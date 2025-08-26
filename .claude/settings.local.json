@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm start)",
+      "Bash(npm test:*)",
+      "Bash(grep:*)",
+      "Bash(vercel:*)",
+      "WebFetch(domain:react-mvp-loan-23jj40wn4-joshua-bascos-projects.vercel.app)",
+      "WebFetch(domain:react-mvp-loan-app.vercel.app)",
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "acceptEdits"
+  }
+}
