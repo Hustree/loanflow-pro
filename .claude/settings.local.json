@@ -10,7 +10,12 @@
       "WebFetch(domain:react-mvp-loan-app.vercel.app)",
       "Bash(npm run build:*)",
       "Bash(cat:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:react-mvp-loan-29b17fayu-joshua-bascos-projects.vercel.app)"
     ],
     "deny": [],
     "ask": [],
