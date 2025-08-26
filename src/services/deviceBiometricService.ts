@@ -125,18 +125,71 @@ export class DeviceBiometricService {
   }
 
   private extractiOSModel(ua: string): string | undefined {
-    // iPhone models
+    // iPhone models - more comprehensive mapping
     if (/iPhone/i.test(ua)) {
       const patterns = [
+        // iPhone 15 series
+        { pattern: /iPhone16,\d/, model: 'iPhone 15 Pro Max' },
+        { pattern: /iPhone15,[23]/, model: 'iPhone 15 Pro' },
         { pattern: /iPhone15,\d/, model: 'iPhone 15' },
+        
+        // iPhone 14 series
+        { pattern: /iPhone14,[678]/, model: 'iPhone 14 Pro' },
         { pattern: /iPhone14,\d/, model: 'iPhone 14' },
+        
+        // iPhone 13 series
+        { pattern: /iPhone14,[23]/, model: 'iPhone 13 Pro' },
         { pattern: /iPhone13,\d/, model: 'iPhone 13' },
+        
+        // iPhone 12 series
+        { pattern: /iPhone13,[23]/, model: 'iPhone 12 Pro' },
         { pattern: /iPhone12,\d/, model: 'iPhone 12' },
+        
+        // iPhone 11 series
+        { pattern: /iPhone12,[13]/, model: 'iPhone 11 Pro' },
         { pattern: /iPhone11,\d/, model: 'iPhone 11' },
-        { pattern: /iPhone10,\d/, model: 'iPhone X' },
-        { pattern: /iPhone9,[34]/, model: 'iPhone 7' },
+        
+        // iPhone X series (Face ID devices)
+        { pattern: /iPhone11,[248]/, model: 'iPhone XS' },
+        { pattern: /iPhone11,6/, model: 'iPhone XR' },
+        { pattern: /iPhone10,[36]/, model: 'iPhone X' },
+        
+        // iPhone 8 and older (Touch ID devices)
+        { pattern: /iPhone10,[12]/, model: 'iPhone 8' },
+        { pattern: /iPhone9,[13]/, model: 'iPhone 7' },
         { pattern: /iPhone8,[12]/, model: 'iPhone 6s' },
         { pattern: /iPhone7,[12]/, model: 'iPhone 6' },
+        { pattern: /iPhone6,[12]/, model: 'iPhone 5s' },
+      ];
+
+      for (const { pattern, model } of patterns) {
+        if (pattern.test(ua)) {
+          console.log(`[iOS Model Detection] Matched: ${model} with pattern: ${pattern}`);
+          return model;
+        }
+      }
+      
+      // If no specific pattern matches, try to infer from iPhone identifier
+      const iPhoneMatch = ua.match(/iPhone(\d+),\d/);
+      if (iPhoneMatch) {
+        const majorVersion = parseInt(iPhoneMatch[1]);
+        if (majorVersion >= 10) {
+          return 'iPhone X or newer'; // Face ID device
+        } else {
+          return 'iPhone 8 or older'; // Touch ID device
+        }
+      }
+      
+      return 'iPhone';
+    }
+
+    // iPad models
+    if (/iPad/i.test(ua)) {
+      const patterns = [
+        { pattern: /iPad13,\d/, model: 'iPad Pro' },
+        { pattern: /iPad11,\d/, model: 'iPad Air' },
+        { pattern: /iPad7,\d/, model: 'iPad' },
+        { pattern: /iPad6,[378]/, model: 'iPad Pro' },
       ];
 
       for (const { pattern, model } of patterns) {
@@ -144,14 +197,6 @@ export class DeviceBiometricService {
           return model;
         }
       }
-      return 'iPhone';
-    }
-
-    // iPad models
-    if (/iPad/i.test(ua)) {
-      if (/iPad13,\d/.test(ua)) return 'iPad Pro';
-      if (/iPad11,\d/.test(ua)) return 'iPad Air';
-      if (/iPad7,\d/.test(ua)) return 'iPad';
       return 'iPad';
     }
 
@@ -256,6 +301,15 @@ export class DeviceBiometricService {
     const hasFaceID = this.iOSDeviceHasFaceID(deviceModel, ua);
     // iPhone 5s to iPhone 8 have Touch ID
     const hasTouchID = this.iOSDeviceHasTouchID(deviceModel, ua);
+
+    // Debug logging for development
+    console.log('[iOS Biometric Detection]', {
+      deviceModel,
+      userAgent: ua,
+      hasFaceID,
+      hasTouchID,
+      platformAuthAvailable
+    });
 
     if (hasFaceID) {
       methods.push({
@@ -389,34 +443,53 @@ export class DeviceBiometricService {
 
   // iOS device capability detection
   private iOSDeviceHasFaceID(deviceModel?: string, ua?: string): boolean {
-    if (!deviceModel && ua) {
-      // iPhone X and newer have Face ID
-      const faceIDPatterns = [
-        /iPhone1[0-5],\d/,  // iPhone X, XS, XR, 11, 12, 13, 14, 15
-      ];
-      return faceIDPatterns.some(pattern => pattern.test(ua));
-    }
-
+    // Check by device model first (most reliable)
     if (deviceModel) {
       const faceIDModels = [
         'iPhone X', 'iPhone XS', 'iPhone XR',
-        'iPhone 11', 'iPhone 12', 'iPhone 13', 'iPhone 14', 'iPhone 15'
+        'iPhone 11', 'iPhone 12', 'iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16'
       ];
       return faceIDModels.some(model => deviceModel.includes(model));
     }
 
-    return false;
+    // Fallback to User Agent analysis
+    if (ua) {
+      // iPhone X and newer have Face ID - more comprehensive patterns
+      const faceIDPatterns = [
+        // iPhone X series and newer (iPhone10,x and higher)
+        /iPhone1[0-9],\d/,          // iPhone X (iPhone10,x) and all newer models
+        // Additional patterns for various iPhone models with Face ID
+        /iPhone.*OS 1[1-9]_/,       // iOS 11+ is a good indicator for Face ID capable devices
+        /iPhone.*Version\/1[1-9]\./  // Safari version 11+ on iPhone
+      ];
+      
+      // Also check if it's NOT an older iPhone model that has Touch ID
+      const touchIDOnlyPatterns = [
+        /iPhone[5-9],\d/,  // iPhone 5s, 6, 6s, 7, 8 series
+      ];
+      
+      const hasFaceIDPattern = faceIDPatterns.some(pattern => pattern.test(ua));
+      const hasTouchIDOnlyPattern = touchIDOnlyPatterns.some(pattern => pattern.test(ua));
+      
+      // If it matches Face ID patterns and doesn't match Touch ID only patterns
+      if (hasFaceIDPattern && !hasTouchIDOnlyPattern) {
+        return true;
+      }
+      
+      // Additional heuristic: if it's iOS and mentions "Mobile" but no specific iPhone model,
+      // assume it's a newer device (most likely Face ID)
+      if (/iPhone.*Mobile.*Safari/i.test(ua) && !/iPhone[5-9],/i.test(ua)) {
+        return true;
+      }
+    }
+
+    // Default assumption for modern iPhones without clear model detection
+    // Most current iOS devices in the wild have Face ID
+    return true;
   }
 
   private iOSDeviceHasTouchID(deviceModel?: string, ua?: string): boolean {
-    if (!deviceModel && ua) {
-      // iPhone 5s to iPhone 8 have Touch ID
-      const touchIDPatterns = [
-        /iPhone[6-9],\d/,   // iPhone 5s, 6, 6s, 7, 8
-      ];
-      return touchIDPatterns.some(pattern => pattern.test(ua));
-    }
-
+    // Check by device model first (most reliable)
     if (deviceModel) {
       const touchIDModels = [
         'iPhone 5s', 'iPhone 6', 'iPhone 6s', 'iPhone 7', 'iPhone 8'
@@ -424,6 +497,21 @@ export class DeviceBiometricService {
       return touchIDModels.some(model => deviceModel.includes(model));
     }
 
+    // Fallback to User Agent analysis - only for specific older iPhone models
+    if (ua) {
+      // Only iPhone 5s to iPhone 8 have Touch ID (before Face ID)
+      const touchIDOnlyPatterns = [
+        /iPhone[6-9],[1-6]/,   // iPhone 6,1 through iPhone 9,6 (covers iPhone 5s through iPhone 8)
+      ];
+      
+      // Must match Touch ID pattern AND not match Face ID patterns
+      const hasTouchIDPattern = touchIDOnlyPatterns.some(pattern => pattern.test(ua));
+      const hasFaceIDPattern = /iPhone1[0-9],\d/.test(ua); // iPhone 10,x and newer
+      
+      return hasTouchIDPattern && !hasFaceIDPattern;
+    }
+
+    // Default to false - if we can't detect, don't assume Touch ID
     return false;
   }
 
