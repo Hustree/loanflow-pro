@@ -114,7 +114,7 @@ const LoanManagement: React.FC = () => {
           </TabPanel>
         </Paper>
 
-        <Box sx={{ mt: 3 }}>
+        {/* <Box sx={{ mt: 3 }}>
           <Paper elevation={1} sx={{ p: 2, backgroundColor: 'grey.50' }}>
             <Typography variant="h6" gutterBottom color="primary">
               Redux Toolkit Implementation Details
@@ -139,7 +139,7 @@ const LoanManagement: React.FC = () => {
               MUI table display, error handling, and ready for API integration with createAsyncThunk.
             </Typography>
           </Paper>
-        </Box>
+        </Box> */}
       </Box>
     </Container>
   );
