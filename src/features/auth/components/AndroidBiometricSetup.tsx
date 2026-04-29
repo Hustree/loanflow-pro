@@ -5,8 +5,8 @@ import {
   checkAndroidCapabilities,
   enrollAndroidBiometric,
   checkAndroidBiometricPasskeys,
-} from '../../store/slices/passkeySlice';
-import type { RootState } from '../../store/store';
+} from '@/store/slices/passkeySlice';
+import type { RootState } from '@/store/store';
 
 interface AndroidBiometricSetupProps {
   email: string;

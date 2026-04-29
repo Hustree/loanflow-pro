@@ -22,13 +22,12 @@ import {
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
+import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { useAuth } from '@/features/auth/AuthContext';
-
-import ResponsiveLayout from '../components/layout/ResponsiveLayout';
-import { useResponsive } from '../hooks/useResponsive';
-import { firebaseService } from '../services/firebaseService';
-import { useAppSelector } from '../store/hooks';
-import type { Loan } from '../types/loan';
+import { useResponsive } from '@/hooks/useResponsive';
+import { firebaseService } from '@/lib/firebase/firebaseService';
+import { useAppSelector } from '@/store/hooks';
+import type { Loan } from '@/types/loan';
 
 interface DashboardStats {
   totalLoans: number;

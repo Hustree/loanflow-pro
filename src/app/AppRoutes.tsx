@@ -3,15 +3,14 @@ import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import { useAuth } from '@/features/auth/AuthContext';
-import Dashboard from '@/pages/Dashboard';
-import DeviceManagementPage from '@/pages/DeviceManagementPage';
-import LoanApplication from '@/pages/LoanApplication';
-import LoanManagement from '@/pages/LoanManagement';
-import Login from '@/pages/Login';
-import PasskeyLoginPage from '@/pages/PasskeyLoginPage';
-import PasskeyRegisterPage from '@/pages/PasskeyRegisterPage';
-import PasskeySetupPage from '@/pages/PasskeySetupPage';
-import ReduxDemo from '@/pages/ReduxDemo';
+import DeviceManagementPage from '@/features/auth/components/DeviceManagementPage';
+import LoginPage from '@/features/auth/components/LoginPage';
+import PasskeyLoginPage from '@/features/auth/components/PasskeyLoginPage';
+import PasskeyRegisterPage from '@/features/auth/components/PasskeyRegisterPage';
+import PasskeySetupPage from '@/features/auth/components/PasskeySetupPage';
+import LoanApplicationPage from '@/features/loan-application/components/LoanApplicationPage';
+import DashboardPage from '@/features/loan-management/components/DashboardPage';
+import LoanManagementPage from '@/features/loan-management/components/LoanManagementPage';
 
 // Protected Route component
 const ProtectedRoute: React.FC = () => {
@@ -38,17 +37,16 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/login/passkey" element={<PasskeyLoginPage />} />
       <Route path="/register" element={<PasskeyRegisterPage />} />
       <Route path="/passkey/setup" element={<PasskeySetupPage />} />
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/loan" element={<LoanApplication />} />
-        <Route path="/manage" element={<LoanManagement />} />
-        <Route path="/redux-demo" element={<ReduxDemo />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/loan" element={<LoanApplicationPage />} />
+        <Route path="/manage" element={<LoanManagementPage />} />
         <Route path="/settings/devices" element={<DeviceManagementPage />} />
       </Route>
 

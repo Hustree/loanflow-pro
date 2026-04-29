@@ -3,9 +3,9 @@ import { Container, Box, Paper, Typography, Button, Alert, Divider } from '@mui/
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import TextInput from '../components/inputs/TextInput';
-import { STATIC_CREDENTIALS } from '../utils/constants';
-import { validateLoginForm } from '../utils/validators';
+import TextInput from '@/components/TextInput';
+import { STATIC_CREDENTIALS } from '@/utils/constants';
+import { validateLoginForm } from '@/utils/validators';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

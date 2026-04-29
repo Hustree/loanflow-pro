@@ -31,8 +31,8 @@ import {
   checkPasskeySupport,
   clearError,
   checkHasPasskeys,
-} from '../../store/slices/passkeySlice';
-import type { RootState, AppDispatch } from '../../store/store';
+} from '@/store/slices/passkeySlice';
+import type { RootState, AppDispatch } from '@/store/store';
 
 export const PasskeyLogin: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

@@ -25,8 +25,8 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { registerPasskey, checkPasskeySupport, clearError } from '../../store/slices/passkeySlice';
-import type { RootState, AppDispatch } from '../../store/store';
+import { registerPasskey, checkPasskeySupport, clearError } from '@/store/slices/passkeySlice';
+import type { RootState, AppDispatch } from '@/store/store';
 
 export const PasskeyRegister: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

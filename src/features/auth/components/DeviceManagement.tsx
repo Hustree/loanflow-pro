@@ -44,12 +44,8 @@ import { format, formatDistanceToNow } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  loadUserPasskeys,
-  removePasskey,
-  checkPasskeySupport,
-} from '../../store/slices/passkeySlice';
-import type { RootState, AppDispatch } from '../../store/store';
+import { loadUserPasskeys, removePasskey, checkPasskeySupport } from '@/store/slices/passkeySlice';
+import type { RootState, AppDispatch } from '@/store/store';
 
 import { PasskeyRegistration } from './PasskeyRegistration';
 

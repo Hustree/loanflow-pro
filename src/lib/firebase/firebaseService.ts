@@ -10,8 +10,9 @@ import type { DocumentSnapshot } from 'firebase/firestore';
 import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 
-import { db, auth, storage } from '../config/firebase';
-import type { Loan } from '../types/loan';
+import type { Loan } from '@/types/loan';
+
+import { db, auth, storage } from './config';
 
 export interface FirebaseLoan extends Omit<Loan, 'id'> {
   createdAt: Timestamp;

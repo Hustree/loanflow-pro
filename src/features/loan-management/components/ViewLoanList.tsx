@@ -18,8 +18,8 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import type { Loan } from '../schema/loan';
-import { useAppSelector } from '../store/hooks';
+import type { Loan } from '@/features/loan-application/loan.schema';
+import { useAppSelector } from '@/store/hooks';
 
 import StatusUpdateModal from './StatusUpdateModal';
 

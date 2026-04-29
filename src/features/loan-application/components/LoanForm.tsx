@@ -14,16 +14,16 @@ import type { SelectChangeEvent } from '@mui/material';
 import React, { useState } from 'react';
 import { ZodError } from 'zod';
 
-import type { CreateLoanPayloadSchema } from '../schema/loan';
-import { loanApplicationInputSchema } from '../schema/loan';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addLoan, clearError } from '../store/loanSlice';
-import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '../utils/constants';
-import { generateReferenceNumber } from '../utils/refNumber';
+import FileUpload from '@/components/FileUpload';
+import SelectInput from '@/components/SelectInput';
+import TextInput from '@/components/TextInput';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { addLoan, clearError } from '@/store/slices/loanSlice';
+import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '@/utils/constants';
+import { generateReferenceNumber } from '@/utils/refNumber';
 
-import FileUpload from './inputs/FileUpload';
-import SelectInput from './inputs/SelectInput';
-import TextInput from './inputs/TextInput';
+import type { CreateLoanPayloadSchema } from '../loan.schema';
+import { loanApplicationInputSchema } from '../loan.schema';
 
 interface LoanFormProps {
   onSuccess?: (referenceNumber: string) => void;

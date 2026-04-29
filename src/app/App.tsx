@@ -4,8 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/features/auth/AuthContext';
+import { lightTheme } from '@/features/theme/theme';
 import { store } from '@/store/store';
-import { lightTheme } from '@/theme/theme';
 
 import AppRoutes from './AppRoutes';
 

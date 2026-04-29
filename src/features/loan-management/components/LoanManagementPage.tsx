@@ -2,9 +2,10 @@ import { Add as AddIcon, List as ListIcon } from '@mui/icons-material';
 import { Container, Box, Paper, Typography, Tabs, Tab, Alert } from '@mui/material';
 import React, { useState } from 'react';
 
-import LoanForm from '../components/LoanForm';
-import ViewLoanList from '../components/ViewLoanList';
-import { useAppSelector } from '../store/hooks';
+import LoanForm from '@/features/loan-application/components/LoanForm';
+import { useAppSelector } from '@/store/hooks';
+
+import ViewLoanList from './ViewLoanList';
 
 interface TabPanelProps {
   children?: React.ReactNode;

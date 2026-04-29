@@ -19,10 +19,14 @@ import {
 import React, { useState } from 'react';
 import { ZodError } from 'zod';
 
-import type { Loan, StatusUpdateInputSchema, LoanStatusEnum } from '../schema/loan';
-import { statusUpdateInputSchema } from '../schema/loan';
-import { useAppDispatch } from '../store/hooks';
-import { updateLoanStatus } from '../store/loanSlice';
+import type {
+  Loan,
+  StatusUpdateInputSchema,
+  LoanStatusEnum,
+} from '@/features/loan-application/loan.schema';
+import { statusUpdateInputSchema } from '@/features/loan-application/loan.schema';
+import { useAppDispatch } from '@/store/hooks';
+import { updateLoanStatus } from '@/store/slices/loanSlice';
 
 interface StatusUpdateModalProps {
   open: boolean;

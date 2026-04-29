@@ -21,17 +21,17 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import SummaryCard from '../components/common/SummaryCard';
-import FileUpload from '../components/inputs/FileUpload';
-import SelectInput from '../components/inputs/SelectInput';
-import TextInput from '../components/inputs/TextInput';
-import type { CreateLoanPayloadSchema } from '../schema/loan';
-import { useAppDispatch } from '../store/hooks';
-import { addLoan } from '../store/loanSlice';
-import type { LoanApplication } from '../types/loan';
-import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '../utils/constants';
-import { generateReferenceNumber } from '../utils/refNumber';
-import { validateLoanForm } from '../utils/validators';
+import FileUpload from '@/components/FileUpload';
+import SelectInput from '@/components/SelectInput';
+import SummaryCard from '@/components/SummaryCard';
+import TextInput from '@/components/TextInput';
+import type { CreateLoanPayloadSchema } from '@/features/loan-application/loan.schema';
+import { useAppDispatch } from '@/store/hooks';
+import { addLoan } from '@/store/slices/loanSlice';
+import type { LoanApplication } from '@/types/loan';
+import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '@/utils/constants';
+import { generateReferenceNumber } from '@/utils/refNumber';
+import { validateLoanForm } from '@/utils/validators';
 
 const LoanApplicationPage: React.FC = () => {
   const navigate = useNavigate();

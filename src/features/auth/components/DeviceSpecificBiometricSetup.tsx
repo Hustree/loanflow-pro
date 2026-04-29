@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { DeviceBiometricInfo } from '../../services/deviceBiometricService';
-import { deviceBiometricService } from '../../services/deviceBiometricService';
-import { passkeyService } from '../../services/passkeyService';
+import type { DeviceBiometricInfo } from '@/features/auth/deviceBiometricService';
+import { deviceBiometricService } from '@/features/auth/deviceBiometricService';
+import { passkeyService } from '@/features/auth/passkeyService';
 import {
   registerPasskey,
   authenticateWithPasskey,
   checkPasskeySupport,
-} from '../../store/slices/passkeySlice';
-import type { RootState } from '../../store/store';
+} from '@/store/slices/passkeySlice';
+import type { RootState } from '@/store/store';
 
 interface DeviceSpecificBiometricSetupProps {
   email: string;

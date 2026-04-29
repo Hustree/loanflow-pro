@@ -2,7 +2,7 @@ import { Container } from '@mui/material';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { PasskeyRegistration } from '../components/auth/PasskeyRegistration';
+import { PasskeyRegistration } from './PasskeyRegistration';
 
 const PasskeySetupPage: React.FC = () => {
   const location = useLocation();

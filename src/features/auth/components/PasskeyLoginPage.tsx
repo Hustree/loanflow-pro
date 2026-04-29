@@ -1,7 +1,7 @@
 import { Container } from '@mui/material';
 import React from 'react';
 
-import { PasskeyLogin } from '../components/auth/PasskeyLogin';
+import { PasskeyLogin } from './PasskeyLogin';
 
 const PasskeyLoginPage: React.FC = () => {
   return (

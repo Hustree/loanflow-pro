@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 
-import type { Loan } from '../types/loan';
+import type { Loan } from '@/types/loan';
 
 export const generateMockLoans = (count: number = 15): Loan[] => {
   const statuses = ['pending', 'approved', 'rejected', 'processing'] as const;

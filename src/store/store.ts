@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import loanProductReducer from './loanProductSlice';
-import loanReducer from './loanSlice';
-import memberReducer from './memberSlice';
+import loanProductReducer from './slices/loanProductSlice';
+import loanReducer from './slices/loanSlice';
+import memberReducer from './slices/memberSlice';
 import passkeyReducer from './slices/passkeySlice';
 
 export const store = configureStore({

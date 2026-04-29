@@ -36,8 +36,8 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { registerPasskey, clearError, resetSteps } from '../../store/slices/passkeySlice';
-import type { RootState, AppDispatch } from '../../store/store';
+import { registerPasskey, clearError, resetSteps } from '@/store/slices/passkeySlice';
+import type { RootState, AppDispatch } from '@/store/store';
 
 interface Props {
   email: string;

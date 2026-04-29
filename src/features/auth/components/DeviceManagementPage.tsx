@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/features/auth/AuthContext';
 
-import { DeviceManagement } from '../components/auth/DeviceManagement';
+import { DeviceManagement } from './DeviceManagement';
 
 const DeviceManagementPage: React.FC = () => {
   const navigate = useNavigate();
