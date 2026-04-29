@@ -6,13 +6,13 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
 import AppRoutes from './routes/AppRoutes';
 import { store } from './store/store';
-import { mobileFirstTheme } from './theme/mobileFirst';
+import { lightTheme } from './theme/theme';
 
 function App() {
   return (
     <ErrorBoundary>
       <Provider store={store}>
-        <ThemeProvider theme={mobileFirstTheme}>
+        <ThemeProvider theme={lightTheme}>
           <CssBaseline />
           <AuthProvider>
             <BrowserRouter>
