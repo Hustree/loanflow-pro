@@ -3,7 +3,7 @@ import { Container, Box, Paper, Typography, Tabs, Tab, Alert } from '@mui/materi
 import React, { useState } from 'react';
 
 import LoanForm from '@/features/loan-application/components/LoanForm';
-import { useAppSelector } from '@/store/hooks';
+import { useListLoansQuery } from '@/store/api';
 
 import ViewLoanList from './ViewLoanList';
 
@@ -39,7 +39,7 @@ function a11yProps(index: number) {
 const LoanManagement: React.FC = () => {
   const [value, setValue] = useState(0);
   const [successMessage, setSuccessMessage] = useState<string>('');
-  const { loans } = useAppSelector((state) => state.loan);
+  const { data: loans = [] } = useListLoansQuery();
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);

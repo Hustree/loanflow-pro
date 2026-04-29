@@ -17,7 +17,6 @@ import {
   Alert,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,17 +24,14 @@ import FileUpload from '@/components/FileUpload';
 import SelectInput from '@/components/SelectInput';
 import SummaryCard from '@/components/SummaryCard';
 import TextInput from '@/components/TextInput';
-import type { CreateLoanPayloadSchema } from '@/features/loan-application/loan.schema';
-import { useAppDispatch } from '@/store/hooks';
-import { addLoan } from '@/store/slices/loanSlice';
+import { useCreateLoanMutation } from '@/store/api';
 import type { LoanApplication } from '@/types/loan';
 import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '@/utils/constants';
-import { generateReferenceNumber } from '@/utils/refNumber';
 import { validateLoanForm } from '@/utils/validators';
 
 const LoanApplicationPage: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const [createLoan] = useCreateLoanMutation();
   const [activeStep, setActiveStep] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -98,33 +94,22 @@ const LoanApplicationPage: React.FC = () => {
     }
 
     try {
+      const partial = formData as LoanApplication;
+
+      // Submit through RTK Query against the MSW backend
+      const created = await createLoan({
+        applicantName: partial.fullName,
+        loanType: partial.loanType,
+        amount: Number(partial.loanAmount),
+        termMonths: Number(partial.term),
+        purpose: `${partial.loanType} loan via ${partial.disbursementMode}`,
+      }).unwrap();
+
       const submissionData: LoanApplication = {
-        ...(formData as LoanApplication),
-        referenceNumber: generateReferenceNumber(),
-        submissionDate: new Date(),
+        ...partial,
+        referenceNumber: created.referenceNumber,
+        submissionDate: new Date(created.submittedAt),
       };
-
-      // Convert to Redux-compatible format
-      const reduxPayload: CreateLoanPayloadSchema = {
-        name: submissionData.fullName,
-        pnpBfpId: submissionData.pnpBfpId,
-        amount: submissionData.loanAmount,
-        type: submissionData.loanType,
-        term: submissionData.term,
-        monthlyIncome: submissionData.monthlyIncome,
-        disbursementMode: submissionData.disbursementMode,
-        uploadedFileName: submissionData.uploadedFile?.name,
-      };
-
-      // Dispatch to Redux store
-      dispatch(addLoan(reduxPayload));
-
-      // Log to console
-      console.log('Loan Application Submitted:', submissionData);
-
-      // Submit to httpbin for demo
-      const response = await axios.post('https://httpbin.org/post', submissionData);
-      console.log('API Response:', response.data);
 
       setFormData((prev) => ({
         ...prev,

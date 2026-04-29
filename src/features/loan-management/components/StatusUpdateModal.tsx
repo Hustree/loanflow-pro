@@ -17,16 +17,9 @@ import {
   Divider,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { ZodError } from 'zod';
 
-import type {
-  Loan,
-  StatusUpdateInputSchema,
-  LoanStatusEnum,
-} from '@/features/loan-application/loan.schema';
-import { statusUpdateInputSchema } from '@/features/loan-application/loan.schema';
-import { useAppDispatch } from '@/store/hooks';
-import { updateLoanStatus } from '@/store/slices/loanSlice';
+import type { Loan, LoanStatus } from '@/lib/api/types';
+import { useUpdateLoanStatusMutation } from '@/store/api';
 
 interface StatusUpdateModalProps {
   open: boolean;
@@ -34,13 +27,11 @@ interface StatusUpdateModalProps {
   loan: Loan | null;
 }
 
-const STATUS_OPTIONS: { value: LoanStatusEnum; label: string; description: string }[] = [
+const STATUS_OPTIONS: { value: LoanStatus; label: string; description: string }[] = [
   { value: 'pending', label: 'Pending', description: 'Application is under review' },
-  { value: 'processing', label: 'Processing', description: 'Application is being processed' },
+  { value: 'in-review', label: 'In Review', description: 'Application is being reviewed' },
   { value: 'approved', label: 'Approved', description: 'Application has been approved' },
   { value: 'rejected', label: 'Rejected', description: 'Application has been rejected' },
-  { value: 'disbursed', label: 'Disbursed', description: 'Loan amount has been disbursed' },
-  { value: 'completed', label: 'Completed', description: 'Loan has been fully repaid' },
 ];
 
 const getStatusColor = (
@@ -53,82 +44,53 @@ const getStatusColor = (
       return 'success';
     case 'rejected':
       return 'error';
-    case 'processing':
+    case 'in-review':
       return 'info';
-    case 'disbursed':
-      return 'primary';
-    case 'completed':
-      return 'success';
     default:
       return 'default';
   }
 };
 
 const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, loan }) => {
-  const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState<StatusUpdateInputSchema>({
-    status: 'pending',
-    notes: '',
-  });
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [updateLoanStatus, { isLoading: isSubmitting }] = useUpdateLoanStatusMutation();
+  const [status, setStatus] = useState<LoanStatus>('pending');
+  const [note, setNote] = useState('');
+  const [validationError, setValidationError] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
-  const handleStatusChange = (event: any) => {
-    const newStatus = event.target.value as LoanStatusEnum;
-    setFormData((prev) => ({ ...prev, status: newStatus }));
-    if (validationErrors.status) {
-      setValidationErrors((prev) => ({ ...prev, status: '' }));
-    }
+  const handleStatusChange = (event: { target: { value: unknown } }) => {
+    setStatus(event.target.value as LoanStatus);
   };
 
   const handleNotesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const notes = event.target.value;
-    setFormData((prev) => ({ ...prev, notes }));
-    if (validationErrors.notes) {
-      setValidationErrors((prev) => ({ ...prev, notes: '' }));
-    }
+    setNote(event.target.value);
+    if (validationError) setValidationError('');
+  };
+
+  const resetState = () => {
+    setStatus('pending');
+    setNote('');
+    setValidationError('');
+    setSubmitError('');
+  };
+
+  const handleClose = () => {
+    resetState();
+    onClose();
   };
 
   const handleSubmit = async () => {
     if (!loan) return;
-
-    try {
-      // Validate using Zod schema
-      const validatedData = statusUpdateInputSchema.parse(formData);
-
-      setIsSubmitting(true);
-
-      // Dispatch the update action
-      dispatch(
-        updateLoanStatus({
-          id: loan.id!,
-          status: validatedData.status,
-          notes: validatedData.notes,
-        }),
-      );
-
-      // Close modal and reset form
-      handleClose();
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const errors: Record<string, string> = {};
-        error.issues.forEach((err) => {
-          if (err.path) {
-            errors[err.path[0] as string] = err.message;
-          }
-        });
-        setValidationErrors(errors);
-      }
-    } finally {
-      setIsSubmitting(false);
+    if (!note.trim()) {
+      setValidationError('Notes are required for status updates');
+      return;
     }
-  };
-
-  const handleClose = () => {
-    setFormData({ status: 'pending', notes: '' });
-    setValidationErrors({});
-    setIsSubmitting(false);
-    onClose();
+    try {
+      await updateLoanStatus({ loanId: loan.id, status, note }).unwrap();
+      handleClose();
+    } catch {
+      setSubmitError('Failed to update status. Please try again.');
+    }
   };
 
   if (!loan) return null;
@@ -139,16 +101,19 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: { borderRadius: 2 },
-      }}
+      PaperProps={{ sx: { borderRadius: 2 } }}
     >
       <DialogTitle sx={{ pb: 1 }}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h6" component="div">
             Update Loan Status
           </Typography>
-          <Button onClick={handleClose} sx={{ minWidth: 'auto', p: 1 }} color="inherit">
+          <Button
+            onClick={handleClose}
+            sx={{ minWidth: 'auto', p: 1 }}
+            color="inherit"
+            aria-label="close"
+          >
             <Close />
           </Button>
         </Box>
@@ -162,9 +127,9 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
           </Typography>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
             <Typography variant="body2" fontWeight="medium">
-              {loan.name}
+              {loan.applicantName}
             </Typography>
-            <Chip label={loan.ref} size="small" color="primary" variant="outlined" />
+            <Chip label={loan.referenceNumber} size="small" color="primary" variant="outlined" />
           </Box>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="body2" color="text.secondary">
@@ -181,15 +146,20 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
 
         <Divider sx={{ my: 2 }} />
 
+        {submitError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {submitError}
+          </Alert>
+        )}
+
         {/* Status Selection */}
         <FormControl fullWidth sx={{ mb: 3 }}>
           <InputLabel id="status-select-label">New Status</InputLabel>
           <Select
             labelId="status-select-label"
-            value={formData.status}
+            value={status}
             label="New Status"
             onChange={handleStatusChange}
-            error={!!validationErrors.status}
           >
             {STATUS_OPTIONS.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -204,11 +174,6 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
               </MenuItem>
             ))}
           </Select>
-          {validationErrors.status && (
-            <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-              {validationErrors.status}
-            </Typography>
-          )}
         </FormControl>
 
         {/* Notes Field */}
@@ -218,20 +183,20 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
           rows={4}
           label="Notes (Required)"
           placeholder="Provide details about this status update..."
-          value={formData.notes}
+          value={note}
           onChange={handleNotesChange}
-          error={!!validationErrors.notes}
-          helperText={validationErrors.notes || `${formData.notes.length}/500 characters`}
+          error={!!validationError}
+          helperText={validationError || `${note.length}/500 characters`}
           inputProps={{ maxLength: 500 }}
           sx={{ mb: 2 }}
         />
 
         {/* Warning for status changes */}
-        {formData.status !== loan.status && (
+        {status !== loan.status && (
           <Alert severity="warning" sx={{ mb: 2 }}>
             <Typography variant="body2">
               You are about to change the status from <strong>{loan.status}</strong> to{' '}
-              <strong>{formData.status}</strong>. This action will be recorded with your notes.
+              <strong>{status}</strong>. This action will be recorded with your notes.
             </Typography>
           </Alert>
         )}
@@ -245,7 +210,7 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
           onClick={handleSubmit}
           variant="contained"
           startIcon={<Save />}
-          disabled={isSubmitting || !formData.notes.trim()}
+          disabled={isSubmitting || !note.trim()}
           sx={{ minWidth: 120 }}
         >
           {isSubmitting ? 'Updating...' : 'Update Status'}

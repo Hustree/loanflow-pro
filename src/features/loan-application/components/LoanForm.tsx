@@ -17,10 +17,8 @@ import { ZodError } from 'zod';
 import FileUpload from '@/components/FileUpload';
 import SelectInput from '@/components/SelectInput';
 import TextInput from '@/components/TextInput';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addLoan, clearError } from '@/store/slices/loanSlice';
+import { useCreateLoanMutation } from '@/store/api';
 import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '@/utils/constants';
-import { generateReferenceNumber } from '@/utils/refNumber';
 
 import type { CreateLoanPayloadSchema } from '../loan.schema';
 import { loanApplicationInputSchema } from '../loan.schema';
@@ -30,8 +28,13 @@ interface LoanFormProps {
 }
 
 const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
-  const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.loan);
+  const [createLoan, { isLoading, error: mutationError }] = useCreateLoanMutation();
+  const error =
+    mutationError && 'message' in mutationError
+      ? (mutationError as { message?: string }).message
+      : mutationError
+        ? 'Failed to submit loan application.'
+        : null;
 
   const [formData, setFormData] = useState<Partial<CreateLoanPayloadSchema>>({
     name: '',
@@ -53,11 +56,6 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: '' }));
     }
-
-    // Clear Redux error when user starts typing
-    if (error) {
-      dispatch(clearError());
-    }
   };
 
   const handleSelectChange = (e: SelectChangeEvent<string | number>) => {
@@ -68,18 +66,12 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: '' }));
     }
-    if (error) {
-      dispatch(clearError());
-    }
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, disbursementMode: e.target.value as any }));
     if (validationErrors.disbursementMode) {
       setValidationErrors((prev) => ({ ...prev, disbursementMode: '' }));
-    }
-    if (error) {
-      dispatch(clearError());
     }
   };
 
@@ -94,14 +86,17 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
     e.preventDefault();
 
     try {
-      // Validate using Zod schema
+      // Validate using Zod schema (local form shape)
       const validatedData = loanApplicationInputSchema.parse(formData);
 
-      // Dispatch the action to add loan
-      dispatch(addLoan(validatedData));
-
-      // Since addLoan generates the reference number internally, we need to generate one here for the callback
-      const generatedRef = generateReferenceNumber();
+      // Map local form fields to API contract shape and submit through RTK Query / MSW
+      const created = await createLoan({
+        applicantName: validatedData.name,
+        loanType: validatedData.type,
+        amount: validatedData.amount,
+        termMonths: validatedData.term,
+        purpose: `${validatedData.type} loan via ${validatedData.disbursementMode}`,
+      }).unwrap();
 
       setSubmitSuccess(true);
       setValidationErrors({});
@@ -114,21 +109,19 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         monthlyIncome: 0,
       });
 
-      // Call success callback if provided
       if (onSuccess) {
-        onSuccess(generatedRef);
+        onSuccess(created.referenceNumber);
       }
-    } catch (error) {
-      if (error instanceof ZodError) {
-        // Handle Zod validation errors
+    } catch (err) {
+      if (err instanceof ZodError) {
         const fieldErrors: Record<string, string> = {};
-        error.issues.forEach((err) => {
-          const field = err.path[0] as string;
-          fieldErrors[field] = err.message;
+        err.issues.forEach((issue) => {
+          const field = issue.path[0] as string;
+          fieldErrors[field] = issue.message;
         });
         setValidationErrors(fieldErrors);
       } else {
-        console.error('Form submission error:', error);
+        console.error('Form submission error:', err);
       }
     }
   };

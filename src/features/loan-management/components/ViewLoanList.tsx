@@ -18,13 +18,13 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import type { Loan } from '@/features/loan-application/loan.schema';
-import { useAppSelector } from '@/store/hooks';
+import type { Loan } from '@/lib/api/types';
+import { useListLoansQuery } from '@/store/api';
 
 import StatusUpdateModal from './StatusUpdateModal';
 
 const ViewLoanList: React.FC = () => {
-  const { loans, isLoading, error } = useAppSelector((state) => state.loan);
+  const { data: loans = [], isLoading, error } = useListLoansQuery();
   const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -39,33 +39,27 @@ const ViewLoanList: React.FC = () => {
         return 'success';
       case 'rejected':
         return 'error';
-      case 'processing':
+      case 'in-review':
         return 'info';
-      case 'disbursed':
-        return 'primary';
-      case 'completed':
-        return 'success';
       default:
         return 'default';
     }
   };
 
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-PH', {
+  const formatCurrency = (amount: number): string =>
+    new Intl.NumberFormat('en-PH', {
       style: 'currency',
       currency: 'PHP',
     }).format(amount);
-  };
 
-  const formatDate = (date: Date): string => {
-    return new Intl.DateTimeFormat('en-PH', {
+  const formatDate = (iso: string): string =>
+    new Intl.DateTimeFormat('en-PH', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(new Date(date));
-  };
+    }).format(new Date(iso));
 
   const handleStatusUpdate = (loan: Loan) => {
     setSelectedLoan(loan);
@@ -98,7 +92,7 @@ const ViewLoanList: React.FC = () => {
   if (error) {
     return (
       <Alert severity="error" sx={{ mb: 2 }}>
-        Error loading loans: {error}
+        Error loading loans.
       </Alert>
     );
   }
@@ -154,10 +148,10 @@ const ViewLoanList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loans.map((loan: Loan) => {
-              const isExpanded = expandedRows.has(loan.id!);
+            {loans.map((loan) => {
+              const isExpanded = expandedRows.has(loan.id);
               return (
-                <React.Fragment key={loan.id || loan.ref}>
+                <React.Fragment key={loan.id}>
                   <TableRow
                     sx={{
                       '&:last-child td, &:last-child th': { border: 0 },
@@ -167,29 +161,25 @@ const ViewLoanList: React.FC = () => {
                     <TableCell padding="checkbox">
                       <IconButton
                         size="small"
-                        onClick={() => toggleRowExpansion(loan.id!)}
+                        onClick={() => toggleRowExpansion(loan.id)}
                         sx={{ p: 0.5 }}
+                        aria-label={isExpanded ? 'collapse notes' : 'expand notes'}
                       >
                         {isExpanded ? <ExpandLess /> : <ExpandMore />}
                       </IconButton>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2" fontWeight="medium" color="primary">
-                        {loan.ref}
+                        {loan.referenceNumber}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Box>
-                        <Typography variant="body2" fontWeight="medium">
-                          {loan.name}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          ID: {loan.pnpBfpId}
-                        </Typography>
-                      </Box>
+                      <Typography variant="body2" fontWeight="medium">
+                        {loan.applicantName}
+                      </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2">{loan.type}</Typography>
+                      <Typography variant="body2">{loan.loanType}</Typography>
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="body2" fontWeight="medium">
@@ -197,7 +187,7 @@ const ViewLoanList: React.FC = () => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2">{loan.term} months</Typography>
+                      <Typography variant="body2">{loan.termMonths} months</Typography>
                     </TableCell>
                     <TableCell>
                       <Chip
@@ -209,7 +199,7 @@ const ViewLoanList: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2" color="text.secondary">
-                        {formatDate(loan.submissionDate)}
+                        {formatDate(loan.submittedAt)}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
@@ -218,6 +208,7 @@ const ViewLoanList: React.FC = () => {
                           size="small"
                           onClick={() => handleStatusUpdate(loan)}
                           sx={{ p: 0.5 }}
+                          aria-label="update loan status"
                         >
                           <Edit />
                         </IconButton>
@@ -233,27 +224,33 @@ const ViewLoanList: React.FC = () => {
                           <Box display="flex" alignItems="center" mb={1}>
                             <Notes sx={{ mr: 1, fontSize: 16 }} />
                             <Typography variant="subtitle2" fontWeight="medium">
-                              Notes & Updates
+                              Notes &amp; Updates
                             </Typography>
                           </Box>
-                          {loan.notes ? (
-                            <Typography variant="body2" color="text.secondary">
-                              {loan.notes}
-                            </Typography>
-                          ) : (
+                          <Typography variant="body2" color="text.secondary" gutterBottom>
+                            <strong>Purpose:</strong> {loan.purpose}
+                          </Typography>
+                          {loan.notes.length === 0 ? (
                             <Typography variant="body2" color="text.secondary" fontStyle="italic">
                               No notes available for this loan application.
                             </Typography>
+                          ) : (
+                            loan.notes.map((note) => (
+                              <Box key={note.id} sx={{ mt: 1 }}>
+                                <Typography variant="body2">{note.content}</Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  {note.authorName} · {formatDate(note.createdAt)}
+                                </Typography>
+                              </Box>
+                            ))
                           )}
-                          {loan.updatedAt && (
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ mt: 1, display: 'block' }}
-                            >
-                              Last updated: {formatDate(loan.updatedAt)}
-                            </Typography>
-                          )}
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ mt: 1, display: 'block' }}
+                          >
+                            Last updated: {formatDate(loan.updatedAt)}
+                          </Typography>
                         </Box>
                       </Collapse>
                     </TableCell>
