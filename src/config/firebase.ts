@@ -5,13 +5,13 @@ import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "demo-api-key",
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "psslai-loan-app.firebaseapp.com",
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "psslai-loan-app",
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "psslai-loan-app.appspot.com",
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "psslai-loan-app.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "psslai-loan-app",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "psslai-loan-app.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX"
 };
 
 const app = initializeApp(firebaseConfig);

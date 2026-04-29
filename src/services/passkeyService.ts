@@ -85,8 +85,8 @@ export interface EnhancedDeviceInfo extends DeviceInfo {
 }
 
 // Mock API endpoints for development
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
-const USE_MOCK_API = !API_BASE_URL || process.env.REACT_APP_USE_MOCK_PASSKEY === 'true';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const USE_MOCK_API = !API_BASE_URL || import.meta.env.VITE_USE_MOCK_PASSKEY === 'true';
 
 export class PasskeyService {
   private static instance: PasskeyService;

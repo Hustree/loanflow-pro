@@ -10,6 +10,16 @@
 
 # production
 /build
+/dist
+/storybook-static
+
+# vite / typescript build artifacts
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# playwright / test artifacts
+/playwright-report
+/test-results
 
 # misc
 .DS_Store
