@@ -6,9 +6,9 @@ import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'demo-api-key',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'psslai-loan-app.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'psslai-loan-app',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'psslai-loan-app.appspot.com',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'loanflow-pro.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'loanflow-pro',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'loanflow-pro.appspot.com',
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
   appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789:web:abcdef123456',
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-XXXXXXXXXX',

@@ -34,7 +34,7 @@ export const PasskeyRegister: React.FC = () => {
   const location = useLocation();
 
   const [email, setEmail] = useState(
-    location.state?.email || location.state?.identifier || 'test@psslai.com',
+    location.state?.email || location.state?.identifier || 'test@loanflow.example',
   );
   const [displayName, setDisplayName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);

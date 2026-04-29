@@ -67,7 +67,7 @@ export const generateMockLoans = (count: number = 15): Loan[] => {
 
 export const mockUserProfile = {
   uid: 'mock-user-001',
-  email: 'juan.delacruz@psslai.com',
+  email: 'juan.delacruz@loanflow.example',
   displayName: 'Juan Dela Cruz',
   photoURL: null,
   memberSince: '2020-01-15',

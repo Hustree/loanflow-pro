@@ -342,7 +342,7 @@ const LoanApplicationPage: React.FC = () => {
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography component="h1" variant="h4">
-            PSSLAI Loan Application
+            LoanFlow Pro
           </Typography>
           <Button
             variant="outlined"

@@ -266,7 +266,7 @@ export class PasskeyService {
     return {
       challenge,
       rp: {
-        name: 'PSSLAI Loan App',
+        name: 'LoanFlow Pro',
         id: window.location.hostname,
       },
       user: {
@@ -478,7 +478,7 @@ export class PasskeyService {
           const biometricAuth = await androidBiometricService.authenticateWithBiometric({
             title: 'Authenticate with Biometric',
             subtitle: 'Use your biometric to sign in',
-            description: 'Authenticate to access your PSSLAI loan account',
+            description: 'Authenticate to access your loan account',
             negativeButtonText: 'Use Password',
             allowDeviceCredential: true,
           });

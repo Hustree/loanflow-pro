@@ -8,7 +8,7 @@ export const AndroidBiometricDemo: React.FC = () => {
   const [deviceInfo, setDeviceInfo] = useState<any>(null);
   const [isAndroidDevice, setIsAndroidDevice] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userEmail] = useState('demo@psslai.com');
+  const [userEmail] = useState('demo@loanflow.example');
   const [displayName] = useState('Demo User');
 
   useEffect(() => {

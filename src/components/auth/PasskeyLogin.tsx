@@ -38,7 +38,7 @@ export const PasskeyLogin: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const [identifier, setIdentifier] = useState('test@psslai.com');
+  const [identifier, setIdentifier] = useState('test@loanflow.example');
   const [showFallback, setShowFallback] = useState(false);
   const [isCheckingPasskey, setIsCheckingPasskey] = useState(false);
   const [hasPasskey, setHasPasskey] = useState(false);
@@ -200,7 +200,7 @@ export const PasskeyLogin: React.FC = () => {
         <Box textAlign="center">
           <Smartphone sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
           <Typography variant="h5" gutterBottom>
-            Welcome to PSSLAI
+            Welcome to LoanFlow Pro
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Sign in securely with your device

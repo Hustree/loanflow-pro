@@ -100,7 +100,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
     >
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" color="primary" fontWeight="bold">
-          PSSLAI Loans
+          LoanFlow Pro
         </Typography>
         {isMobile && (
           <IconButton onClick={handleDrawerToggle} size="small">

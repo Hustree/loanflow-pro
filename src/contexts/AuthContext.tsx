@@ -106,10 +106,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
 
       // Demo mode fallback
-      if (email === 'demo@psslai.com' && password === 'demo1234') {
+      if (email === 'demo@loanflow.example' && password === 'demo1234') {
         const demoUser = {
           uid: 'demo-user-001',
-          email: 'demo@psslai.com',
+          email: 'demo@loanflow.example',
           displayName: 'Demo User',
         } as unknown as User;
 
@@ -119,11 +119,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       // Legacy login support
-      if (email === 'psslaimember' && password === '1234') {
+      if (email === 'demo' && password === 'demo') {
         const legacyUser = {
           uid: 'legacy-user-001',
-          email: 'psslaimember@psslai.com',
-          displayName: 'PSSLAI Member',
+          email: 'demo@loanflow.example',
+          displayName: 'Demo User',
         } as unknown as User;
 
         setUser(legacyUser);

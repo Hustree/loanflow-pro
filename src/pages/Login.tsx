@@ -66,7 +66,7 @@ const Login: React.FC = () => {
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <AccountCircle sx={{ fontSize: 60, color: 'primary.main', mb: 1 }} />
             <Typography component="h1" variant="h5">
-              PSSLAI Loan Application
+              LoanFlow Pro
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               Sign in to continue
@@ -130,7 +130,7 @@ const Login: React.FC = () => {
               align="center"
               sx={{ display: 'block' }}
             >
-              Legacy credentials: psslaimember / 1234
+              Legacy credentials: demo / 1234
             </Typography>
           </Box>
         </Paper>

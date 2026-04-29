@@ -7,7 +7,7 @@ import { DeviceSpecificBiometricSetup } from '../auth/DeviceSpecificBiometricSet
 export const DeviceSpecificBiometricDemo: React.FC = () => {
   const [deviceInfo, setDeviceInfo] = useState<DeviceBiometricInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userEmail] = useState('demo@psslai.com');
+  const [userEmail] = useState('demo@loanflow.example');
   const [displayName] = useState('Demo User');
   const [mode, setMode] = useState<'register' | 'authenticate'>('register');
 

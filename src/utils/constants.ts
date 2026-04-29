@@ -18,6 +18,6 @@ export const DISBURSEMENT_MODES = [
 ];
 
 export const STATIC_CREDENTIALS = {
-  username: 'psslaimember',
+  username: 'demo',
   password: '1234',
 };
