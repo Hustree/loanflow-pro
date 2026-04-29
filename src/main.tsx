@@ -4,10 +4,18 @@ import ReactDOM from 'react-dom/client';
 import App from './app/App';
 import { reportWebVitals } from './lib/reportWebVitals';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+async function enableMocking() {
+  if (import.meta.env.VITE_BACKEND === 'firebase') return;
+  const { worker } = await import('./lib/msw/browser');
+  await worker.start({ onUnhandledRequest: 'bypass' });
+}
+
+enableMocking().then(() => {
+  ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  );
+});
 
 reportWebVitals();
