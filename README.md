@@ -27,11 +27,21 @@ LoanFlow Pro is a production-shaped reference for the slice of fintech most team
 
 It started as an internal MVP for a credit union. The full origin story is in [`STORY.md`](./STORY.md).
 
+## Headline strengths
+
+What makes this repo worth your time:
+
+1. **Real WebAuthn passkey POC.** Not a stub — the registration and authentication ceremonies call `navigator.credentials.create()` / `.get()` against the platform authenticator (Touch ID, Face ID, Windows Hello, Android biometric). Device detection picks the right label per platform (e.g. "Sign in with Face ID" on iPhone, "Use fingerprint" on Android). The relying-party verification is simulated by MSW so the demo runs without a server, but the browser side is the real ceremony — same code you'd ship to production with a real RP attached. Implementation lives in `src/features/auth/`; design is captured in [ADR 0004](./docs/adr/0004-passkeys-with-static-demo-creds.md) and the original PRDs under `docs/legacy/`.
+2. **Zero-config public demo via MSW.** The Vercel deploy needs no backend, no secrets, no spend caps. A localStorage-backed in-memory DB seeded with three example loans makes the management dashboard immediately useful — recruiters don't land on an empty list. The same handlers run in Vitest via `setupServer`, so unit tests share the contract.
+3. **TypeScript strict + feature-folder architecture.** `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` are on. Code is organised by feature (`auth`, `loan-application`, `loan-management`, `theme`), each with a public-API barrel — cross-feature coupling is visible at the import level.
+4. **Tests that actually cover behaviour.** 125 Vitest specs (95–100% coverage on schemas, slices, validators, refNumber utility), 30 Playwright E2E specs across Chromium / WebKit / Firefox, axe accessibility budgets enforced per route. CI gates the whole stack.
+
 ## Try it in 5 seconds
 
 1. Open the [live demo](https://loanflow-pro.vercel.app).
 2. Click **Try the demo (no signup)**.
 3. Submit a loan, update its status, toggle dark mode, switch language.
+4. (On a passkey-capable device) sign out and try **Sign in with passkey** to enroll your platform authenticator.
 
 No signup, no API keys, no backend required.
 
@@ -50,10 +60,10 @@ No signup, no API keys, no backend required.
 
 ## Features
 
-- **Multi-step loan application** with Zod-validated form, file upload, generated reference numbers.
+- **Passkey authentication** (real WebAuthn ceremony) with device-specific UX — Touch ID, Face ID, Windows Hello, Android biometric. Falls back to static demo credentials so the demo always works.
+- **Multi-step loan application** with Zod-validated form, file upload, and generated reference numbers (`LN-YYYYMMDD-NNNN`).
 - **Loan management dashboard** with status updates, expandable detail rows, and a notes/audit trail.
-- **Passkey auth** (Touch ID / Face ID / Windows Hello / Android biometric) alongside static demo credentials.
-- **MSW-backed demo** with three seeded loans persisted to `localStorage`.
+- **MSW-backed demo** with three seeded loans persisted to `localStorage` — same handlers reused in unit tests.
 - **Dark mode** with system-pref defaults and persistence.
 - **i18n** scaffolded for English, Filipino, and Spanish.
 - **Accessibility budget** — zero axe violations on key flows in CI.
