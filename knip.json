@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.tsx", "tests/**/*.spec.ts", ".storybook/main.ts"],
+  "project": ["src/**/*.{ts,tsx}", "tests/**/*.{ts,tsx}"],
+  "ignore": ["docs/**", "build/**", "storybook-static/**", "src/lib/firebase/mockFirebaseData.ts"],
+  "ignoreDependencies": [
+    "@types/node",
+    "@axe-core/react",
+    "buffer",
+    "@storybook/blocks",
+    "@storybook/test"
+  ],
+  "ignoreBinaries": ["release-please"]
+}
