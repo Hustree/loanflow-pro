@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ZodError } from 'zod';
 
 import FileUpload from '@/components/FileUpload';
@@ -28,12 +29,13 @@ interface LoanFormProps {
 }
 
 const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const [createLoan, { isLoading, error: mutationError }] = useCreateLoanMutation();
   const error =
     mutationError && 'message' in mutationError
       ? (mutationError as { message?: string }).message
       : mutationError
-        ? 'Failed to submit loan application.'
+        ? t('apply.failure')
         : null;
 
   const [formData, setFormData] = useState<Partial<CreateLoanPayloadSchema>>({
@@ -134,7 +136,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
       {submitSuccess && (
         <Alert severity="success" sx={{ mb: 2 }} onClose={handleCloseSuccess}>
-          Loan application submitted successfully!
+          {t('apply.success')}
         </Alert>
       )}
 
@@ -145,7 +147,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
       )}
 
       <TextInput
-        label="Full Name"
+        label={t('apply.fields.fullName')}
         name="name"
         value={formData.name || ''}
         onChange={handleTextChange}
@@ -156,18 +158,18 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
       />
 
       <TextInput
-        label="PNP/BFP ID Number"
+        label={t('apply.fields.pnpBfpId')}
         name="pnpBfpId"
         value={formData.pnpBfpId || ''}
         onChange={handleTextChange}
         error={!!validationErrors.pnpBfpId}
-        helperText={validationErrors.pnpBfpId || 'Enter your 6-12 character ID'}
+        helperText={validationErrors.pnpBfpId || t('apply.fields.pnpBfpIdHint')}
         required
         disabled={isLoading}
       />
 
       <TextInput
-        label="Monthly Income"
+        label={t('apply.fields.monthlyIncome')}
         name="monthlyIncome"
         type="number"
         value={formData.monthlyIncome || ''}
@@ -179,7 +181,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
       />
 
       <SelectInput
-        label="Loan Type"
+        label={t('apply.fields.loanType')}
         name="type"
         value={formData.type || ''}
         onChange={handleSelectChange}
@@ -191,19 +193,19 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
       />
 
       <TextInput
-        label="Loan Amount"
+        label={t('apply.fields.amount')}
         name="amount"
         type="number"
         value={formData.amount || ''}
         onChange={handleTextChange}
         error={!!validationErrors.amount}
-        helperText={validationErrors.amount || 'Maximum: ₱500,000'}
+        helperText={validationErrors.amount || t('apply.fields.amountHint')}
         required
         disabled={isLoading}
       />
 
       <SelectInput
-        label="Term"
+        label={t('apply.fields.term')}
         name="term"
         value={formData.term || ''}
         onChange={handleSelectChange}
@@ -220,7 +222,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         required
         sx={{ mt: 2 }}
       >
-        <FormLabel component="legend">Disbursement Mode</FormLabel>
+        <FormLabel component="legend">{t('apply.fields.disbursementMode')}</FormLabel>
         <RadioGroup value={formData.disbursementMode || ''} onChange={handleRadioChange}>
           {DISBURSEMENT_MODES.map((mode) => (
             <FormControlLabel
@@ -242,7 +244,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
           formData.uploadedFileName ? ({ name: formData.uploadedFileName } as File) : undefined
         }
         accept=".pdf,.jpg,.jpeg,.png"
-        helperText="Upload supporting documents (PDF, JPG, PNG)"
+        helperText={t('apply.fields.uploadHint')}
       />
 
       <Box sx={{ mt: 3 }}>
@@ -253,7 +255,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
           disabled={isLoading}
           fullWidth
         >
-          {isLoading ? 'Submitting...' : 'Submit Loan Application'}
+          {isLoading ? t('apply.submitting') : t('apply.submit')}
         </Button>
       </Box>
     </Box>

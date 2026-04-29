@@ -1,6 +1,7 @@
 import { AccountCircle, Lock, Fingerprint, PlayArrow } from '@mui/icons-material';
 import { Container, Box, Paper, Typography, Button, Alert, Divider } from '@mui/material';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 
 import TextInput from '@/components/TextInput';
@@ -9,6 +10,7 @@ import { validateLoginForm } from '@/utils/validators';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -43,7 +45,7 @@ const Login: React.FC = () => {
       // Navigate to loan page
       navigate('/loan');
     } else {
-      setLoginError('Invalid username or password');
+      setLoginError(t('login.error'));
     }
   };
 
@@ -76,10 +78,10 @@ const Login: React.FC = () => {
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <AccountCircle sx={{ fontSize: 60, color: 'primary.main', mb: 1 }} />
             <Typography component="h1" variant="h5">
-              LoanFlow Pro
+              {t('app.name')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Sign in to continue
+              {t('login.subtitle')}
             </Typography>
           </Box>
 
@@ -99,14 +101,14 @@ const Login: React.FC = () => {
             startIcon={<PlayArrow />}
             sx={{ mb: 2, py: 1.5 }}
           >
-            Try the demo (no signup)
+            {t('login.tryDemo')}
           </Button>
 
-          <Divider sx={{ my: 2 }}>OR</Divider>
+          <Divider sx={{ my: 2 }}>{t('login.or')}</Divider>
 
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextInput
-              label="Username"
+              label={t('login.username')}
               name="username"
               value={formData.username}
               onChange={handleChange}
@@ -116,7 +118,7 @@ const Login: React.FC = () => {
             />
 
             <TextInput
-              label="Password"
+              label={t('login.password')}
               name="password"
               type="password"
               value={formData.password}
@@ -133,10 +135,10 @@ const Login: React.FC = () => {
               sx={{ mt: 3, mb: 2, py: 1.5 }}
               startIcon={<Lock />}
             >
-              Sign In
+              {t('login.submit')}
             </Button>
 
-            <Divider sx={{ my: 2 }}>OR</Divider>
+            <Divider sx={{ my: 2 }}>{t('login.or')}</Divider>
 
             <Button
               fullWidth
@@ -146,7 +148,7 @@ const Login: React.FC = () => {
               component={Link}
               to="/login/passkey"
             >
-              Sign In with Passkey
+              {t('login.passkey')}
             </Button>
 
             <Typography
@@ -155,7 +157,7 @@ const Login: React.FC = () => {
               align="center"
               sx={{ display: 'block', mt: 1, opacity: 0.7 }}
             >
-              Demo credentials: demo / demo
+              {t('login.demoHint')}
             </Typography>
           </Box>
         </Paper>

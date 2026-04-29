@@ -35,6 +35,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/features/auth';
 import { ThemeToggle } from '@/features/theme';
 import { useResponsive } from '@/hooks/useResponsive';
+import { LanguageSwitcher } from '@/lib/i18n/LanguageSwitcher';
 
 interface ResponsiveLayoutProps {
   children: React.ReactNode;
@@ -208,6 +209,8 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
             {!isMobile && (
               <Chip label="Firebase Connected" color="success" size="small" sx={{ mr: 1 }} />
             )}
+
+            {!isMobile && <LanguageSwitcher />}
 
             <ThemeToggle />
 
