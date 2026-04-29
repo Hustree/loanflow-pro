@@ -1,0 +1,10 @@
+build
+dist
+coverage
+storybook-static
+node_modules
+playwright-report
+test-results
+package-lock.json
+*.svg
+.claude/

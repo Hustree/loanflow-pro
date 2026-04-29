@@ -1,11 +1,15 @@
-import { 
-  validatePnpBfpId, 
-  validateLoanAmount, 
+import { describe, expect, it } from 'vitest';
+
+import {
+  validatePnpBfpId,
+  validateLoanAmount,
   validateMonthlyIncome,
   validateEmail,
   validatePhoneNumber,
   validateRequiredField,
-  validateLoanEligibility
+  validateLoanEligibility,
+  validateLoanForm,
+  validateLoginForm,
 } from './validators';
 
 describe('Validators', () => {
@@ -140,11 +144,11 @@ describe('Integration Tests', () => {
     expect(validatePhoneNumber(applicationData.phone)).toBe(true);
     expect(validateMonthlyIncome(applicationData.monthlyIncome)).toBe(true);
     expect(validateLoanAmount(applicationData.loanAmount)).toBe(true);
-    
+
     const eligibility = validateLoanEligibility(
       applicationData.monthlyIncome,
       applicationData.loanAmount,
-      applicationData.term
+      applicationData.term,
     );
     expect(eligibility.isEligible).toBe(true);
   });
@@ -161,5 +165,71 @@ describe('Integration Tests', () => {
     expect(validatePnpBfpId(minData.pnpBfpId)).toBe(true);
     expect(validateMonthlyIncome(minData.monthlyIncome)).toBe(true);
     expect(validateLoanAmount(minData.loanAmount)).toBe(true);
+  });
+});
+
+describe('validateLoanForm', () => {
+  it('returns errors for empty payload', () => {
+    const errors = validateLoanForm({});
+    expect(errors.fullName).toBeDefined();
+    expect(errors.pnpBfpId).toBeDefined();
+    expect(errors.loanType).toBeDefined();
+    expect(errors.loanAmount).toBeDefined();
+    expect(errors.term).toBeDefined();
+    expect(errors.monthlyIncome).toBeDefined();
+    expect(errors.disbursementMode).toBeDefined();
+  });
+
+  it('flags too-short fullName', () => {
+    const errors = validateLoanForm({ fullName: 'AB' });
+    expect(errors.fullName).toContain('at least 3');
+  });
+
+  it('flags malformed pnpBfpId', () => {
+    const errors = validateLoanForm({ pnpBfpId: '!!!' });
+    expect(errors.pnpBfpId).toBeDefined();
+  });
+
+  it('flags loan amount above ceiling', () => {
+    const errors = validateLoanForm({ loanAmount: 600_000 });
+    expect(errors.loanAmount).toContain('500,000');
+  });
+
+  it('flags insufficient income for amount', () => {
+    const errors = validateLoanForm({ loanAmount: 360_000, monthlyIncome: 1000 });
+    expect(errors.monthlyIncome).toBe('Monthly income is insufficient for the loan amount');
+  });
+
+  it('returns no errors for a complete valid payload', () => {
+    const errors = validateLoanForm({
+      fullName: 'Alex Demo',
+      pnpBfpId: 'PNP12345',
+      loanType: 'Salary',
+      loanAmount: 50_000,
+      term: 12,
+      monthlyIncome: 30_000,
+      disbursementMode: 'PNB',
+    });
+    expect(Object.keys(errors)).toHaveLength(0);
+  });
+});
+
+describe('validateLoginForm', () => {
+  it('flags missing username and password', () => {
+    const errors = validateLoginForm('', '');
+    expect(errors.username).toBeDefined();
+    expect(errors.password).toBeDefined();
+  });
+
+  it('passes for non-empty credentials', () => {
+    expect(validateLoginForm('user', 'pass')).toEqual({});
+  });
+});
+
+describe('validateLoanEligibility (additional branches)', () => {
+  it('hits the loan-amount-too-large branch when monthlyIncome is small', () => {
+    const result = validateLoanEligibility(1000, 50_000, 12);
+    expect(result.isEligible).toBe(false);
+    expect(result.reason).toContain('income');
   });
 });
