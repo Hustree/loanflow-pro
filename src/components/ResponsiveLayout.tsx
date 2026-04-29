@@ -7,8 +7,6 @@ import {
   Notifications,
   Settings,
   Help,
-  DarkMode,
-  LightMode,
   Close,
 } from '@mui/icons-material';
 import {
@@ -30,12 +28,12 @@ import {
   Badge,
   useTheme,
   Chip,
-  Tooltip,
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/features/auth';
+import { ThemeToggle } from '@/features/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 
 interface ResponsiveLayoutProps {
@@ -51,7 +49,6 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [darkMode, setDarkMode] = useState(false);
   const [notificationCount] = useState(3);
 
   const handleDrawerToggle = () => {
@@ -209,15 +206,10 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {!isMobile && (
-              <>
-                <Chip label="Firebase Connected" color="success" size="small" sx={{ mr: 1 }} />
-                <Tooltip title="Toggle theme">
-                  <IconButton onClick={() => setDarkMode(!darkMode)} size="small">
-                    {darkMode ? <LightMode /> : <DarkMode />}
-                  </IconButton>
-                </Tooltip>
-              </>
+              <Chip label="Firebase Connected" color="success" size="small" sx={{ mr: 1 }} />
             )}
+
+            <ThemeToggle />
 
             <IconButton color="inherit">
               <Badge badgeContent={notificationCount} color="error">
