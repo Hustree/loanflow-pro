@@ -1,6 +1,6 @@
 {
   "name": "loanflow-pro",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "End-to-end loan application MVP — passkey auth, multi-step apply flow, status management. React 19 + Vite + MUI + Redux Toolkit.",
   "license": "MIT",
