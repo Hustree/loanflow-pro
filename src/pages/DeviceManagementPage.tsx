@@ -3,8 +3,9 @@ import { Container, Typography, Box, Button, Stack } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useAuth } from '@/features/auth/AuthContext';
+
 import { DeviceManagement } from '../components/auth/DeviceManagement';
-import { useAuth } from '../contexts/AuthContext';
 
 const DeviceManagementPage: React.FC = () => {
   const navigate = useNavigate();

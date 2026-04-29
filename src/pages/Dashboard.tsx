@@ -22,8 +22,9 @@ import {
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useAuth } from '@/features/auth/AuthContext';
+
 import ResponsiveLayout from '../components/layout/ResponsiveLayout';
-import { useAuth } from '../contexts/AuthContext';
 import { useResponsive } from '../hooks/useResponsive';
 import { firebaseService } from '../services/firebaseService';
 import { useAppSelector } from '../store/hooks';

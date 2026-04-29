@@ -2,16 +2,16 @@ import { CircularProgress, Box } from '@mui/material';
 import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
-import { useAuth } from '../contexts/AuthContext';
-import Dashboard from '../pages/Dashboard';
-import DeviceManagementPage from '../pages/DeviceManagementPage';
-import LoanApplication from '../pages/LoanApplication';
-import LoanManagement from '../pages/LoanManagement';
-import Login from '../pages/Login';
-import PasskeyLoginPage from '../pages/PasskeyLoginPage';
-import PasskeyRegisterPage from '../pages/PasskeyRegisterPage';
-import PasskeySetupPage from '../pages/PasskeySetupPage';
-import ReduxDemo from '../pages/ReduxDemo';
+import { useAuth } from '@/features/auth/AuthContext';
+import Dashboard from '@/pages/Dashboard';
+import DeviceManagementPage from '@/pages/DeviceManagementPage';
+import LoanApplication from '@/pages/LoanApplication';
+import LoanManagement from '@/pages/LoanManagement';
+import Login from '@/pages/Login';
+import PasskeyLoginPage from '@/pages/PasskeyLoginPage';
+import PasskeyRegisterPage from '@/pages/PasskeyRegisterPage';
+import PasskeySetupPage from '@/pages/PasskeySetupPage';
+import ReduxDemo from '@/pages/ReduxDemo';
 
 // Protected Route component
 const ProtectedRoute: React.FC = () => {
