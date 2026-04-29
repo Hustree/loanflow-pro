@@ -19,5 +19,5 @@ export const DISBURSEMENT_MODES = [
 
 export const STATIC_CREDENTIALS = {
   username: 'demo',
-  password: '1234',
+  password: 'demo',
 };

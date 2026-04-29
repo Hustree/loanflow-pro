@@ -1,4 +1,4 @@
-import { AccountCircle, Lock, Fingerprint } from '@mui/icons-material';
+import { AccountCircle, Lock, Fingerprint, PlayArrow } from '@mui/icons-material';
 import { Container, Box, Paper, Typography, Button, Alert, Divider } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -26,30 +26,40 @@ const Login: React.FC = () => {
     setLoginError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const submit = (username: string, password: string) => {
     // Validate form
-    const validationErrors = validateLoginForm(formData.username, formData.password);
+    const validationErrors = validateLoginForm(username, password);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
     // Check credentials
-    if (
-      formData.username === STATIC_CREDENTIALS.username &&
-      formData.password === STATIC_CREDENTIALS.password
-    ) {
+    if (username === STATIC_CREDENTIALS.username && password === STATIC_CREDENTIALS.password) {
       // Store auth state in sessionStorage
       sessionStorage.setItem('isAuthenticated', 'true');
-      sessionStorage.setItem('username', formData.username);
+      sessionStorage.setItem('username', username);
 
       // Navigate to loan page
       navigate('/loan');
     } else {
       setLoginError('Invalid username or password');
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submit(formData.username, formData.password);
+  };
+
+  const handleTryDemo = () => {
+    setErrors({});
+    setLoginError('');
+    setFormData({
+      username: STATIC_CREDENTIALS.username,
+      password: STATIC_CREDENTIALS.password,
+    });
+    submit(STATIC_CREDENTIALS.username, STATIC_CREDENTIALS.password);
   };
 
   return (
@@ -78,6 +88,21 @@ const Login: React.FC = () => {
               {loginError}
             </Alert>
           )}
+
+          <Button
+            variant="contained"
+            color="secondary"
+            fullWidth
+            size="large"
+            onClick={handleTryDemo}
+            data-testid="try-demo-button"
+            startIcon={<PlayArrow />}
+            sx={{ mb: 2, py: 1.5 }}
+          >
+            Try the demo (no signup)
+          </Button>
+
+          <Divider sx={{ my: 2 }}>OR</Divider>
 
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextInput
@@ -128,9 +153,9 @@ const Login: React.FC = () => {
               variant="caption"
               color="text.secondary"
               align="center"
-              sx={{ display: 'block' }}
+              sx={{ display: 'block', mt: 1, opacity: 0.7 }}
             >
-              Legacy credentials: demo / 1234
+              Demo credentials: demo / demo
             </Typography>
           </Box>
         </Paper>
