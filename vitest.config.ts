@@ -15,6 +15,9 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Vitest only owns unit + RTL tests under src/; Playwright owns tests/e2e/.
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['node_modules', 'build', 'dist', 'storybook-static', 'tests/**'],
     css: false,
     coverage: {
       provider: 'v8',
