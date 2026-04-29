@@ -28,9 +28,33 @@ console.error = (...args: unknown[]) => {
 };
 console.warn = (...args: unknown[]) => {
   const msg = String(args[0] ?? '');
-  if (msg.includes('Firebase') || msg.includes('MSW')) return;
+  if (msg.includes('Firebase')) return;
   originalWarn(...(args as []));
 };
+
+// Node's `Request` (used by RTK Query under the hood) cannot parse relative URLs
+// because there is no document base. Wrap the constructor with a Proxy so that
+// `new Request('/api/foo')` becomes `new Request('http://localhost/api/foo')`,
+// preserving prototype chain and constructor identity for MSW's interceptor.
+const OriginalRequest = globalThis.Request;
+const RequestProxy = new Proxy(OriginalRequest, {
+  construct(target, args: [RequestInfo | URL, RequestInit?]) {
+    const [input, init] = args;
+    if (typeof input === 'string' && input.startsWith('/')) {
+      return Reflect.construct(target, [`http://localhost${input}`, init]);
+    }
+    return Reflect.construct(target, args);
+  },
+});
+globalThis.Request = RequestProxy;
+
+const originalFetch = globalThis.fetch.bind(globalThis);
+globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
+  if (typeof input === 'string' && input.startsWith('/')) {
+    return originalFetch(`http://localhost${input}`, init);
+  }
+  return originalFetch(input as RequestInfo, init);
+}) as typeof fetch;
 
 // MSW: bypass unhandled requests (firebase auth and other side-effect libs may fetch).
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));

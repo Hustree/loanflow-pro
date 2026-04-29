@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { lightTheme } from '@/features/theme/theme';
+import '@/lib/i18n';
 import { api } from '@/store/api';
 import loanProductReducer from '@/store/slices/loanProductSlice';
 import loanReducer from '@/store/slices/loanSlice';
@@ -39,7 +40,7 @@ export function makeTestStore(): EnhancedStore {
 interface ProvidersProps {
   children: ReactNode;
   store: EnhancedStore;
-  initialEntries?: string[];
+  initialEntries?: string[] | undefined;
 }
 
 function AllProviders({ children, store, initialEntries }: ProvidersProps): ReactElement {

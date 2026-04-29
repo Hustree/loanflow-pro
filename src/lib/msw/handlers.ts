@@ -10,7 +10,9 @@ import type {
 
 import { db } from './db';
 
-const API = '/api';
+// Use a wildcard origin so handlers match in both the browser (MSW service
+// worker, relative URLs) and Node (setupServer, absolute URLs in tests).
+const API = '*/api';
 
 const generateRef = (): string => {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
