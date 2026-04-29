@@ -1,4 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import {
+  Check,
+  Security,
+  Smartphone,
+  Speed,
+  NoEncryption,
+  FaceRetouchingNatural,
+  Fingerprint,
+  Devices,
+  ErrorOutline,
+  Info,
+} from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -22,21 +33,11 @@ import {
   Avatar,
   Collapse,
 } from '@mui/material';
-import {
-  Check,
-  Security,
-  Smartphone,
-  Speed,
-  NoEncryption,
-  FaceRetouchingNatural,
-  Fingerprint,
-  Devices,
-  ErrorOutline,
-  Info,
-} from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { registerPasskey, clearError, resetSteps } from '../../store/slices/passkeySlice';
-import { RootState, AppDispatch } from '../../store/store';
+import type { RootState, AppDispatch } from '../../store/store';
 
 interface Props {
   email: string;

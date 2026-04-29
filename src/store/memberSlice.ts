@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface Member {
   id: string;
@@ -55,14 +56,16 @@ export const memberSlice = createSlice({
     // UPDATE
     updateMember: (state, action: PayloadAction<Partial<Member> & { id: string }>) => {
       const index = state.members.findIndex((member) => member.id === action.payload.id);
-      if (index !== -1) {
-        state.members[index] = {
-          ...state.members[index],
+      const existing = index !== -1 ? state.members[index] : undefined;
+      if (index !== -1 && existing) {
+        const updated = {
+          ...existing,
           ...action.payload,
           updatedAt: new Date(),
         };
+        state.members[index] = updated;
         if (state.selectedMember?.id === action.payload.id) {
-          state.selectedMember = state.members[index];
+          state.selectedMember = updated;
         }
       }
     },

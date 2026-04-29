@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { AndroidBiometricSetup } from '../auth/AndroidBiometricSetup';
+
 import { androidBiometricService } from '../../services/androidBiometricService';
 import { passkeyService } from '../../services/passkeyService';
+import { AndroidBiometricSetup } from '../auth/AndroidBiometricSetup';
 
 export const AndroidBiometricDemo: React.FC = () => {
   const [deviceInfo, setDeviceInfo] = useState<any>(null);

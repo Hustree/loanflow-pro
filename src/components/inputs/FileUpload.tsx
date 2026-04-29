@@ -1,13 +1,13 @@
-import React, { useRef } from 'react';
-import { Button, Box, Typography, IconButton } from '@mui/material';
 import { CloudUpload as CloudUploadIcon, Clear as ClearIcon } from '@mui/icons-material';
+import { Button, Box, Typography, IconButton } from '@mui/material';
+import React, { useRef } from 'react';
 
-interface FileUploadProps {
+export interface FileUploadProps {
   onFileSelect: (file: File | null) => void;
-  selectedFile?: File | null;
-  accept?: string;
-  error?: boolean;
-  helperText?: string;
+  selectedFile?: File | null | undefined;
+  accept?: string | undefined;
+  error?: boolean | undefined;
+  helperText?: string | undefined;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({

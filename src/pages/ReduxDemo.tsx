@@ -1,4 +1,13 @@
-import React, { useState } from 'react';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  CheckCircle as CheckIcon,
+  Cancel as CancelIcon,
+  Person as PersonIcon,
+  AttachMoney as MoneyIcon,
+  Category as CategoryIcon,
+} from '@mui/icons-material';
 import {
   Box,
   Container,
@@ -23,31 +32,14 @@ import {
   ListItemSecondaryAction,
   Alert,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from '@mui/material';
 import Grid from '@mui/system/Grid';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  CheckCircle as CheckIcon,
-  Cancel as CancelIcon,
-  Person as PersonIcon,
-  AttachMoney as MoneyIcon,
-  Category as CategoryIcon,
-} from '@mui/icons-material';
+import React, { useState } from 'react';
+
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addProduct, deleteProduct, toggleProductStatus } from '../store/loanProductSlice';
 import { addLoan, updateLoanStatus, removeLoan } from '../store/loanSlice';
-import { addMember, updateMember, deleteMember, addLoanToMember } from '../store/memberSlice';
-import {
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  toggleProductStatus,
-} from '../store/loanProductSlice';
+import { addMember, updateMember, deleteMember } from '../store/memberSlice';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,8 +63,6 @@ export default function ReduxDemo() {
   const products = useAppSelector((state) => state.loanProduct.products);
 
   const [tabValue, setTabValue] = useState(0);
-  const [editDialog, setEditDialog] = useState(false);
-  const [editingLoan, setEditingLoan] = useState<any>(null);
 
   // Loan Form State
   const [loanForm, setLoanForm] = useState({
@@ -110,7 +100,7 @@ export default function ReduxDemo() {
     isActive: true,
   });
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 

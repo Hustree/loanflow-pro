@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import {
+  Assignment,
+  CheckCircle,
+  Refresh,
+  Schedule,
+  Assessment,
+  Security,
+} from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -12,22 +19,15 @@ import {
   Alert,
   Button,
 } from '@mui/material';
-import {
-  Assignment,
-  CheckCircle,
-  Refresh,
-  Schedule,
-  Assessment,
-  Security,
-  Add,
-} from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppSelector } from '../store/hooks';
+
+import ResponsiveLayout from '../components/layout/ResponsiveLayout';
+import { useAuth } from '../contexts/AuthContext';
 import { useResponsive } from '../hooks/useResponsive';
 import { firebaseService } from '../services/firebaseService';
-import { Loan } from '../types/loan';
-import ResponsiveLayout from '../components/layout/ResponsiveLayout';
+import { useAppSelector } from '../store/hooks';
+import type { Loan } from '../types/loan';
 
 interface DashboardStats {
   totalLoans: number;

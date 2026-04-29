@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { Send } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -10,17 +10,20 @@ import {
   FormHelperText,
   Alert,
 } from '@mui/material';
-import { Send } from '@mui/icons-material';
-import { SelectChangeEvent } from '@mui/material';
-import TextInput from './inputs/TextInput';
-import SelectInput from './inputs/SelectInput';
-import FileUpload from './inputs/FileUpload';
+import type { SelectChangeEvent } from '@mui/material';
+import React, { useState } from 'react';
+import { ZodError } from 'zod';
+
+import type { CreateLoanPayloadSchema } from '../schema/loan';
+import { loanApplicationInputSchema } from '../schema/loan';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addLoan, clearError } from '../store/loanSlice';
-import { CreateLoanPayloadSchema, loanApplicationInputSchema } from '../schema/loan';
 import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '../utils/constants';
 import { generateReferenceNumber } from '../utils/refNumber';
-import { ZodError } from 'zod';
+
+import FileUpload from './inputs/FileUpload';
+import SelectInput from './inputs/SelectInput';
+import TextInput from './inputs/TextInput';
 
 interface LoanFormProps {
   onSuccess?: (referenceNumber: string) => void;
@@ -33,12 +36,8 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
   const [formData, setFormData] = useState<Partial<CreateLoanPayloadSchema>>({
     name: '',
     pnpBfpId: '',
-    type: undefined,
     amount: 0,
-    term: undefined,
     monthlyIncome: 0,
-    disbursementMode: undefined,
-    uploadedFileName: undefined,
   });
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -111,12 +110,8 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
       setFormData({
         name: '',
         pnpBfpId: '',
-        type: undefined,
         amount: 0,
-        term: undefined,
         monthlyIncome: 0,
-        disbursementMode: undefined,
-        uploadedFileName: undefined,
       });
 
       // Call success callback if provided

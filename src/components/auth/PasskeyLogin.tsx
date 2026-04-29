@@ -1,4 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import {
+  Fingerprint,
+  FaceRetouchingNatural,
+  Smartphone,
+  Security,
+  Email,
+  Phone,
+  ArrowBack,
+  CheckCircle,
+} from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -13,25 +22,17 @@ import {
   InputAdornment,
   Fade,
 } from '@mui/material';
-import {
-  Fingerprint,
-  FaceRetouchingNatural,
-  Smartphone,
-  Security,
-  Email,
-  Phone,
-  ArrowBack,
-  CheckCircle,
-} from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
 import {
   authenticateWithPasskey,
   checkPasskeySupport,
   clearError,
   checkHasPasskeys,
 } from '../../store/slices/passkeySlice';
-import { RootState, AppDispatch } from '../../store/store';
+import type { RootState, AppDispatch } from '../../store/store';
 
 export const PasskeyLogin: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -96,7 +97,7 @@ export const PasskeyLogin: React.FC = () => {
         // No passkey or not supported
         setShowFallback(true);
       }
-    } catch (err) {
+    } catch {
       setShowFallback(true);
     } finally {
       setIsCheckingPasskey(false);

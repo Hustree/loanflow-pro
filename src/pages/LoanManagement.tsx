@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Container, Box, Paper, Typography, Tabs, Tab, Alert } from '@mui/material';
 import { Add as AddIcon, List as ListIcon } from '@mui/icons-material';
+import { Container, Box, Paper, Typography, Tabs, Tab, Alert } from '@mui/material';
+import React, { useState } from 'react';
+
 import LoanForm from '../components/LoanForm';
 import ViewLoanList from '../components/ViewLoanList';
 import { useAppSelector } from '../store/hooks';
@@ -39,7 +40,7 @@ const LoanManagement: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string>('');
   const { loans } = useAppSelector((state) => state.loan);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 

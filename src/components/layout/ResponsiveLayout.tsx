@@ -1,4 +1,16 @@
-import React, { useState } from 'react';
+import {
+  Menu as MenuIcon,
+  Dashboard,
+  Assignment,
+  AccountCircle,
+  Logout,
+  Notifications,
+  Settings,
+  Help,
+  DarkMode,
+  LightMode,
+  Close,
+} from '@mui/icons-material';
 import {
   AppBar,
   Box,
@@ -20,20 +32,9 @@ import {
   Chip,
   Tooltip,
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Dashboard,
-  Assignment,
-  AccountCircle,
-  Logout,
-  Notifications,
-  Settings,
-  Help,
-  DarkMode,
-  LightMode,
-  Close,
-} from '@mui/icons-material';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+
 import { useAuth } from '../../contexts/AuthContext';
 import { useResponsive } from '../../hooks/useResponsive';
 
@@ -42,11 +43,11 @@ interface ResponsiveLayoutProps {
 }
 
 const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
-  const theme = useTheme();
+  useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile } = useResponsive();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

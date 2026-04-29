@@ -1,32 +1,17 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  orderBy,
-  Timestamp,
-  onSnapshot,
-  DocumentData,
-  QuerySnapshot,
-  limit,
-  startAfter,
-  DocumentSnapshot,
-} from 'firebase/firestore';
+import type { User } from 'firebase/auth';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  User,
   updateProfile,
 } from 'firebase/auth';
+import type { DocumentSnapshot } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
+
 import { db, auth, storage } from '../config/firebase';
-import { Loan } from '../types/loan';
+import type { Loan } from '../types/loan';
 
 export interface FirebaseLoan extends Omit<Loan, 'id'> {
   createdAt: Timestamp;
@@ -115,9 +100,9 @@ export class FirebaseService {
   }
 
   async getLoans(
-    userId?: string,
+    _userId?: string,
     pageSize: number = 10,
-    lastDoc?: DocumentSnapshot,
+    _lastDoc?: DocumentSnapshot,
   ): Promise<{
     loans: Loan[];
     lastDocument: DocumentSnapshot | null;
@@ -191,7 +176,7 @@ export class FirebaseService {
   }
 
   // Real-time listeners
-  subscribeLoanUpdates(callback: (loans: Loan[]) => void, userId?: string): () => void {
+  subscribeLoanUpdates(callback: (loans: Loan[]) => void, _userId?: string): () => void {
     // MOCK: Use mock real-time simulator
     import('./mockFirebaseData').then(({ mockRealtimeSimulator, generateMockLoans }) => {
       // Send initial mock data

@@ -1,4 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import {
+  Fingerprint,
+  FaceRetouchingNatural,
+  Security,
+  Email,
+  Phone,
+  ArrowBack,
+  CheckCircle,
+  PersonAdd,
+} from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -12,20 +21,12 @@ import {
   InputAdornment,
   Fade,
 } from '@mui/material';
-import {
-  Fingerprint,
-  FaceRetouchingNatural,
-  Security,
-  Email,
-  Phone,
-  ArrowBack,
-  CheckCircle,
-  PersonAdd,
-} from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+
 import { registerPasskey, checkPasskeySupport, clearError } from '../../store/slices/passkeySlice';
-import { RootState, AppDispatch } from '../../store/store';
+import type { RootState, AppDispatch } from '../../store/store';
 
 export const PasskeyRegister: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

@@ -1,4 +1,4 @@
-import { LoanApplication } from '../types/loan';
+import type { LoanApplication } from '../types/loan';
 
 export const validateLoanForm = (values: Partial<LoanApplication>): Record<string, string> => {
   const errors: Record<string, string> = {};

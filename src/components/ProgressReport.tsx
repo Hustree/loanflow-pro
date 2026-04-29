@@ -1,4 +1,4 @@
-import React from 'react';
+import { CheckCircle, Dashboard, Phone, Security, Storage, Science } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -9,15 +9,7 @@ import {
   ListItemText,
   ListItemIcon,
 } from '@mui/material';
-import {
-  CheckCircle,
-  Dashboard,
-  Phone,
-  Security,
-  Storage,
-  Science,
-  Error as ErrorIcon,
-} from '@mui/icons-material';
+import React from 'react';
 
 const ProgressReport: React.FC = () => {
   return (

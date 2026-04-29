@@ -1,4 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import {
+  Smartphone,
+  Computer,
+  Tablet,
+  Delete,
+  Add,
+  Security,
+  AccessTime,
+  CheckCircle,
+  Warning,
+  Info,
+  Apple,
+  Android,
+  Window,
+  DesktopWindows,
+} from '@mui/icons-material';
 import {
   Box,
   Paper,
@@ -25,30 +40,17 @@ import {
   Tooltip,
   Badge,
 } from '@mui/material';
-import {
-  Smartphone,
-  Computer,
-  Tablet,
-  Delete,
-  Add,
-  Security,
-  AccessTime,
-  CheckCircle,
-  Warning,
-  Info,
-  Apple,
-  Android,
-  Window,
-  DesktopWindows,
-} from '@mui/icons-material';
 import { format, formatDistanceToNow } from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
   loadUserPasskeys,
   removePasskey,
   checkPasskeySupport,
 } from '../../store/slices/passkeySlice';
-import { RootState, AppDispatch } from '../../store/store';
+import type { RootState, AppDispatch } from '../../store/store';
+
 import { PasskeyRegistration } from './PasskeyRegistration';
 
 interface Props {
@@ -63,11 +65,14 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
   const [showAddDevice, setShowAddDevice] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const { devices, isSupported, error } = useSelector((state: RootState) => state.passkey);
+  const { devices, isSupported, error: _error } = useSelector((state: RootState) => state.passkey);
 
   useEffect(() => {
     loadDevices();
     dispatch(checkPasskeySupport());
+    // loadDevices is stable for this component's lifetime; Phase 5 will move
+    // device fetching to RTK Query and remove this hook entirely.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, userEmail]);
 
   const loadDevices = async () => {

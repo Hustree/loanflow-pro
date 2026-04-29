@@ -1,29 +1,23 @@
+import type { SelectChangeEvent } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 import React from 'react';
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-  SelectChangeEvent,
-} from '@mui/material';
 
 interface SelectOption {
   value: string | number;
   label: string;
 }
 
-interface SelectInputProps {
+export interface SelectInputProps {
   label: string;
   name: string;
   value: string | number;
   onChange: (e: SelectChangeEvent<string | number>) => void;
   options: SelectOption[];
-  error?: boolean;
-  helperText?: string;
-  required?: boolean;
-  fullWidth?: boolean;
-  disabled?: boolean;
+  error?: boolean | undefined;
+  helperText?: string | undefined;
+  required?: boolean | undefined;
+  fullWidth?: boolean | undefined;
+  disabled?: boolean | undefined;
 }
 
 const SelectInput: React.FC<SelectInputProps> = ({

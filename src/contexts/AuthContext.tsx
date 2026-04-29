@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
 import { firebaseService } from '../services/firebaseService';
 import { passkeyService } from '../services/passkeyService';
 
@@ -74,6 +76,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     return () => unsubscribe();
+    // Mount-only init: reads session storage for fallback. `user` intentionally
+    // omitted to avoid re-running on every state update; Phase 5 refactors auth.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

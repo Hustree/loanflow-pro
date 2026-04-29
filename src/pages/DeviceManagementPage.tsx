@@ -1,9 +1,10 @@
-import React from 'react';
-import { Container, Typography, Box, Button, Stack } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
+import { Container, Typography, Box, Button, Stack } from '@mui/material';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+
 import { DeviceManagement } from '../components/auth/DeviceManagement';
+import { useAuth } from '../contexts/AuthContext';
 
 const DeviceManagementPage: React.FC = () => {
   const navigate = useNavigate();

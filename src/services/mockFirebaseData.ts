@@ -1,5 +1,6 @@
-import { Loan } from '../types/loan';
 import { Timestamp } from 'firebase/firestore';
+
+import type { Loan } from '../types/loan';
 
 export const generateMockLoans = (count: number = 15): Loan[] => {
   const statuses = ['pending', 'approved', 'rejected', 'processing'] as const;
@@ -21,14 +22,15 @@ export const generateMockLoans = (count: number = 15): Loan[] => {
   const now = Date.now();
 
   for (let i = 0; i < count; i++) {
-    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    const randomType = loanTypes[Math.floor(Math.random() * loanTypes.length)];
-    const randomName = names[Math.floor(Math.random() * names.length)];
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)]!;
+    const randomType = loanTypes[Math.floor(Math.random() * loanTypes.length)]!;
+    const randomName = names[Math.floor(Math.random() * names.length)]!;
     const randomAmount = Math.floor(Math.random() * 400000) + 10000;
-    const randomTerm = [6, 12, 24, 36, 48][Math.floor(Math.random() * 5)];
+    const randomTerm = [6, 12, 24, 36, 48][Math.floor(Math.random() * 5)]!;
     const randomDays = Math.floor(Math.random() * 30);
     const createdDate = new Date(now - randomDays * 24 * 60 * 60 * 1000);
 
+    const hasUpload = Math.random() > 0.3;
     loans.push({
       id: `loan-${i + 1}`,
       referenceNumber: `LN-${createdDate.getFullYear()}${String(createdDate.getMonth() + 1).padStart(2, '0')}${String(createdDate.getDate()).padStart(2, '0')}-${String(i + 1).padStart(4, '0')}`,
@@ -49,7 +51,7 @@ export const generateMockLoans = (count: number = 15): Loan[] => {
             : randomStatus === 'processing'
               ? 'Documents under review. Additional requirements may be requested.'
               : 'Application received and queued for review.',
-      uploadedFileName: Math.random() > 0.3 ? `document_${i + 1}.pdf` : undefined,
+      ...(hasUpload && { uploadedFileName: `document_${i + 1}.pdf` }),
       createdAt: Timestamp.fromDate(createdDate),
       updatedAt: Timestamp.fromDate(
         new Date(createdDate.getTime() + Math.random() * 24 * 60 * 60 * 1000),
@@ -187,7 +189,7 @@ export const mockAnalyticsEvents = {
 // Mock real-time updates simulator
 export class MockRealtimeSimulator {
   private callbacks: ((loan: Loan) => void)[] = [];
-  private interval: NodeJS.Timeout | null = null;
+  private interval: ReturnType<typeof setInterval> | null = null;
 
   subscribe(callback: (loan: Loan) => void) {
     this.callbacks.push(callback);
@@ -195,8 +197,9 @@ export class MockRealtimeSimulator {
     if (!this.interval) {
       this.interval = setInterval(() => {
         const mockLoans = generateMockLoans(1);
-        if (mockLoans[0] && Math.random() > 0.7) {
-          this.callbacks.forEach((cb) => cb(mockLoans[0]));
+        const updated = mockLoans[0];
+        if (updated && Math.random() > 0.7) {
+          this.callbacks.forEach((cb) => cb(updated));
         }
       }, 10000); // Simulate update every 10 seconds
     }

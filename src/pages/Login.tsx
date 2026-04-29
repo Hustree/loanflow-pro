@@ -1,10 +1,11 @@
+import { AccountCircle, Lock, Fingerprint } from '@mui/icons-material';
+import { Container, Box, Paper, Typography, Button, Alert, Divider } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Box, Paper, Typography, Button, Alert, Divider, Stack } from '@mui/material';
-import { AccountCircle, Lock, Fingerprint } from '@mui/icons-material';
+
 import TextInput from '../components/inputs/TextInput';
-import { validateLoginForm } from '../utils/validators';
 import { STATIC_CREDENTIALS } from '../utils/constants';
+import { validateLoginForm } from '../utils/validators';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

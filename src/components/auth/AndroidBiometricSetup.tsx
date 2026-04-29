@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
+
 import {
   checkAndroidCapabilities,
   enrollAndroidBiometric,
   checkAndroidBiometricPasskeys,
 } from '../../store/slices/passkeySlice';
+import type { RootState } from '../../store/store';
 
 interface AndroidBiometricSetupProps {
   email: string;

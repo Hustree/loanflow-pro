@@ -1,6 +1,7 @@
-import React from 'react';
 import { Card, CardContent, Typography, Box, Divider, Chip } from '@mui/material';
-import { LoanApplication } from '../../types/loan';
+import React from 'react';
+
+import type { LoanApplication } from '../../types/loan';
 
 interface SummaryCardProps {
   loanData: LoanApplication;

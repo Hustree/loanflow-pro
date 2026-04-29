@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { deviceBiometricService, DeviceBiometricInfo } from '../../services/deviceBiometricService';
+
+import type { DeviceBiometricInfo } from '../../services/deviceBiometricService';
+import { deviceBiometricService } from '../../services/deviceBiometricService';
 
 interface DeviceExample {
   name: string;

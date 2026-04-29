@@ -1,6 +1,8 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type { AndroidDeviceInfo } from '../../services/androidBiometricService';
 import { passkeyService } from '../../services/passkeyService';
-import { AndroidDeviceInfo } from '../../services/androidBiometricService';
 
 export interface PasskeyDevice {
   id: string;

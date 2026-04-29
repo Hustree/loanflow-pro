@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Send, ExitToApp } from '@mui/icons-material';
 import {
   Container,
   Box,
@@ -17,20 +16,22 @@ import {
   StepLabel,
   Alert,
 } from '@mui/material';
-import { Send, ExitToApp } from '@mui/icons-material';
-import { SelectChangeEvent } from '@mui/material';
-import TextInput from '../components/inputs/TextInput';
-import SelectInput from '../components/inputs/SelectInput';
-import FileUpload from '../components/inputs/FileUpload';
+import type { SelectChangeEvent } from '@mui/material';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import SummaryCard from '../components/common/SummaryCard';
-import { LoanApplication } from '../types/loan';
-import { validateLoanForm } from '../utils/validators';
-import { generateReferenceNumber } from '../utils/refNumber';
-import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '../utils/constants';
+import FileUpload from '../components/inputs/FileUpload';
+import SelectInput from '../components/inputs/SelectInput';
+import TextInput from '../components/inputs/TextInput';
+import type { CreateLoanPayloadSchema } from '../schema/loan';
 import { useAppDispatch } from '../store/hooks';
 import { addLoan } from '../store/loanSlice';
-import { CreateLoanPayloadSchema } from '../schema/loan';
-import axios from 'axios';
+import type { LoanApplication } from '../types/loan';
+import { LOAN_TYPES, LOAN_TERMS, DISBURSEMENT_MODES } from '../utils/constants';
+import { generateReferenceNumber } from '../utils/refNumber';
+import { validateLoanForm } from '../utils/validators';
 
 const LoanApplicationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -43,12 +44,8 @@ const LoanApplicationPage: React.FC = () => {
   const [formData, setFormData] = useState<Partial<LoanApplication>>({
     fullName: '',
     pnpBfpId: '',
-    loanType: undefined,
     loanAmount: 0,
-    term: undefined,
     monthlyIncome: 0,
-    disbursementMode: undefined,
-    uploadedFile: undefined,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -84,7 +81,11 @@ const LoanApplicationPage: React.FC = () => {
   };
 
   const handleFileSelect = (file: File | null) => {
-    setFormData((prev) => ({ ...prev, uploadedFile: file || undefined }));
+    setFormData((prev) => {
+      if (file) return { ...prev, uploadedFile: file };
+      const { uploadedFile: _omit, ...rest } = prev;
+      return rest;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,8 +128,8 @@ const LoanApplicationPage: React.FC = () => {
 
       setFormData((prev) => ({
         ...prev,
-        referenceNumber: submissionData.referenceNumber,
-        submissionDate: submissionData.submissionDate,
+        ...(submissionData.referenceNumber && { referenceNumber: submissionData.referenceNumber }),
+        ...(submissionData.submissionDate && { submissionDate: submissionData.submissionDate }),
       }));
 
       setSubmitSuccess(true);

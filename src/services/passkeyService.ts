@@ -5,8 +5,11 @@ import {
   browserSupportsWebAuthnAutofill,
 } from '@simplewebauthn/browser';
 import { z } from 'zod';
-import { androidBiometricService, AndroidDeviceInfo } from './androidBiometricService';
-import { deviceBiometricService, DeviceBiometricInfo } from './deviceBiometricService';
+
+import type { AndroidDeviceInfo } from './androidBiometricService';
+import { androidBiometricService } from './androidBiometricService';
+import type { DeviceBiometricInfo } from './deviceBiometricService';
+import { deviceBiometricService } from './deviceBiometricService';
 
 // Enhanced Zod Schemas for Android Biometric Support
 export const AndroidPasskeyCredentialSchema = z.object({
@@ -160,7 +163,7 @@ export class PasskeyService {
 
       return {
         ...baseInfo,
-        androidInfo,
+        ...(androidInfo && { androidInfo }),
         supportsBiometrics,
         biometricTypes,
         biometricInfo,
@@ -663,7 +666,7 @@ export class PasskeyService {
   }
 
   // Authenticate with specific Android biometric method
-  async authenticateWithAndroidBiometric(email: string, credentialId?: string): Promise<any> {
+  async authenticateWithAndroidBiometric(email: string, _credentialId?: string): Promise<any> {
     if (!androidBiometricService.isAndroidDevice()) {
       throw new Error('Not an Android device');
     }
@@ -672,7 +675,7 @@ export class PasskeyService {
   }
 
   // Get biometric security level for user
-  async getBiometricSecurityLevel(email: string): Promise<'LOW' | 'MEDIUM' | 'HIGH' | null> {
+  async getBiometricSecurityLevel(_email: string): Promise<'LOW' | 'MEDIUM' | 'HIGH' | null> {
     if (!androidBiometricService.isAndroidDevice()) {
       return null;
     }

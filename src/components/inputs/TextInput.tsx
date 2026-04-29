@@ -1,17 +1,17 @@
-import React from 'react';
 import { TextField } from '@mui/material';
+import React from 'react';
 
-interface TextInputProps {
+export interface TextInputProps {
   label: string;
   name: string;
   value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  error?: boolean;
-  helperText?: string;
-  type?: string;
-  required?: boolean;
-  fullWidth?: boolean;
-  disabled?: boolean;
+  error?: boolean | undefined;
+  helperText?: string | undefined;
+  type?: string | undefined;
+  required?: boolean | undefined;
+  fullWidth?: boolean | undefined;
+  disabled?: boolean | undefined;
 }
 
 const TextInput: React.FC<TextInputProps> = ({

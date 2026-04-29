@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Loan, CreateLoanPayloadSchema } from '../schema/loan';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+
+import type { Loan, CreateLoanPayloadSchema } from '../schema/loan';
 import { generateReferenceNumber } from '../utils/refNumber';
 
 export interface LoanState {

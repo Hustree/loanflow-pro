@@ -175,7 +175,7 @@ export class DeviceBiometricService {
 
       // If no specific pattern matches, try to infer from iPhone identifier
       const iPhoneMatch = ua.match(/iPhone(\d+),\d/);
-      if (iPhoneMatch) {
+      if (iPhoneMatch && iPhoneMatch[1]) {
         const majorVersion = parseInt(iPhoneMatch[1]);
         if (majorVersion >= 10) {
           return 'iPhone X or newer'; // Face ID device
@@ -546,7 +546,7 @@ export class DeviceBiometricService {
   }
 
   // Android device capability detection
-  private androidDeviceHasFaceUnlock(deviceModel?: string, ua?: string): boolean {
+  private androidDeviceHasFaceUnlock(deviceModel?: string, _ua?: string): boolean {
     if (!deviceModel) return false;
 
     const faceUnlockDevices = ['Pixel', 'Galaxy S', 'Galaxy Note', 'OnePlus', 'Mi ', 'Xiaomi'];
@@ -658,7 +658,7 @@ export class DeviceBiometricService {
   }
 
   // Utility method to get user-friendly biometric name
-  getBiometricDisplayName(type: string, deviceModel?: string, platform?: string): string {
+  getBiometricDisplayName(type: string, deviceModel?: string, _platform?: string): string {
     switch (type) {
       case 'face-id':
         return 'Face ID';

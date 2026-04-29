@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { Close, Save } from '@mui/icons-material';
 import {
   Dialog,
   DialogTitle,
@@ -16,16 +16,13 @@ import {
   Chip,
   Divider,
 } from '@mui/material';
-import { Close, Save, Warning } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { ZodError } from 'zod';
+
+import type { Loan, StatusUpdateInputSchema, LoanStatusEnum } from '../schema/loan';
+import { statusUpdateInputSchema } from '../schema/loan';
 import { useAppDispatch } from '../store/hooks';
 import { updateLoanStatus } from '../store/loanSlice';
-import {
-  Loan,
-  StatusUpdateInputSchema,
-  statusUpdateInputSchema,
-  LoanStatusEnum,
-} from '../schema/loan';
-import { ZodError } from 'zod';
 
 interface StatusUpdateModalProps {
   open: boolean;

@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface LoanProduct {
   id: string;
@@ -100,14 +101,16 @@ export const loanProductSlice = createSlice({
     // UPDATE
     updateProduct: (state, action: PayloadAction<Partial<LoanProduct> & { id: string }>) => {
       const index = state.products.findIndex((product) => product.id === action.payload.id);
-      if (index !== -1) {
-        state.products[index] = {
-          ...state.products[index],
+      const existing = index !== -1 ? state.products[index] : undefined;
+      if (index !== -1 && existing) {
+        const updated = {
+          ...existing,
           ...action.payload,
           updatedAt: new Date(),
         };
+        state.products[index] = updated;
         if (state.selectedProduct?.id === action.payload.id) {
-          state.selectedProduct = state.products[index];
+          state.selectedProduct = updated;
         }
       }
     },

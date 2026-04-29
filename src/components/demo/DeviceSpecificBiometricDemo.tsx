@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+
+import type { DeviceBiometricInfo } from '../../services/deviceBiometricService';
+import { deviceBiometricService } from '../../services/deviceBiometricService';
 import { DeviceSpecificBiometricSetup } from '../auth/DeviceSpecificBiometricSetup';
-import { deviceBiometricService, DeviceBiometricInfo } from '../../services/deviceBiometricService';
 
 export const DeviceSpecificBiometricDemo: React.FC = () => {
   const [deviceInfo, setDeviceInfo] = useState<DeviceBiometricInfo | null>(null);

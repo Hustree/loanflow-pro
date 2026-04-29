@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { Edit, ExpandMore, ExpandLess, Notes } from '@mui/icons-material';
 import {
   Box,
   Paper,
@@ -16,9 +16,11 @@ import {
   Tooltip,
   Collapse,
 } from '@mui/material';
-import { Edit, ExpandMore, ExpandLess, Notes } from '@mui/icons-material';
+import React, { useState } from 'react';
+
+import type { Loan } from '../schema/loan';
 import { useAppSelector } from '../store/hooks';
-import { Loan } from '../schema/loan';
+
 import StatusUpdateModal from './StatusUpdateModal';
 
 const ViewLoanList: React.FC = () => {
