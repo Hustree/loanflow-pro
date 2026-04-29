@@ -25,8 +25,8 @@ import {
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { 
-  authenticateWithPasskey, 
+import {
+  authenticateWithPasskey,
   checkPasskeySupport,
   clearError,
   checkHasPasskeys,
@@ -36,18 +36,15 @@ import { RootState, AppDispatch } from '../../store/store';
 export const PasskeyLogin: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  
+
   const [identifier, setIdentifier] = useState('test@psslai.com');
   const [showFallback, setShowFallback] = useState(false);
   const [isCheckingPasskey, setIsCheckingPasskey] = useState(false);
   const [hasPasskey, setHasPasskey] = useState(false);
-  
-  const { 
-    isSupported, 
-    loading, 
-    error,
-    authenticationStep,
-  } = useSelector((state: RootState) => state.passkey);
+
+  const { isSupported, loading, error, authenticationStep } = useSelector(
+    (state: RootState) => state.passkey,
+  );
 
   useEffect(() => {
     dispatch(checkPasskeySupport());
@@ -85,13 +82,13 @@ export const PasskeyLogin: React.FC = () => {
 
   const handleCheckPasskey = async () => {
     if (!identifier) return;
-    
+
     setIsCheckingPasskey(true);
     try {
       const formattedId = formatIdentifier(identifier);
       const result = await dispatch(checkHasPasskeys(formattedId)).unwrap();
       setHasPasskey(result);
-      
+
       if (result && isSupported) {
         // User has passkey and browser supports it
         handlePasskeyLogin();
@@ -108,35 +105,35 @@ export const PasskeyLogin: React.FC = () => {
 
   const handlePasskeyLogin = async () => {
     if (!identifier) return;
-    
+
     try {
       const formattedId = formatIdentifier(identifier);
       const result = await dispatch(authenticateWithPasskey(formattedId)).unwrap();
-      
+
       if (result.success) {
         // Store auth token if provided
         if (result.token) {
           sessionStorage.setItem('authToken', result.token);
         }
-        
+
         // Set authentication state for protected route access
         sessionStorage.setItem('isAuthenticated', 'true');
         sessionStorage.setItem('username', formattedId);
-        
+
         // Navigate to dashboard
         navigate('/dashboard');
       }
     } catch (err: any) {
       console.error('Login failed:', err);
       setShowFallback(true);
-      
+
       // Show specific error message
       if (err.message?.includes('No passkeys found')) {
-        navigate('/register', { 
-          state: { 
+        navigate('/register', {
+          state: {
             email: identifier,
-            message: 'No passkeys found. Please register first.' 
-          }
+            message: 'No passkeys found. Please register first.',
+          },
         });
       }
     }
@@ -188,11 +185,7 @@ export const PasskeyLogin: React.FC = () => {
         <Alert severity="warning" sx={{ mb: 3 }}>
           Your device doesn't support passkey authentication.
         </Alert>
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={() => navigate('/login')}
-        >
+        <Button fullWidth variant="contained" onClick={() => navigate('/login')}>
           Use Traditional Login
         </Button>
       </Paper>
@@ -231,20 +224,26 @@ export const PasskeyLogin: React.FC = () => {
             ),
           }}
           helperText={
-            isPhoneNumber(identifier) 
-              ? 'Philippine mobile number detected' 
+            isPhoneNumber(identifier)
+              ? 'Philippine mobile number detected'
               : isEmail(identifier)
-              ? 'Email address detected'
-              : ''
+                ? 'Email address detected'
+                : ''
           }
         />
 
         {/* Authentication Step Message */}
         {authenticationStep !== 'idle' && (
           <Fade in>
-            <Alert 
+            <Alert
               severity={authenticationStep === 'completed' ? 'success' : 'info'}
-              icon={authenticationStep === 'completed' ? <CheckCircle /> : <CircularProgress size={20} />}
+              icon={
+                authenticationStep === 'completed' ? (
+                  <CheckCircle />
+                ) : (
+                  <CircularProgress size={20} />
+                )
+              }
             >
               {getStepMessage()}
             </Alert>
@@ -272,10 +271,9 @@ export const PasskeyLogin: React.FC = () => {
         ) : (
           <Stack spacing={2}>
             <Alert severity="info">
-              {hasPasskey 
+              {hasPasskey
                 ? 'Passkey authentication unavailable. Please use an alternative method.'
-                : 'No passkey found for this account. Please use an alternative method or register a passkey.'
-              }
+                : 'No passkey found for this account. Please use an alternative method or register a passkey.'}
             </Alert>
             <Button
               fullWidth
@@ -305,10 +303,7 @@ export const PasskeyLogin: React.FC = () => {
 
         {/* Error Display */}
         {error && (
-          <Alert 
-            severity="error" 
-            onClose={() => dispatch(clearError())}
-          >
+          <Alert severity="error" onClose={() => dispatch(clearError())}>
             {error}
           </Alert>
         )}
@@ -318,16 +313,11 @@ export const PasskeyLogin: React.FC = () => {
         {/* Alternative Options */}
         <Stack spacing={1}>
           {!showFallback && (
-            <Button
-              fullWidth
-              variant="text"
-              onClick={() => setShowFallback(true)}
-              size="small"
-            >
+            <Button fullWidth variant="text" onClick={() => setShowFallback(true)} size="small">
               Use other sign-in methods
             </Button>
           )}
-          
+
           {showFallback && (
             <Button
               fullWidth
@@ -345,7 +335,7 @@ export const PasskeyLogin: React.FC = () => {
         <Box textAlign="center">
           <Typography variant="body2">
             New member?{' '}
-            <Link 
+            <Link
               component="button"
               variant="body2"
               onClick={() => navigate('/register')}

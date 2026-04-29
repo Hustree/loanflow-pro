@@ -16,18 +16,18 @@ Same end-state, both audiences served. The repo must look credible in 10 seconds
 
 ## 2. Constraints & decisions (locked during brainstorm)
 
-| Decision | Choice | Rationale |
-|---|---|---|
-| Audience | Portfolio + OSS starter (D) | Drives both polish and reusability |
-| Branding identity | Dual identity (C) | Generic code (`LoanFlow Pro`) + honest origin in `STORY.md` |
-| Scope | Full senior-grade overhaul (C) | Vite, tests, MSW, Storybook, a11y, i18n |
-| Backend | MSW default + optional Firebase (C) | Demo works zero-config; real backend opt-in |
-| Brand assets | Full custom (A) | SVG logo + wordmark + favicon + OG image |
-| Test depth | Critical-path coverage (B) | Vitest unit + RTK + Playwright E2E ~70% logic, key flows |
-| Commit history | Keep existing 4 commits (A) | No force-push; new work as Conventional Commits |
-| Rollout | Big-bang single PR (1) | Full end-to-end in one shipping unit |
-| License | MIT | Permissive, standard for portfolio + starter |
-| Attribution | None | No AI/Claude/Anthropic mentions in any artifact |
+| Decision          | Choice                              | Rationale                                                   |
+| ----------------- | ----------------------------------- | ----------------------------------------------------------- |
+| Audience          | Portfolio + OSS starter (D)         | Drives both polish and reusability                          |
+| Branding identity | Dual identity (C)                   | Generic code (`LoanFlow Pro`) + honest origin in `STORY.md` |
+| Scope             | Full senior-grade overhaul (C)      | Vite, tests, MSW, Storybook, a11y, i18n                     |
+| Backend           | MSW default + optional Firebase (C) | Demo works zero-config; real backend opt-in                 |
+| Brand assets      | Full custom (A)                     | SVG logo + wordmark + favicon + OG image                    |
+| Test depth        | Critical-path coverage (B)          | Vitest unit + RTK + Playwright E2E ~70% logic, key flows    |
+| Commit history    | Keep existing 4 commits (A)         | No force-push; new work as Conventional Commits             |
+| Rollout           | Big-bang single PR (1)              | Full end-to-end in one shipping unit                        |
+| License           | MIT                                 | Permissive, standard for portfolio + starter                |
+| Attribution       | None                                | No AI/Claude/Anthropic mentions in any artifact             |
 
 ## 3. End-state architecture
 
@@ -102,21 +102,21 @@ loanflow-pro/
 
 ## 5. Tooling & quality gates
 
-| Tool | Config | Purpose |
-|---|---|---|
-| ESLint | flat config — `@typescript-eslint`, `react`, `react-hooks`, `jsx-a11y`, `import`, `unicorn`, `vitest` | static analysis |
-| Prettier | 100-col, semi, single-quote, trailing-comma all | formatting |
-| Husky + lint-staged | pre-commit: typecheck + lint:fix + format on staged files | guard rails |
-| commitlint | Conventional Commits; scopes: `auth`, `apply`, `manage`, `theme`, `i18n`, `infra`, `docs` | commit hygiene |
-| EditorConfig | LF, 2-space, trim trailing whitespace | editor parity |
-| Vitest | jsdom, MSW server, `@testing-library/react` v16 | unit + integration |
-| Playwright | Chromium + WebKit + Firefox; `@axe-core/playwright` budget | E2E + a11y |
-| Storybook 8 | Vite builder; a11y addon; interactions addon | component catalog |
-| Dependabot | weekly — npm + actions | automated upgrades |
-| CodeQL | default JS/TS workflow | security scanning |
-| Knip | dead-code/dep checker (CI) | hygiene |
-| `tsconfig` | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `@/*` aliases | type rigor |
-| Node | pinned via `.nvmrc` (20 LTS) + `engines` field | env parity |
+| Tool                | Config                                                                                                | Purpose            |
+| ------------------- | ----------------------------------------------------------------------------------------------------- | ------------------ |
+| ESLint              | flat config — `@typescript-eslint`, `react`, `react-hooks`, `jsx-a11y`, `import`, `unicorn`, `vitest` | static analysis    |
+| Prettier            | 100-col, semi, single-quote, trailing-comma all                                                       | formatting         |
+| Husky + lint-staged | pre-commit: typecheck + lint:fix + format on staged files                                             | guard rails        |
+| commitlint          | Conventional Commits; scopes: `auth`, `apply`, `manage`, `theme`, `i18n`, `infra`, `docs`             | commit hygiene     |
+| EditorConfig        | LF, 2-space, trim trailing whitespace                                                                 | editor parity      |
+| Vitest              | jsdom, MSW server, `@testing-library/react` v16                                                       | unit + integration |
+| Playwright          | Chromium + WebKit + Firefox; `@axe-core/playwright` budget                                            | E2E + a11y         |
+| Storybook 8         | Vite builder; a11y addon; interactions addon                                                          | component catalog  |
+| Dependabot          | weekly — npm + actions                                                                                | automated upgrades |
+| CodeQL              | default JS/TS workflow                                                                                | security scanning  |
+| Knip                | dead-code/dep checker (CI)                                                                            | hygiene            |
+| `tsconfig`          | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `@/*` aliases                     | type rigor         |
+| Node                | pinned via `.nvmrc` (20 LTS) + `engines` field                                                        | env parity         |
 
 ## 6. CI/CD
 
@@ -181,16 +181,16 @@ loanflow-pro/
 
 ## 9. Testing strategy
 
-| Layer | Tool | Target |
-|---|---|---|
-| Schemas (Zod) | Vitest | 100% — every branch |
-| Reducers / RTK slices | Vitest | 100% |
-| Custom hooks | Vitest + RTL | every hook has ≥ 1 test |
-| Components — primitives | Vitest + RTL + Storybook play (co-located stories) | render + key interactions |
-| Components — features | Vitest + RTL + MSW | happy path + 1 error path each |
-| E2E | Playwright | login (form + Try Demo + passkey), apply (multi-step + summary), manage (status update + notes), dark-mode toggle, i18n switch |
-| A11y | axe via Playwright | zero violations on login, apply, manage |
-| Visual | Storybook | spot-check (Chromatic optional, off in CI) |
+| Layer                   | Tool                                               | Target                                                                                                                         |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Schemas (Zod)           | Vitest                                             | 100% — every branch                                                                                                            |
+| Reducers / RTK slices   | Vitest                                             | 100%                                                                                                                           |
+| Custom hooks            | Vitest + RTL                                       | every hook has ≥ 1 test                                                                                                        |
+| Components — primitives | Vitest + RTL + Storybook play (co-located stories) | render + key interactions                                                                                                      |
+| Components — features   | Vitest + RTL + MSW                                 | happy path + 1 error path each                                                                                                 |
+| E2E                     | Playwright                                         | login (form + Try Demo + passkey), apply (multi-step + summary), manage (status update + notes), dark-mode toggle, i18n switch |
+| A11y                    | axe via Playwright                                 | zero violations on login, apply, manage                                                                                        |
+| Visual                  | Storybook                                          | spot-check (Chromatic optional, off in CI)                                                                                     |
 
 CI coverage gate: **80% lines / 75% branches** on logic layer (utils, slices, schemas).
 

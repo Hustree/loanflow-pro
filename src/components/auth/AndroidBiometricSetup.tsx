@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { 
-  checkAndroidCapabilities, 
+import {
+  checkAndroidCapabilities,
   enrollAndroidBiometric,
-  checkAndroidBiometricPasskeys 
+  checkAndroidBiometricPasskeys,
 } from '../../store/slices/passkeySlice';
 
 interface AndroidBiometricSetupProps {
@@ -29,10 +29,12 @@ export const AndroidBiometricSetup: React.FC<AndroidBiometricSetupProps> = ({
     biometricEnrollment,
     securityLevel,
     loading,
-    error
+    error,
   } = useSelector((state: RootState) => state.passkey);
 
-  const [selectedBiometric, setSelectedBiometric] = useState<'fingerprint' | 'face' | 'iris'>('fingerprint');
+  const [selectedBiometric, setSelectedBiometric] = useState<'fingerprint' | 'face' | 'iris'>(
+    'fingerprint',
+  );
 
   useEffect(() => {
     dispatch(checkAndroidCapabilities() as any);
@@ -43,11 +45,13 @@ export const AndroidBiometricSetup: React.FC<AndroidBiometricSetupProps> = ({
 
   const handleEnrollBiometric = async () => {
     try {
-      await dispatch(enrollAndroidBiometric({ 
-        email, 
-        displayName, 
-        biometricType: selectedBiometric 
-      }) as any);
+      await dispatch(
+        enrollAndroidBiometric({
+          email,
+          displayName,
+          biometricType: selectedBiometric,
+        }) as any,
+      );
       onSuccess?.();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Enrollment failed';
@@ -57,28 +61,40 @@ export const AndroidBiometricSetup: React.FC<AndroidBiometricSetupProps> = ({
 
   const getBiometricIcon = (type: string) => {
     switch (type) {
-      case 'fingerprint': return '👆';
-      case 'face': return '😊';
-      case 'iris': return '👁️';
-      default: return '🔐';
+      case 'fingerprint':
+        return '👆';
+      case 'face':
+        return '😊';
+      case 'iris':
+        return '👁️';
+      default:
+        return '🔐';
     }
   };
 
   const getSecurityLevelColor = (level: string | null) => {
     switch (level) {
-      case 'HIGH': return 'text-green-600';
-      case 'MEDIUM': return 'text-yellow-600';
-      case 'LOW': return 'text-red-600';
-      default: return 'text-gray-600';
+      case 'HIGH':
+        return 'text-green-600';
+      case 'MEDIUM':
+        return 'text-yellow-600';
+      case 'LOW':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
   const getSecurityLevelText = (level: string | null) => {
     switch (level) {
-      case 'HIGH': return 'High Security (Hardware-backed)';
-      case 'MEDIUM': return 'Medium Security';
-      case 'LOW': return 'Basic Security';
-      default: return 'Security level unknown';
+      case 'HIGH':
+        return 'High Security (Hardware-backed)';
+      case 'MEDIUM':
+        return 'Medium Security';
+      case 'LOW':
+        return 'Basic Security';
+      default:
+        return 'Security level unknown';
     }
   };
 
@@ -104,22 +120,28 @@ export const AndroidBiometricSetup: React.FC<AndroidBiometricSetupProps> = ({
 
   return (
     <div className="p-4 bg-white border rounded-lg shadow-sm">
-      <h3 className="text-xl font-semibold mb-4 flex items-center">
-        🤖 Android Biometric Setup
-      </h3>
+      <h3 className="text-xl font-semibold mb-4 flex items-center">🤖 Android Biometric Setup</h3>
 
       {/* Device Information */}
       <div className="mb-4 p-3 bg-gray-50 rounded">
         <h4 className="font-medium mb-2">Device Information</h4>
         <div className="text-sm space-y-1">
-          <p><strong>Android Version:</strong> {androidCapabilities?.androidVersion || 'Unknown'}</p>
-          <p><strong>API Level:</strong> {androidCapabilities?.apiLevel || 'Unknown'}</p>
-          <p><strong>Security Level:</strong> 
+          <p>
+            <strong>Android Version:</strong> {androidCapabilities?.androidVersion || 'Unknown'}
+          </p>
+          <p>
+            <strong>API Level:</strong> {androidCapabilities?.apiLevel || 'Unknown'}
+          </p>
+          <p>
+            <strong>Security Level:</strong>
             <span className={`ml-1 ${getSecurityLevelColor(securityLevel)}`}>
               {getSecurityLevelText(securityLevel)}
             </span>
           </p>
-          <p><strong>Hardware Backed:</strong> {androidCapabilities?.hardwareBacked ? '✅ Yes' : '❌ No'}</p>
+          <p>
+            <strong>Hardware Backed:</strong>{' '}
+            {androidCapabilities?.hardwareBacked ? '✅ Yes' : '❌ No'}
+          </p>
         </div>
       </div>
 
@@ -155,7 +177,8 @@ export const AndroidBiometricSetup: React.FC<AndroidBiometricSetupProps> = ({
       {biometricEnrollment.isEnrolling && (
         <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400">
           <p className="text-blue-800">
-            🔄 Enrolling {biometricEnrollment.enrollmentType}... Please follow the on-screen prompts.
+            🔄 Enrolling {biometricEnrollment.enrollmentType}... Please follow the on-screen
+            prompts.
           </p>
         </div>
       )}
@@ -170,17 +193,13 @@ export const AndroidBiometricSetup: React.FC<AndroidBiometricSetupProps> = ({
 
       {(biometricEnrollment.error || error) && (
         <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-400">
-          <p className="text-red-800">
-            ❌ {biometricEnrollment.error || error}
-          </p>
+          <p className="text-red-800">❌ {biometricEnrollment.error || error}</p>
         </div>
       )}
 
       {/* Enroll Button */}
       <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-600">
-          Select a biometric method and click enroll
-        </div>
+        <div className="text-sm text-gray-600">Select a biometric method and click enroll</div>
         <button
           onClick={handleEnrollBiometric}
           disabled={loading || !selectedBiometric || availableBiometrics.length === 0}

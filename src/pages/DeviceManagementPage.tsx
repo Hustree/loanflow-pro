@@ -19,11 +19,7 @@ const DeviceManagementPage: React.FC = () => {
       <Stack spacing={3}>
         {/* Header with back button */}
         <Box>
-          <Button
-            startIcon={<ArrowBack />}
-            onClick={() => navigate('/dashboard')}
-            sx={{ mb: 2 }}
-          >
+          <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mb: 2 }}>
             Back to Dashboard
           </Button>
           <Typography variant="h4" gutterBottom>

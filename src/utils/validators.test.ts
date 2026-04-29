@@ -1,11 +1,11 @@
-import { 
-  validatePnpBfpId, 
-  validateLoanAmount, 
+import {
+  validatePnpBfpId,
+  validateLoanAmount,
   validateMonthlyIncome,
   validateEmail,
   validatePhoneNumber,
   validateRequiredField,
-  validateLoanEligibility
+  validateLoanEligibility,
 } from './validators';
 
 describe('Validators', () => {
@@ -140,11 +140,11 @@ describe('Integration Tests', () => {
     expect(validatePhoneNumber(applicationData.phone)).toBe(true);
     expect(validateMonthlyIncome(applicationData.monthlyIncome)).toBe(true);
     expect(validateLoanAmount(applicationData.loanAmount)).toBe(true);
-    
+
     const eligibility = validateLoanEligibility(
       applicationData.monthlyIncome,
       applicationData.loanAmount,
-      applicationData.term
+      applicationData.term,
     );
     expect(eligibility.isEligible).toBe(true);
   });

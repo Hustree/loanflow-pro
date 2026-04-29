@@ -41,18 +41,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Check passkey support
     setPasskeySupported(passkeyService.checkSupport());
-    
+
     const unsubscribe = firebaseService.onAuthChange((authUser) => {
       setUser(authUser);
       setLoading(false);
-      
+
       // Store auth state in session for fallback
       if (authUser) {
-        sessionStorage.setItem('authUser', JSON.stringify({
-          uid: authUser.uid,
-          email: authUser.email,
-          displayName: authUser.displayName,
-        }));
+        sessionStorage.setItem(
+          'authUser',
+          JSON.stringify({
+            uid: authUser.uid,
+            email: authUser.email,
+            displayName: authUser.displayName,
+          }),
+        );
       } else {
         sessionStorage.removeItem('authUser');
       }
@@ -96,7 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
+
       // Demo mode fallback
       if (email === 'demo@psslai.com' && password === 'demo1234') {
         const demoUser = {
@@ -104,12 +107,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: 'demo@psslai.com',
           displayName: 'Demo User',
         } as unknown as User;
-        
+
         setUser(demoUser);
         sessionStorage.setItem('authUser', JSON.stringify(demoUser));
         return;
       }
-      
+
       // Legacy login support
       if (email === 'psslaimember' && password === '1234') {
         const legacyUser = {
@@ -117,12 +120,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: 'psslaimember@psslai.com',
           displayName: 'PSSLAI Member',
         } as unknown as User;
-        
+
         setUser(legacyUser);
         sessionStorage.setItem('authUser', JSON.stringify(legacyUser));
         return;
       }
-      
+
       // Firebase authentication
       const authUser = await firebaseService.signIn(email, password);
       setUser(authUser);
@@ -152,7 +155,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
+
       // Check if using demo/legacy mode
       const storedUser = sessionStorage.getItem('authUser');
       if (storedUser) {
@@ -164,7 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
       }
-      
+
       // Firebase logout
       await firebaseService.signOutUser();
       setUser(null);
@@ -182,9 +185,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
+
       const result = await passkeyService.startAuthentication(email);
-      
+
       if (result.success) {
         // Create a mock user for passkey auth
         const passkeyUser = {
@@ -192,10 +195,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: email,
           displayName: email.split('@')[0],
         } as unknown as User;
-        
+
         setUser(passkeyUser);
         sessionStorage.setItem('authUser', JSON.stringify(passkeyUser));
-        
+
         if (result.token) {
           sessionStorage.setItem('authToken', result.token);
         }
@@ -212,9 +215,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
+
       const result = await passkeyService.startRegistration(email, displayName);
-      
+
       if (result.success) {
         setHasPasskey(true);
       }

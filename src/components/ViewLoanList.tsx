@@ -27,7 +27,9 @@ const ViewLoanList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
-  const getStatusColor = (status: string): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+  const getStatusColor = (
+    status: string,
+  ): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
     switch (status) {
       case 'pending':
         return 'warning';
@@ -117,20 +119,36 @@ const ViewLoanList: React.FC = () => {
       <Typography variant="h5" gutterBottom>
         Loan Applications ({loans.length})
       </Typography>
-      
+
       <TableContainer component={Paper} elevation={2}>
         <Table sx={{ minWidth: 650 }} aria-label="loan applications table">
           <TableHead>
             <TableRow sx={{ backgroundColor: 'grey.50' }}>
               <TableCell padding="checkbox"></TableCell>
-              <TableCell><strong>Reference</strong></TableCell>
-              <TableCell><strong>Applicant</strong></TableCell>
-              <TableCell><strong>Type</strong></TableCell>
-              <TableCell align="right"><strong>Amount</strong></TableCell>
-              <TableCell align="center"><strong>Term</strong></TableCell>
-              <TableCell><strong>Status</strong></TableCell>
-              <TableCell><strong>Submitted</strong></TableCell>
-              <TableCell align="center"><strong>Actions</strong></TableCell>
+              <TableCell>
+                <strong>Reference</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Applicant</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Type</strong>
+              </TableCell>
+              <TableCell align="right">
+                <strong>Amount</strong>
+              </TableCell>
+              <TableCell align="center">
+                <strong>Term</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Status</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Submitted</strong>
+              </TableCell>
+              <TableCell align="center">
+                <strong>Actions</strong>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -139,9 +157,9 @@ const ViewLoanList: React.FC = () => {
               return (
                 <React.Fragment key={loan.id || loan.ref}>
                   <TableRow
-                    sx={{ 
+                    sx={{
                       '&:last-child td, &:last-child th': { border: 0 },
-                      '&:hover': { backgroundColor: 'grey.50' }
+                      '&:hover': { backgroundColor: 'grey.50' },
                     }}
                   >
                     <TableCell padding="checkbox">
@@ -169,9 +187,7 @@ const ViewLoanList: React.FC = () => {
                       </Box>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2">
-                        {loan.type}
-                      </Typography>
+                      <Typography variant="body2">{loan.type}</Typography>
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="body2" fontWeight="medium">
@@ -179,9 +195,7 @@ const ViewLoanList: React.FC = () => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2">
-                        {loan.term} months
-                      </Typography>
+                      <Typography variant="body2">{loan.term} months</Typography>
                     </TableCell>
                     <TableCell>
                       <Chip
@@ -208,7 +222,7 @@ const ViewLoanList: React.FC = () => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                  
+
                   {/* Expanded row for notes */}
                   <TableRow>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
@@ -230,7 +244,11 @@ const ViewLoanList: React.FC = () => {
                             </Typography>
                           )}
                           {loan.updatedAt && (
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ mt: 1, display: 'block' }}
+                            >
                               Last updated: {formatDate(loan.updatedAt)}
                             </Typography>
                           )}
@@ -247,17 +265,14 @@ const ViewLoanList: React.FC = () => {
 
       <Box sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}>
         <Typography variant="body2" color="text.secondary">
-          <strong>Total Applications:</strong> {loans.length} | 
-          <strong> Total Amount Requested:</strong> {formatCurrency(loans.reduce((sum, loan) => sum + loan.amount, 0))}
+          <strong>Total Applications:</strong> {loans.length} |
+          <strong> Total Amount Requested:</strong>{' '}
+          {formatCurrency(loans.reduce((sum, loan) => sum + loan.amount, 0))}
         </Typography>
       </Box>
 
       {/* Status Update Modal */}
-      <StatusUpdateModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        loan={selectedLoan}
-      />
+      <StatusUpdateModal open={isModalOpen} onClose={handleCloseModal} loan={selectedLoan} />
     </Box>
   );
 };

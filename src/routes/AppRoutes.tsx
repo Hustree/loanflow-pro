@@ -16,22 +16,24 @@ import { CircularProgress, Box } from '@mui/material';
 const ProtectedRoute: React.FC = () => {
   const { user, loading } = useAuth();
   const isAuthenticated = user !== null || sessionStorage.getItem('isAuthenticated') === 'true';
-  
+
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
         <CircularProgress />
       </Box>
     );
   }
-  
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 const AppRoutes: React.FC = () => {
   const { user } = useAuth();
   const isAuthenticated = user !== null || sessionStorage.getItem('isAuthenticated') === 'true';
-  
+
   return (
     <Routes>
       {/* Public routes */}
@@ -39,7 +41,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/login/passkey" element={<PasskeyLoginPage />} />
       <Route path="/register" element={<PasskeyRegisterPage />} />
       <Route path="/passkey/setup" element={<PasskeySetupPage />} />
-      
+
       {/* Protected routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
@@ -48,10 +50,16 @@ const AppRoutes: React.FC = () => {
         <Route path="/redux-demo" element={<ReduxDemo />} />
         <Route path="/settings/devices" element={<DeviceManagementPage />} />
       </Route>
-      
+
       {/* Default redirect */}
-      <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login/passkey"} replace />} />
-      <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login/passkey"} replace />} />
+      <Route
+        path="/"
+        element={<Navigate to={isAuthenticated ? '/dashboard' : '/login/passkey'} replace />}
+      />
+      <Route
+        path="*"
+        element={<Navigate to={isAuthenticated ? '/dashboard' : '/login/passkey'} replace />}
+      />
     </Routes>
   );
 };

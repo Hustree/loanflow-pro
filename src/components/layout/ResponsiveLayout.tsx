@@ -47,7 +47,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isMobile, isTablet } = useResponsive();
-  
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [darkMode, setDarkMode] = useState(false);
@@ -89,7 +89,14 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
   ];
 
   const drawerContent = (
-    <Box sx={{ width: isMobile ? '100%' : 280, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box
+      sx={{
+        width: isMobile ? '100%' : 280,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" color="primary" fontWeight="bold">
           PSSLAI Loans
@@ -100,9 +107,9 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
           </IconButton>
         )}
       </Box>
-      
+
       <Divider />
-      
+
       {user && (
         <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -120,9 +127,9 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
           </Box>
         </Box>
       )}
-      
+
       <Divider />
-      
+
       <List sx={{ flex: 1, py: 2 }}>
         {menuItems.map((item) => (
           <ListItem key={item.path} disablePadding>
@@ -150,13 +157,15 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
           </ListItem>
         ))}
       </List>
-      
+
       <Divider />
-      
+
       <List sx={{ pb: 2 }}>
         <ListItem disablePadding>
           <ListItemButton onClick={() => navigate('/help')}>
-            <ListItemIcon><Help /></ListItemIcon>
+            <ListItemIcon>
+              <Help />
+            </ListItemIcon>
             <ListItemText primary="Help & Support" />
           </ListItemButton>
         </ListItem>
@@ -190,22 +199,17 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
               <MenuIcon />
             </IconButton>
           )}
-          
+
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {location.pathname === '/loan' && 'Loan Application'}
             {location.pathname === '/manage' && 'Loan Management'}
             {location.pathname === '/dashboard' && 'Dashboard'}
           </Typography>
-          
+
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {!isMobile && (
               <>
-                <Chip
-                  label="Firebase Connected"
-                  color="success"
-                  size="small"
-                  sx={{ mr: 1 }}
-                />
+                <Chip label="Firebase Connected" color="success" size="small" sx={{ mr: 1 }} />
                 <Tooltip title="Toggle theme">
                   <IconButton onClick={() => setDarkMode(!darkMode)} size="small">
                     {darkMode ? <LightMode /> : <DarkMode />}
@@ -213,13 +217,13 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
                 </Tooltip>
               </>
             )}
-            
+
             <IconButton color="inherit">
               <Badge badgeContent={notificationCount} color="error">
                 <Notifications />
               </Badge>
             </IconButton>
-            
+
             <IconButton
               edge="end"
               aria-label="account of current user"
@@ -232,34 +236,47 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
           </Box>
         </Toolbar>
       </AppBar>
-      
+
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
         onClose={handleMenuClose}
         PaperProps={{
-          sx: { width: 200, mt: 1.5 }
+          sx: { width: 200, mt: 1.5 },
         }}
       >
-        <MenuItem onClick={() => { navigate('/profile'); handleMenuClose(); }}>
-          <ListItemIcon><AccountCircle fontSize="small" /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            navigate('/profile');
+            handleMenuClose();
+          }}
+        >
+          <ListItemIcon>
+            <AccountCircle fontSize="small" />
+          </ListItemIcon>
           Profile
         </MenuItem>
-        <MenuItem onClick={() => { navigate('/settings'); handleMenuClose(); }}>
-          <ListItemIcon><Settings fontSize="small" /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            navigate('/settings');
+            handleMenuClose();
+          }}
+        >
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
           Settings
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>
-          <ListItemIcon><Logout fontSize="small" /></ListItemIcon>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
-      
-      <Box
-        component="nav"
-        sx={{ width: { sm: isMobile ? 0 : 280 }, flexShrink: { sm: 0 } }}
-      >
+
+      <Box component="nav" sx={{ width: { sm: isMobile ? 0 : 280 }, flexShrink: { sm: 0 } }}>
         {!isMobile && (
           <Drawer
             variant="permanent"
@@ -276,7 +293,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
             {drawerContent}
           </Drawer>
         )}
-        
+
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -295,7 +312,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
           {drawerContent}
         </Drawer>
       </Box>
-      
+
       <Box
         component="main"
         sx={{

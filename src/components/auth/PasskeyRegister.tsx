@@ -24,28 +24,23 @@ import {
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  registerPasskey, 
-  checkPasskeySupport,
-  clearError,
-} from '../../store/slices/passkeySlice';
+import { registerPasskey, checkPasskeySupport, clearError } from '../../store/slices/passkeySlice';
 import { RootState, AppDispatch } from '../../store/store';
 
 export const PasskeyRegister: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const [email, setEmail] = useState(location.state?.email || location.state?.identifier || 'test@psslai.com');
+
+  const [email, setEmail] = useState(
+    location.state?.email || location.state?.identifier || 'test@psslai.com',
+  );
   const [displayName, setDisplayName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
-  
-  const { 
-    isSupported, 
-    loading, 
-    error,
-    registrationStep,
-  } = useSelector((state: RootState) => state.passkey);
+
+  const { isSupported, loading, error, registrationStep } = useSelector(
+    (state: RootState) => state.passkey,
+  );
 
   useEffect(() => {
     dispatch(checkPasskeySupport());
@@ -91,43 +86,46 @@ export const PasskeyRegister: React.FC = () => {
 
   const handleRegister = async () => {
     if (!email || !displayName) return;
-    
+
     setIsRegistering(true);
     try {
       const formattedEmail = formatIdentifier(email);
-      const result = await dispatch(registerPasskey({ 
-        email: formattedEmail, 
-        displayName 
-      })).unwrap();
-      
+      const result = await dispatch(
+        registerPasskey({
+          email: formattedEmail,
+          displayName,
+        }),
+      ).unwrap();
+
       if (result.success) {
         // Store auth token if provided
         if (result.token) {
           sessionStorage.setItem('authToken', result.token);
         }
-        
+
         // Set authentication state for protected route access
         sessionStorage.setItem('isAuthenticated', 'true');
         sessionStorage.setItem('username', email);
-        
+
         // Navigate to dashboard with success message
         navigate('/dashboard', {
           state: {
-            message: 'Passkey registered successfully! You can now use Face ID/Touch ID to sign in.',
-            severity: 'success'
-          }
+            message:
+              'Passkey registered successfully! You can now use Face ID/Touch ID to sign in.',
+            severity: 'success',
+          },
         });
       }
     } catch (err: any) {
       console.error('Registration failed:', err);
-      
+
       // Show specific error message based on error type
       if (err.message?.includes('already exists')) {
-        navigate('/login/passkey', { 
-          state: { 
+        navigate('/login/passkey', {
+          state: {
             email,
-            message: 'You already have a passkey registered. Please sign in instead.' 
-          }
+            message: 'You already have a passkey registered. Please sign in instead.',
+          },
         });
       }
     } finally {
@@ -181,11 +179,7 @@ export const PasskeyRegister: React.FC = () => {
         <Alert severity="warning" sx={{ mb: 3 }}>
           Your device doesn't support passkey authentication.
         </Alert>
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={() => navigate('/login')}
-        >
+        <Button fullWidth variant="contained" onClick={() => navigate('/login')}>
           Use Traditional Login
         </Button>
       </Paper>
@@ -207,11 +201,7 @@ export const PasskeyRegister: React.FC = () => {
         </Box>
 
         {/* Show message from previous page */}
-        {location.state?.message && (
-          <Alert severity="info">
-            {location.state.message}
-          </Alert>
-        )}
+        {location.state?.message && <Alert severity="info">{location.state.message}</Alert>}
 
         {/* Email Input */}
         <TextField
@@ -230,11 +220,11 @@ export const PasskeyRegister: React.FC = () => {
             ),
           }}
           helperText={
-            isPhoneNumber(email) 
-              ? 'Philippine mobile number detected' 
+            isPhoneNumber(email)
+              ? 'Philippine mobile number detected'
               : isEmail(email)
-              ? 'Email address detected'
-              : ''
+                ? 'Email address detected'
+                : ''
           }
         />
 
@@ -253,9 +243,11 @@ export const PasskeyRegister: React.FC = () => {
         {/* Registration Step Message */}
         {registrationStep !== 'idle' && (
           <Fade in>
-            <Alert 
+            <Alert
               severity={registrationStep === 'completed' ? 'success' : 'info'}
-              icon={registrationStep === 'completed' ? <CheckCircle /> : <CircularProgress size={20} />}
+              icon={
+                registrationStep === 'completed' ? <CheckCircle /> : <CircularProgress size={20} />
+              }
             >
               {getStepMessage()}
             </Alert>
@@ -282,10 +274,7 @@ export const PasskeyRegister: React.FC = () => {
 
         {/* Error Display */}
         {error && (
-          <Alert 
-            severity="error" 
-            onClose={() => dispatch(clearError())}
-          >
+          <Alert severity="error" onClose={() => dispatch(clearError())}>
             {error}
           </Alert>
         )}
@@ -302,13 +291,8 @@ export const PasskeyRegister: React.FC = () => {
           >
             Back to Sign In
           </Button>
-          
-          <Button
-            fullWidth
-            variant="text"
-            onClick={() => navigate('/login')}
-            size="small"
-          >
+
+          <Button fullWidth variant="text" onClick={() => navigate('/login')} size="small">
             Use Traditional Login
           </Button>
         </Stack>

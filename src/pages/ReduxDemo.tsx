@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -27,8 +27,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from '@mui/material'
-import Grid from '@mui/system/Grid'
+} from '@mui/material';
+import Grid from '@mui/system/Grid';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -38,51 +38,42 @@ import {
   Person as PersonIcon,
   AttachMoney as MoneyIcon,
   Category as CategoryIcon,
-} from '@mui/icons-material'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
-import {
-  addLoan,
-  updateLoanStatus,
-  removeLoan,
-} from '../store/loanSlice'
-import {
-  addMember,
-  updateMember,
-  deleteMember,
-  addLoanToMember,
-} from '../store/memberSlice'
+} from '@mui/icons-material';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addLoan, updateLoanStatus, removeLoan } from '../store/loanSlice';
+import { addMember, updateMember, deleteMember, addLoanToMember } from '../store/memberSlice';
 import {
   addProduct,
   updateProduct,
   deleteProduct,
   toggleProductStatus,
-} from '../store/loanProductSlice'
+} from '../store/loanProductSlice';
 
 interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props
+  const { children, value, index, ...other } = props;
   return (
     <div hidden={value !== index} {...other}>
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
-  )
+  );
 }
 
 export default function ReduxDemo() {
-  const dispatch = useAppDispatch()
-  const loans = useAppSelector((state) => state.loan.loans)
-  const members = useAppSelector((state) => state.member.members)
-  const products = useAppSelector((state) => state.loanProduct.products)
-  
-  const [tabValue, setTabValue] = useState(0)
-  const [editDialog, setEditDialog] = useState(false)
-  const [editingLoan, setEditingLoan] = useState<any>(null)
-  
+  const dispatch = useAppDispatch();
+  const loans = useAppSelector((state) => state.loan.loans);
+  const members = useAppSelector((state) => state.member.members);
+  const products = useAppSelector((state) => state.loanProduct.products);
+
+  const [tabValue, setTabValue] = useState(0);
+  const [editDialog, setEditDialog] = useState(false);
+  const [editingLoan, setEditingLoan] = useState<any>(null);
+
   // Loan Form State
   const [loanForm, setLoanForm] = useState({
     name: '',
@@ -92,8 +83,8 @@ export default function ReduxDemo() {
     term: 12 as any,
     monthlyIncome: 0,
     disbursementMode: 'PNB' as any,
-  })
-  
+  });
+
   // Member Form State
   const [memberForm, setMemberForm] = useState({
     memberNumber: '',
@@ -103,8 +94,8 @@ export default function ReduxDemo() {
     phone: '',
     address: '',
     status: 'active' as any,
-  })
-  
+  });
+
   // Product Form State
   const [productForm, setProductForm] = useState({
     code: '',
@@ -117,16 +108,16 @@ export default function ReduxDemo() {
     availableTerms: [] as number[],
     requirements: [] as string[],
     isActive: true,
-  })
+  });
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue)
-  }
+    setTabValue(newValue);
+  };
 
   // LOAN CRUD OPERATIONS
   const handleAddLoan = () => {
     if (loanForm.name && loanForm.amount > 0) {
-      dispatch(addLoan(loanForm))
+      dispatch(addLoan(loanForm));
       setLoanForm({
         name: '',
         pnpBfpId: '',
@@ -135,30 +126,32 @@ export default function ReduxDemo() {
         term: 12,
         monthlyIncome: 0,
         disbursementMode: 'PNB',
-      })
+      });
     }
-  }
+  };
 
   const handleUpdateLoanStatus = (id: string, status: any) => {
-    const notes = prompt('Add notes for this status update:')
+    const notes = prompt('Add notes for this status update:');
     if (notes) {
-      dispatch(updateLoanStatus({ id, status, notes }))
+      dispatch(updateLoanStatus({ id, status, notes }));
     }
-  }
+  };
 
   const handleDeleteLoan = (id: string) => {
     if (window.confirm('Are you sure you want to delete this loan?')) {
-      dispatch(removeLoan(id))
+      dispatch(removeLoan(id));
     }
-  }
+  };
 
   // MEMBER CRUD OPERATIONS
   const handleAddMember = () => {
     if (memberForm.firstName && memberForm.lastName) {
-      dispatch(addMember({
-        ...memberForm,
-        dateJoined: new Date(),
-      }))
+      dispatch(
+        addMember({
+          ...memberForm,
+          dateJoined: new Date(),
+        }),
+      );
       setMemberForm({
         memberNumber: '',
         firstName: '',
@@ -167,24 +160,24 @@ export default function ReduxDemo() {
         phone: '',
         address: '',
         status: 'active',
-      })
+      });
     }
-  }
+  };
 
   const handleUpdateMember = (id: string, updates: any) => {
-    dispatch(updateMember({ id, ...updates }))
-  }
+    dispatch(updateMember({ id, ...updates }));
+  };
 
   const handleDeleteMember = (id: string) => {
     if (window.confirm('Are you sure you want to delete this member?')) {
-      dispatch(deleteMember(id))
+      dispatch(deleteMember(id));
     }
-  }
+  };
 
   // PRODUCT CRUD OPERATIONS
   const handleAddProduct = () => {
     if (productForm.code && productForm.name) {
-      dispatch(addProduct(productForm))
+      dispatch(addProduct(productForm));
       setProductForm({
         code: '',
         name: '',
@@ -196,30 +189,36 @@ export default function ReduxDemo() {
         availableTerms: [],
         requirements: [],
         isActive: true,
-      })
+      });
     }
-  }
+  };
 
   const handleToggleProduct = (id: string) => {
-    dispatch(toggleProductStatus(id))
-  }
+    dispatch(toggleProductStatus(id));
+  };
 
   const handleDeleteProduct = (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      dispatch(deleteProduct(id))
+      dispatch(deleteProduct(id));
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved': return 'success'
-      case 'rejected': return 'error'
-      case 'pending': return 'warning'
-      case 'disbursed': return 'info'
-      case 'completed': return 'default'
-      default: return 'default'
+      case 'approved':
+        return 'success';
+      case 'rejected':
+        return 'error';
+      case 'pending':
+        return 'warning';
+      case 'disbursed':
+        return 'info';
+      case 'completed':
+        return 'default';
+      default:
+        return 'default';
     }
-  }
+  };
 
   return (
     <Container maxWidth="xl">
@@ -227,14 +226,12 @@ export default function ReduxDemo() {
         <Typography variant="h3" gutterBottom>
           Redux Demo - Loan Management System
         </Typography>
-        
+
         <Alert severity="info" sx={{ mb: 3 }}>
           <Typography variant="body2">
-            <strong>Redux DevTools:</strong> Open your browser's Redux DevTools extension to see:
-            • Real-time state changes
-            • Action dispatches
-            • Time-travel debugging
-            • State tree inspection
+            <strong>Redux DevTools:</strong> Open your browser's Redux DevTools extension to see: •
+            Real-time state changes • Action dispatches • Time-travel debugging • State tree
+            inspection
           </Typography>
         </Alert>
 
@@ -261,9 +258,7 @@ export default function ReduxDemo() {
                   <Typography variant="subtitle2" color="primary">
                     Centralized Logic
                   </Typography>
-                  <Typography variant="body2">
-                    All state mutations in reducers/slices
-                  </Typography>
+                  <Typography variant="body2">All state mutations in reducers/slices</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -273,9 +268,7 @@ export default function ReduxDemo() {
                   <Typography variant="subtitle2" color="primary">
                     Time Travel Debug
                   </Typography>
-                  <Typography variant="body2">
-                    Undo/redo actions with DevTools
-                  </Typography>
+                  <Typography variant="body2">Undo/redo actions with DevTools</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -285,9 +278,7 @@ export default function ReduxDemo() {
                   <Typography variant="subtitle2" color="primary">
                     Component Decoupling
                   </Typography>
-                  <Typography variant="body2">
-                    Any component can access state
-                  </Typography>
+                  <Typography variant="body2">Any component can access state</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -359,14 +350,18 @@ export default function ReduxDemo() {
                     label="Monthly Income"
                     type="number"
                     value={loanForm.monthlyIncome}
-                    onChange={(e) => setLoanForm({ ...loanForm, monthlyIncome: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setLoanForm({ ...loanForm, monthlyIncome: Number(e.target.value) })
+                    }
                     fullWidth
                   />
                   <FormControl fullWidth>
                     <InputLabel>Disbursement Mode</InputLabel>
                     <Select
                       value={loanForm.disbursementMode}
-                      onChange={(e) => setLoanForm({ ...loanForm, disbursementMode: e.target.value as any })}
+                      onChange={(e) =>
+                        setLoanForm({ ...loanForm, disbursementMode: e.target.value as any })
+                      }
                       label="Disbursement Mode"
                     >
                       <MenuItem value="PNB">PNB</MenuItem>
@@ -399,8 +394,8 @@ export default function ReduxDemo() {
                           primary={
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                               <Typography variant="subtitle1">{loan.name}</Typography>
-                              <Chip 
-                                label={loan.status} 
+                              <Chip
+                                label={loan.status}
                                 color={getStatusColor(loan.status) as any}
                                 size="small"
                               />
@@ -409,9 +404,8 @@ export default function ReduxDemo() {
                           secondary={
                             <Box>
                               <Typography variant="body2">
-                                Amount: ₱{loan.amount.toLocaleString()} | 
-                                Type: {loan.type} | 
-                                Term: {loan.term} months
+                                Amount: ₱{loan.amount.toLocaleString()} | Type: {loan.type} | Term:{' '}
+                                {loan.term} months
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
                                 Ref: {loan.ref} | ID: {loan.id?.substring(0, 8)}...
@@ -450,8 +444,8 @@ export default function ReduxDemo() {
                   ))}
                   {loans.length === 0 && (
                     <ListItem>
-                      <ListItemText 
-                        primary="No loans yet" 
+                      <ListItemText
+                        primary="No loans yet"
                         secondary="Add a loan using the form on the left"
                       />
                     </ListItem>
@@ -537,8 +531,8 @@ export default function ReduxDemo() {
                               <Typography variant="body2">
                                 Member #: {member.memberNumber} | Email: {member.email}
                               </Typography>
-                              <Chip 
-                                label={member.status} 
+                              <Chip
+                                label={member.status}
                                 color={member.status === 'active' ? 'success' : 'default'}
                                 size="small"
                               />
@@ -549,16 +543,13 @@ export default function ReduxDemo() {
                           <IconButton
                             edge="end"
                             onClick={() => {
-                              const newStatus = member.status === 'active' ? 'inactive' : 'active'
-                              handleUpdateMember(member.id, { status: newStatus })
+                              const newStatus = member.status === 'active' ? 'inactive' : 'active';
+                              handleUpdateMember(member.id, { status: newStatus });
                             }}
                           >
                             <EditIcon />
                           </IconButton>
-                          <IconButton
-                            edge="end"
-                            onClick={() => handleDeleteMember(member.id)}
-                          >
+                          <IconButton edge="end" onClick={() => handleDeleteMember(member.id)}>
                             <DeleteIcon />
                           </IconButton>
                         </ListItemSecondaryAction>
@@ -568,8 +559,8 @@ export default function ReduxDemo() {
                   ))}
                   {members.length === 0 && (
                     <ListItem>
-                      <ListItemText 
-                        primary="No members yet" 
+                      <ListItemText
+                        primary="No members yet"
                         secondary="Add a member using the form on the left"
                       />
                     </ListItem>
@@ -604,7 +595,9 @@ export default function ReduxDemo() {
                   <TextField
                     label="Description"
                     value={productForm.description}
-                    onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, description: e.target.value })
+                    }
                     fullWidth
                     multiline
                     rows={2}
@@ -613,21 +606,27 @@ export default function ReduxDemo() {
                     label="Min Amount"
                     type="number"
                     value={productForm.minAmount}
-                    onChange={(e) => setProductForm({ ...productForm, minAmount: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, minAmount: Number(e.target.value) })
+                    }
                     fullWidth
                   />
                   <TextField
                     label="Max Amount"
                     type="number"
                     value={productForm.maxAmount}
-                    onChange={(e) => setProductForm({ ...productForm, maxAmount: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, maxAmount: Number(e.target.value) })
+                    }
                     fullWidth
                   />
                   <TextField
                     label="Interest Rate (%)"
                     type="number"
                     value={productForm.interestRate}
-                    onChange={(e) => setProductForm({ ...productForm, interestRate: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, interestRate: Number(e.target.value) })
+                    }
                     fullWidth
                   />
                   <Button
@@ -652,7 +651,13 @@ export default function ReduxDemo() {
                     <Grid size={12} key={product.id}>
                       <Card>
                         <CardContent>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'start',
+                            }}
+                          >
                             <Box>
                               <Typography variant="h6">
                                 {product.name} ({product.code})
@@ -661,26 +666,25 @@ export default function ReduxDemo() {
                                 {product.description}
                               </Typography>
                               <Typography variant="body2" sx={{ mt: 1 }}>
-                                Amount: ₱{product.minAmount.toLocaleString()} - ₱{product.maxAmount.toLocaleString()}
+                                Amount: ₱{product.minAmount.toLocaleString()} - ₱
+                                {product.maxAmount.toLocaleString()}
                               </Typography>
                               <Typography variant="body2">
-                                Interest Rate: {product.interestRate}% | Processing Fee: ₱{product.processingFee}
+                                Interest Rate: {product.interestRate}% | Processing Fee: ₱
+                                {product.processingFee}
                               </Typography>
                               <Typography variant="body2">
                                 Terms: {product.availableTerms.join(', ')} months
                               </Typography>
                             </Box>
-                            <Chip 
-                              label={product.isActive ? 'Active' : 'Inactive'} 
+                            <Chip
+                              label={product.isActive ? 'Active' : 'Inactive'}
                               color={product.isActive ? 'success' : 'default'}
                             />
                           </Box>
                         </CardContent>
                         <CardActions>
-                          <Button
-                            size="small"
-                            onClick={() => handleToggleProduct(product.id)}
-                          >
+                          <Button size="small" onClick={() => handleToggleProduct(product.id)}>
                             {product.isActive ? 'Deactivate' : 'Activate'}
                           </Button>
                           <Button
@@ -701,5 +705,5 @@ export default function ReduxDemo() {
         </TabPanel>
       </Box>
     </Container>
-  )
+  );
 }

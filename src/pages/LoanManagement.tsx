@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  Tabs,
-  Tab,
-  Alert,
-} from '@mui/material';
+import { Container, Box, Paper, Typography, Tabs, Tab, Alert } from '@mui/material';
 import { Add as AddIcon, List as ListIcon } from '@mui/icons-material';
 import LoanForm from '../components/LoanForm';
 import ViewLoanList from '../components/ViewLoanList';
@@ -30,11 +22,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -86,29 +74,26 @@ const LoanManagement: React.FC = () => {
         <Paper elevation={3} sx={{ mt: 3 }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={value} onChange={handleChange} aria-label="loan management tabs">
-              <Tab 
-                icon={<AddIcon />} 
-                label={`New Application`} 
-                {...a11yProps(0)} 
-              />
-              <Tab 
-                icon={<ListIcon />} 
-                label={`View Applications (${loans.length})`} 
-                {...a11yProps(1)} 
+              <Tab icon={<AddIcon />} label={`New Application`} {...a11yProps(0)} />
+              <Tab
+                icon={<ListIcon />}
+                label={`View Applications (${loans.length})`}
+                {...a11yProps(1)}
               />
             </Tabs>
           </Box>
-          
+
           <TabPanel value={value} index={0}>
             <Typography variant="h6" gutterBottom>
               Submit New Loan Application
             </Typography>
             <Typography variant="body2" color="text.secondary" paragraph>
-              Fill out the form below to submit a new loan application. All data will be stored in Redux state.
+              Fill out the form below to submit a new loan application. All data will be stored in
+              Redux state.
             </Typography>
             <LoanForm onSuccess={handleLoanSuccess} />
           </TabPanel>
-          
+
           <TabPanel value={value} index={1}>
             <ViewLoanList />
           </TabPanel>

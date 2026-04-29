@@ -3,11 +3,13 @@
 ## ✅ Completed Tasks
 
 ### 1. Project Setup
+
 - Created React app with TypeScript template
 - Installed all required dependencies (MUI, React Router, axios, form libraries)
 - Set up senior-level folder structure
 
 ### 2. Components Created
+
 - **Reusable MUI Input Components:**
   - `TextInput.tsx` - Generic text field component
   - `SelectInput.tsx` - Dropdown selection component
@@ -15,6 +17,7 @@
   - `SummaryCard.tsx` - Loan summary display component
 
 ### 3. Pages Implemented
+
 - **Login Page (`/login`):**
   - MUI-styled login form
   - Static credentials: `psslaimember / 1234`
@@ -40,6 +43,7 @@
   - **Professional UI** with Material-UI components
 
 ### 4. Features Implemented
+
 - ✅ Protected routes with authentication
 - ✅ Form validations (required fields, numeric validation, ID format)
 - ✅ Reference number generation
@@ -52,6 +56,7 @@
 - ✅ **NEW: Expandable Table Rows for Detailed View**
 
 ### 5. Technical Highlights
+
 - TypeScript for type safety
 - React Router v6 for navigation
 - Material-UI theme configuration
@@ -70,14 +75,16 @@ npm start
 ## Message for Zoho Cliq/Slack
 
 Hi Sir Paul,  
-✅ Built initial React + MUI MVP for Loan App  
-- Login + Loan Form UI done  
-- Validations implemented  
-- Reference # working  
+✅ Built initial React + MUI MVP for Loan App
+
+- Login + Loan Form UI done
+- Validations implemented
+- Reference # working
 - Submission and summary functional  
-Will proceed to mock API and refactor reusable components next. Screenshot to follow.
+  Will proceed to mock API and refactor reusable components next. Screenshot to follow.
 
 ## Next Steps
+
 - Integrate with AWS Lambda backend
 - Add more comprehensive error handling
 - Add admin features

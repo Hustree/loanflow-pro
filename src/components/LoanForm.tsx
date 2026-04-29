@@ -47,14 +47,14 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const processedValue = ['amount', 'monthlyIncome'].includes(name) ? Number(value) : value;
-    
+
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
-    
+
     // Clear validation error for this field
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: '' }));
     }
-    
+
     // Clear Redux error when user starts typing
     if (error) {
       dispatch(clearError());
@@ -64,7 +64,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
   const handleSelectChange = (e: SelectChangeEvent<string | number>) => {
     const { name, value } = e.target;
     const processedValue = name === 'term' ? Number(value) : value;
-    
+
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: '' }));
@@ -85,28 +85,28 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
   };
 
   const handleFileSelect = (file: File | null) => {
-    setFormData((prev) => ({ 
-      ...prev, 
-      uploadedFileName: file?.name || undefined 
+    setFormData((prev) => ({
+      ...prev,
+      uploadedFileName: file?.name || undefined,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       // Validate using Zod schema
       const validatedData = loanApplicationInputSchema.parse(formData);
-      
+
       // Dispatch the action to add loan
       dispatch(addLoan(validatedData));
-      
+
       // Since addLoan generates the reference number internally, we need to generate one here for the callback
       const generatedRef = generateReferenceNumber();
-      
+
       setSubmitSuccess(true);
       setValidationErrors({});
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -118,12 +118,11 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         disbursementMode: undefined,
         uploadedFileName: undefined,
       });
-      
+
       // Call success callback if provided
       if (onSuccess) {
         onSuccess(generatedRef);
       }
-      
     } catch (error) {
       if (error instanceof ZodError) {
         // Handle Zod validation errors
@@ -146,11 +145,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
       {submitSuccess && (
-        <Alert 
-          severity="success" 
-          sx={{ mb: 2 }}
-          onClose={handleCloseSuccess}
-        >
+        <Alert severity="success" sx={{ mb: 2 }} onClose={handleCloseSuccess}>
           Loan application submitted successfully!
         </Alert>
       )}
@@ -171,7 +166,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         required
         disabled={isLoading}
       />
-      
+
       <TextInput
         label="PNP/BFP ID Number"
         name="pnpBfpId"
@@ -182,7 +177,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         required
         disabled={isLoading}
       />
-      
+
       <TextInput
         label="Monthly Income"
         name="monthlyIncome"
@@ -206,7 +201,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         required
         disabled={isLoading}
       />
-      
+
       <TextInput
         label="Loan Amount"
         name="amount"
@@ -218,7 +213,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         required
         disabled={isLoading}
       />
-      
+
       <SelectInput
         label="Term"
         name="term"
@@ -230,7 +225,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         required
         disabled={isLoading}
       />
-      
+
       <FormControl
         component="fieldset"
         error={!!validationErrors.disbursementMode}
@@ -238,10 +233,7 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
         sx={{ mt: 2 }}
       >
         <FormLabel component="legend">Disbursement Mode</FormLabel>
-        <RadioGroup
-          value={formData.disbursementMode || ''}
-          onChange={handleRadioChange}
-        >
+        <RadioGroup value={formData.disbursementMode || ''} onChange={handleRadioChange}>
           {DISBURSEMENT_MODES.map((mode) => (
             <FormControlLabel
               key={mode.value}
@@ -255,10 +247,12 @@ const LoanForm: React.FC<LoanFormProps> = ({ onSuccess }) => {
           <FormHelperText>{validationErrors.disbursementMode}</FormHelperText>
         )}
       </FormControl>
-      
+
       <FileUpload
         onFileSelect={handleFileSelect}
-        selectedFile={formData.uploadedFileName ? { name: formData.uploadedFileName } as File : undefined}
+        selectedFile={
+          formData.uploadedFileName ? ({ name: formData.uploadedFileName } as File) : undefined
+        }
         accept=".pdf,.jpg,.jpeg,.png"
         helperText="Upload supporting documents (PDF, JPG, PNG)"
       />

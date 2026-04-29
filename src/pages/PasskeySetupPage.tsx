@@ -6,7 +6,7 @@ import { PasskeyRegistration } from '../components/auth/PasskeyRegistration';
 const PasskeySetupPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // Get data from navigation state or use defaults
   const { email, displayName } = location.state || {
     email: 'user@example.com',

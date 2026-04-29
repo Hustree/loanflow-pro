@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { isMobile } = useResponsive();
   const loans = useAppSelector((state) => state.loan.loans);
-  
+
   const [firebaseLoans, setFirebaseLoans] = useState<Loan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch from Firebase
         if (user?.uid && user.uid !== 'demo-user-001' && user.uid !== 'legacy-user-001') {
           const { loans: fbLoans } = await firebaseService.getLoans(user.uid);
@@ -84,27 +84,33 @@ const Dashboard: React.FC = () => {
   // Combine Redux and Firebase loans
   const allLoans = useMemo(() => {
     const combinedLoans = [...loans];
-    
-            // Add Firebase loans that aren't in Redux
-        firebaseLoans.forEach(fbLoan => {
-          if (!loans.find(loan => (loan as any).referenceNumber === (fbLoan as any).referenceNumber || (loan as any).ref === (fbLoan as any).ref)) {
-            combinedLoans.push(fbLoan as any);
-          }
-        });
-    
+
+    // Add Firebase loans that aren't in Redux
+    firebaseLoans.forEach((fbLoan) => {
+      if (
+        !loans.find(
+          (loan) =>
+            (loan as any).referenceNumber === (fbLoan as any).referenceNumber ||
+            (loan as any).ref === (fbLoan as any).ref,
+        )
+      ) {
+        combinedLoans.push(fbLoan as any);
+      }
+    });
+
     return combinedLoans;
   }, [loans, firebaseLoans]);
 
   const stats: DashboardStats = useMemo(() => {
-    const pending = allLoans.filter(loan => loan.status === 'pending').length;
-    const approved = allLoans.filter(loan => loan.status === 'approved').length;
-    const rejected = allLoans.filter(loan => loan.status === 'rejected').length;
+    const pending = allLoans.filter((loan) => loan.status === 'pending').length;
+    const approved = allLoans.filter((loan) => loan.status === 'approved').length;
+    const rejected = allLoans.filter((loan) => loan.status === 'rejected').length;
     const totalAmount = allLoans.reduce((sum, loan) => sum + loan.amount, 0);
     const averageAmount = allLoans.length > 0 ? totalAmount / allLoans.length : 0;
     const monthlyPayment = allLoans
-      .filter(loan => loan.status === 'approved')
-      .reduce((sum, loan) => sum + (loan.amount / (loan.term || 12)), 0);
-    
+      .filter((loan) => loan.status === 'approved')
+      .reduce((sum, loan) => sum + loan.amount / (loan.term || 12), 0);
+
     // Add sample data for better presentation when no real data exists
     const sampleStats = {
       totalLoans: allLoans.length || 47,
@@ -116,7 +122,7 @@ const Dashboard: React.FC = () => {
       monthlyPayment: monthlyPayment || 125000,
       completionRate: allLoans.length > 0 ? (approved / allLoans.length) * 100 : 59.6,
     };
-    
+
     return sampleStats;
   }, [allLoans]);
 
@@ -132,8 +138,8 @@ const Dashboard: React.FC = () => {
     color: string;
     trend?: number;
   }> = ({ title, value, icon, color, trend }) => (
-    <Card 
-      sx={{ 
+    <Card
+      sx={{
         height: '100%',
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:hover': {
@@ -143,40 +149,49 @@ const Dashboard: React.FC = () => {
       }}
     >
       <CardContent sx={{ p: isMobile ? 1.5 : 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: isMobile ? 1 : 2 }}>
-          <Box sx={{ 
-            p: isMobile ? 1 : 1.5, 
-            bgcolor: `${color}.100`, 
-            borderRadius: 2,
+        <Box
+          sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+            justifyContent: 'space-between',
+            mb: isMobile ? 1 : 2,
+          }}
+        >
+          <Box
+            sx={{
+              p: isMobile ? 1 : 1.5,
+              bgcolor: `${color}.100`,
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             {icon}
           </Box>
           {trend !== undefined && (
             <Chip
               label={`${trend > 0 ? '+' : ''}${trend}%`}
-              size={isMobile ? "small" : "medium"}
+              size={isMobile ? 'small' : 'medium'}
               color={trend > 0 ? 'success' : 'error'}
               sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.65rem' : '0.75rem' }}
             />
           )}
         </Box>
-        <Typography 
-          variant={isMobile ? "h5" : "h4"} 
-          fontWeight="bold" 
+        <Typography
+          variant={isMobile ? 'h5' : 'h4'}
+          fontWeight="bold"
           gutterBottom
           sx={{ fontSize: isMobile ? '1.5rem' : '2.125rem' }}
         >
           {loading ? <Skeleton width="60%" /> : value}
         </Typography>
-        <Typography 
-          variant="body2" 
+        <Typography
+          variant="body2"
           color="text.secondary"
-          sx={{ 
+          sx={{
             fontSize: isMobile ? '0.75rem' : '0.875rem',
-            lineHeight: isMobile ? 1.2 : 1.43 
+            lineHeight: isMobile ? 1.2 : 1.43,
           }}
         >
           {title}
@@ -208,11 +223,13 @@ const Dashboard: React.FC = () => {
           </Alert>
         )}
 
-        <Box sx={{ 
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: isMobile ? 1 : 3,
-        }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: isMobile ? 1 : 3,
+          }}
+        >
           <StatCard
             title="Total Applications"
             value={stats.totalLoans}
@@ -220,14 +237,14 @@ const Dashboard: React.FC = () => {
             color="primary"
             trend={12}
           />
-          
+
           <StatCard
             title="Pending Review"
             value={stats.pendingLoans}
             icon={<Schedule sx={{ color: 'warning.main' }} />}
             color="warning"
           />
-          
+
           <StatCard
             title="Approved Loans"
             value={stats.approvedLoans}
@@ -235,7 +252,7 @@ const Dashboard: React.FC = () => {
             color="success"
             trend={8}
           />
-          
+
           <StatCard
             title="Completion Rate"
             value={`${stats.completionRate.toFixed(1)}%`}
@@ -244,92 +261,121 @@ const Dashboard: React.FC = () => {
           />
         </Box>
 
-        <Box sx={{ 
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' },
-          gap: isMobile ? 1 : 3,
-          mt: 1
-        }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' },
+            gap: isMobile ? 1 : 3,
+            mt: 1,
+          }}
+        >
           <Paper sx={{ p: isMobile ? 2 : 3, height: '100%' }}>
-            <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold">
+            <Typography variant={isMobile ? 'subtitle1' : 'h6'} gutterBottom fontWeight="bold">
               Financial Overview
             </Typography>
-            
-            <Box sx={{ 
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: isMobile ? 1 : 2,
-              mt: 1 
-            }}>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: isMobile ? 1 : 2,
+                mt: 1,
+              }}
+            >
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+                >
                   Total Amount
                 </Typography>
-                <Typography variant={isMobile ? "subtitle2" : "h5"} fontWeight="bold" color="primary">
+                <Typography
+                  variant={isMobile ? 'subtitle2' : 'h5'}
+                  fontWeight="bold"
+                  color="primary"
+                >
                   ₱{stats.totalAmount.toLocaleString()}
                 </Typography>
               </Box>
-              
+
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+                >
                   Average Loan
                 </Typography>
-                <Typography variant={isMobile ? "subtitle2" : "h5"} fontWeight="bold">
+                <Typography variant={isMobile ? 'subtitle2' : 'h5'} fontWeight="bold">
                   ₱{stats.averageAmount.toLocaleString()}
                 </Typography>
               </Box>
-              
+
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+                >
                   Monthly Payments
                 </Typography>
-                <Typography variant={isMobile ? "subtitle2" : "h5"} fontWeight="bold" color="success.main">
+                <Typography
+                  variant={isMobile ? 'subtitle2' : 'h5'}
+                  fontWeight="bold"
+                  color="success.main"
+                >
                   ₱{stats.monthlyPayment.toLocaleString()}
                 </Typography>
               </Box>
             </Box>
 
             <Box sx={{ mt: isMobile ? 2 : 4 }}>
-              <Typography variant="caption" color="text.secondary" gutterBottom sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                gutterBottom
+                sx={{ fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+              >
                 Loan Processing Progress
               </Typography>
-              <LinearProgress 
-                variant="determinate" 
-                value={stats.completionRate} 
+              <LinearProgress
+                variant="determinate"
+                value={stats.completionRate}
                 sx={{ height: isMobile ? 6 : 8, borderRadius: 4 }}
               />
             </Box>
           </Paper>
-          
+
           <Paper sx={{ p: isMobile ? 2 : 3, height: '100%' }}>
-            <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold">
+            <Typography variant={isMobile ? 'subtitle1' : 'h6'} gutterBottom fontWeight="bold">
               Quick Actions
             </Typography>
-            
+
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 1.5 : 2, mt: 2 }}>
               <Button
                 variant="contained"
                 fullWidth
                 startIcon={<Assignment />}
-                onClick={() => window.location.href = '/loan'}
-                sx={{ 
+                onClick={() => (window.location.href = '/loan')}
+                sx={{
                   justifyContent: 'flex-start',
                   py: isMobile ? 1 : 1.5,
-                  fontSize: isMobile ? '0.875rem' : '1rem'
+                  fontSize: isMobile ? '0.875rem' : '1rem',
                 }}
               >
                 New Application
               </Button>
-              
+
               <Button
                 variant="outlined"
                 fullWidth
                 startIcon={<Assessment />}
-                onClick={() => window.location.href = '/manage'}
-                sx={{ 
+                onClick={() => (window.location.href = '/manage')}
+                sx={{
                   justifyContent: 'flex-start',
                   py: isMobile ? 1 : 1.5,
-                  fontSize: isMobile ? '0.875rem' : '1rem'
+                  fontSize: isMobile ? '0.875rem' : '1rem',
                 }}
               >
                 View All Loans
@@ -341,20 +387,20 @@ const Dashboard: React.FC = () => {
                 startIcon={<Security />}
                 component={Link}
                 to="/settings/devices"
-                sx={{ 
+                sx={{
                   justifyContent: 'flex-start',
                   py: isMobile ? 1 : 1.5,
-                  fontSize: isMobile ? '0.875rem' : '1rem'
+                  fontSize: isMobile ? '0.875rem' : '1rem',
                 }}
               >
                 Manage Devices
               </Button>
-              
+
               <Chip
                 label="Firebase Sync Active"
                 color="success"
                 variant="outlined"
-                size={isMobile ? "small" : "medium"}
+                size={isMobile ? 'small' : 'medium'}
                 sx={{ mt: isMobile ? 1 : 2, fontSize: isMobile ? '0.7rem' : '0.8125rem' }}
               />
             </Box>
@@ -363,99 +409,137 @@ const Dashboard: React.FC = () => {
 
         <Box sx={{ mt: 1 }}>
           <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Recent Activity
-              </Typography>
-              
-              {loading ? (
-                <Box>
-                  <Skeleton variant="text" width="100%" height={40} />
-                  <Skeleton variant="text" width="100%" height={40} />
-                  <Skeleton variant="text" width="100%" height={40} />
-                </Box>
-              ) : allLoans.length > 0 ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                  {allLoans.slice(0, 5).map((loan) => (
-                    <Box
-                      key={loan.id || (loan as any).referenceNumber || (loan as any).ref}
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        p: 2,
-                        bgcolor: 'grey.50',
-                        borderRadius: 1,
-                        borderLeft: 4,
-                        borderColor: 
-                          loan.status === 'approved' ? 'success.main' :
-                          loan.status === 'rejected' ? 'error.main' : 'warning.main',
-                      }}
-                    >
-                      <Box>
-                        <Typography variant="subtitle2" fontWeight="bold">
-                          {(loan as any).referenceNumber || (loan as any).ref}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {loan.name} • ₱{loan.amount.toLocaleString()}
-                        </Typography>
-                      </Box>
-                      <Chip
-                        label={loan.status}
-                        size="small"
-                        color={
-                          loan.status === 'approved' ? 'success' :
-                          loan.status === 'rejected' ? 'error' : 'warning'
-                        }
-                      />
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Recent Activity
+            </Typography>
+
+            {loading ? (
+              <Box>
+                <Skeleton variant="text" width="100%" height={40} />
+                <Skeleton variant="text" width="100%" height={40} />
+                <Skeleton variant="text" width="100%" height={40} />
+              </Box>
+            ) : allLoans.length > 0 ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                {allLoans.slice(0, 5).map((loan) => (
+                  <Box
+                    key={loan.id || (loan as any).referenceNumber || (loan as any).ref}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      p: 2,
+                      bgcolor: 'grey.50',
+                      borderRadius: 1,
+                      borderLeft: 4,
+                      borderColor:
+                        loan.status === 'approved'
+                          ? 'success.main'
+                          : loan.status === 'rejected'
+                            ? 'error.main'
+                            : 'warning.main',
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight="bold">
+                        {(loan as any).referenceNumber || (loan as any).ref}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {loan.name} • ₱{loan.amount.toLocaleString()}
+                      </Typography>
                     </Box>
-                  ))}
-                </Box>
-              ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                  {[
-                    { ref: 'LN-20250113-0045', name: 'Juan Dela Cruz', amount: 85000, status: 'approved' },
-                    { ref: 'LN-20250113-0044', name: 'Maria Santos', amount: 125000, status: 'pending' },
-                    { ref: 'LN-20250113-0043', name: 'Pedro Reyes', amount: 65000, status: 'approved' },
-                    { ref: 'LN-20250113-0042', name: 'Ana Garcia', amount: 95000, status: 'processing' },
-                    { ref: 'LN-20250113-0041', name: 'Jose Rizal', amount: 150000, status: 'approved' },
-                  ].map((loan) => (
-                    <Box
-                      key={loan.ref}
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        p: 2,
-                        bgcolor: 'grey.50',
-                        borderRadius: 1,
-                        borderLeft: 4,
-                        borderColor: 
-                          loan.status === 'approved' ? 'success.main' :
-                          loan.status === 'rejected' ? 'error.main' : 'warning.main',
-                      }}
-                    >
-                      <Box>
-                        <Typography variant="subtitle2" fontWeight="bold">
-                          {loan.ref}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {loan.name} • ₱{loan.amount.toLocaleString()}
-                        </Typography>
-                      </Box>
-                      <Chip
-                        label={loan.status}
-                        size="small"
-                        color={
-                          loan.status === 'approved' ? 'success' :
-                          loan.status === 'rejected' ? 'error' : 
-                          loan.status === 'processing' ? 'info' : 'warning'
-                        }
-                      />
+                    <Chip
+                      label={loan.status}
+                      size="small"
+                      color={
+                        loan.status === 'approved'
+                          ? 'success'
+                          : loan.status === 'rejected'
+                            ? 'error'
+                            : 'warning'
+                      }
+                    />
+                  </Box>
+                ))}
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                {[
+                  {
+                    ref: 'LN-20250113-0045',
+                    name: 'Juan Dela Cruz',
+                    amount: 85000,
+                    status: 'approved',
+                  },
+                  {
+                    ref: 'LN-20250113-0044',
+                    name: 'Maria Santos',
+                    amount: 125000,
+                    status: 'pending',
+                  },
+                  {
+                    ref: 'LN-20250113-0043',
+                    name: 'Pedro Reyes',
+                    amount: 65000,
+                    status: 'approved',
+                  },
+                  {
+                    ref: 'LN-20250113-0042',
+                    name: 'Ana Garcia',
+                    amount: 95000,
+                    status: 'processing',
+                  },
+                  {
+                    ref: 'LN-20250113-0041',
+                    name: 'Jose Rizal',
+                    amount: 150000,
+                    status: 'approved',
+                  },
+                ].map((loan) => (
+                  <Box
+                    key={loan.ref}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      p: 2,
+                      bgcolor: 'grey.50',
+                      borderRadius: 1,
+                      borderLeft: 4,
+                      borderColor:
+                        loan.status === 'approved'
+                          ? 'success.main'
+                          : loan.status === 'rejected'
+                            ? 'error.main'
+                            : 'warning.main',
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight="bold">
+                        {loan.ref}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {loan.name} • ₱{loan.amount.toLocaleString()}
+                      </Typography>
                     </Box>
-                  ))}
-                </Box>
-              )}
-            </Paper>
+                    <Chip
+                      label={loan.status}
+                      size="small"
+                      color={
+                        loan.status === 'approved'
+                          ? 'success'
+                          : loan.status === 'rejected'
+                            ? 'error'
+                            : loan.status === 'processing'
+                              ? 'info'
+                              : 'warning'
+                      }
+                    />
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Paper>
         </Box>
       </Box>
     </ResponsiveLayout>

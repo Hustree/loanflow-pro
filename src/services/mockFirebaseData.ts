@@ -28,7 +28,7 @@ export const generateMockLoans = (count: number = 15): Loan[] => {
     const randomTerm = [6, 12, 24, 36, 48][Math.floor(Math.random() * 5)];
     const randomDays = Math.floor(Math.random() * 30);
     const createdDate = new Date(now - randomDays * 24 * 60 * 60 * 1000);
-    
+
     loans.push({
       id: `loan-${i + 1}`,
       referenceNumber: `LN-${createdDate.getFullYear()}${String(createdDate.getMonth() + 1).padStart(2, '0')}${String(createdDate.getDate()).padStart(2, '0')}-${String(i + 1).padStart(4, '0')}`,
@@ -41,21 +41,26 @@ export const generateMockLoans = (count: number = 15): Loan[] => {
       disbursementMode: Math.random() > 0.5 ? 'bank_transfer' : 'cash_pickup',
       status: randomStatus,
       submittedAt: createdDate.toISOString(),
-      notes: randomStatus === 'approved' ? 
-        `Approved by Manager. Disbursement scheduled for ${new Date(now + 3 * 24 * 60 * 60 * 1000).toLocaleDateString()}.` :
-        randomStatus === 'rejected' ? 
-        'Insufficient income to loan ratio. Please reapply with co-maker.' :
-        randomStatus === 'processing' ?
-        'Documents under review. Additional requirements may be requested.' :
-        'Application received and queued for review.',
+      notes:
+        randomStatus === 'approved'
+          ? `Approved by Manager. Disbursement scheduled for ${new Date(now + 3 * 24 * 60 * 60 * 1000).toLocaleDateString()}.`
+          : randomStatus === 'rejected'
+            ? 'Insufficient income to loan ratio. Please reapply with co-maker.'
+            : randomStatus === 'processing'
+              ? 'Documents under review. Additional requirements may be requested.'
+              : 'Application received and queued for review.',
       uploadedFileName: Math.random() > 0.3 ? `document_${i + 1}.pdf` : undefined,
       createdAt: Timestamp.fromDate(createdDate),
-      updatedAt: Timestamp.fromDate(new Date(createdDate.getTime() + Math.random() * 24 * 60 * 60 * 1000)),
+      updatedAt: Timestamp.fromDate(
+        new Date(createdDate.getTime() + Math.random() * 24 * 60 * 60 * 1000),
+      ),
       userId: 'mock-user-001',
     });
   }
 
-  return loans.sort((a, b) => new Date(b.submittedAt!).getTime() - new Date(a.submittedAt!).getTime());
+  return loans.sort(
+    (a, b) => new Date(b.submittedAt!).getTime() - new Date(a.submittedAt!).getTime(),
+  );
 };
 
 export const mockUserProfile = {
@@ -146,11 +151,12 @@ export const mockDashboardMetrics = {
 
 export const mockLoanCalculator = (amount: number, term: number, interestRate: number = 0.015) => {
   const monthlyRate = interestRate;
-  const monthlyPayment = (amount * monthlyRate * Math.pow(1 + monthlyRate, term)) / 
-                        (Math.pow(1 + monthlyRate, term) - 1);
+  const monthlyPayment =
+    (amount * monthlyRate * Math.pow(1 + monthlyRate, term)) /
+    (Math.pow(1 + monthlyRate, term) - 1);
   const totalPayment = monthlyPayment * term;
   const totalInterest = totalPayment - amount;
-  
+
   return {
     principal: amount,
     term,
@@ -185,18 +191,18 @@ export class MockRealtimeSimulator {
 
   subscribe(callback: (loan: Loan) => void) {
     this.callbacks.push(callback);
-    
+
     if (!this.interval) {
       this.interval = setInterval(() => {
         const mockLoans = generateMockLoans(1);
         if (mockLoans[0] && Math.random() > 0.7) {
-          this.callbacks.forEach(cb => cb(mockLoans[0]));
+          this.callbacks.forEach((cb) => cb(mockLoans[0]));
         }
       }, 10000); // Simulate update every 10 seconds
     }
-    
+
     return () => {
-      this.callbacks = this.callbacks.filter(cb => cb !== callback);
+      this.callbacks = this.callbacks.filter((cb) => cb !== callback);
       if (this.callbacks.length === 0 && this.interval) {
         clearInterval(this.interval);
         this.interval = null;

@@ -13,7 +13,7 @@ export const AndroidBiometricDemo: React.FC = () => {
   useEffect(() => {
     const checkDevice = async () => {
       setLoading(true);
-      
+
       try {
         // Check if it's an Android device
         const isAndroid = androidBiometricService.isAndroidDevice();
@@ -60,7 +60,7 @@ export const AndroidBiometricDemo: React.FC = () => {
       fallbackMethods: ['PIN', 'PATTERN', 'PASSWORD'],
       hardwareBacked: true,
     };
-    
+
     setDeviceInfo(mockAndroidInfo);
     setIsAndroidDevice(true);
   };
@@ -92,27 +92,43 @@ export const AndroidBiometricDemo: React.FC = () => {
         <h2 className="text-xl font-semibold mb-4 flex items-center">
           📱 Device Detection Results
         </h2>
-        
+
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <h3 className="font-medium mb-2">Basic Device Info</h3>
             <div className="bg-gray-50 p-3 rounded text-sm space-y-1">
-              <p><strong>Device Type:</strong> {deviceInfo?.deviceType || 'Unknown'}</p>
-              <p><strong>Browser:</strong> {deviceInfo?.browser || 'Unknown'}</p>
-              <p><strong>OS:</strong> {deviceInfo?.os || 'Unknown'}</p>
-              <p><strong>Device Name:</strong> {deviceInfo?.deviceName || 'Unknown'}</p>
+              <p>
+                <strong>Device Type:</strong> {deviceInfo?.deviceType || 'Unknown'}
+              </p>
+              <p>
+                <strong>Browser:</strong> {deviceInfo?.browser || 'Unknown'}
+              </p>
+              <p>
+                <strong>OS:</strong> {deviceInfo?.os || 'Unknown'}
+              </p>
+              <p>
+                <strong>Device Name:</strong> {deviceInfo?.deviceName || 'Unknown'}
+              </p>
             </div>
           </div>
 
           <div>
             <h3 className="font-medium mb-2">Android Detection</h3>
             <div className="bg-gray-50 p-3 rounded text-sm space-y-1">
-              <p><strong>Is Android:</strong> {isAndroidDevice ? '✅ Yes' : '❌ No'}</p>
+              <p>
+                <strong>Is Android:</strong> {isAndroidDevice ? '✅ Yes' : '❌ No'}
+              </p>
               {isAndroidDevice && (
                 <>
-                  <p><strong>Android Version:</strong> {deviceInfo?.androidVersion || 'Unknown'}</p>
-                  <p><strong>API Level:</strong> {deviceInfo?.apiLevel || 'Unknown'}</p>
-                  <p><strong>Security Level:</strong> {deviceInfo?.securityLevel || 'Unknown'}</p>
+                  <p>
+                    <strong>Android Version:</strong> {deviceInfo?.androidVersion || 'Unknown'}
+                  </p>
+                  <p>
+                    <strong>API Level:</strong> {deviceInfo?.apiLevel || 'Unknown'}
+                  </p>
+                  <p>
+                    <strong>Security Level:</strong> {deviceInfo?.securityLevel || 'Unknown'}
+                  </p>
                 </>
               )}
             </div>
@@ -127,29 +143,57 @@ export const AndroidBiometricDemo: React.FC = () => {
                 <div className="text-center">
                   <div className="text-2xl mb-1">👆</div>
                   <div className="font-medium">Fingerprint</div>
-                  <div className={deviceInfo.biometricCapabilities.fingerprint ? 'text-green-600' : 'text-gray-400'}>
-                    {deviceInfo.biometricCapabilities.fingerprint ? '✓ Available' : '✗ Not Available'}
+                  <div
+                    className={
+                      deviceInfo.biometricCapabilities.fingerprint
+                        ? 'text-green-600'
+                        : 'text-gray-400'
+                    }
+                  >
+                    {deviceInfo.biometricCapabilities.fingerprint
+                      ? '✓ Available'
+                      : '✗ Not Available'}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-1">😊</div>
                   <div className="font-medium">Face Unlock</div>
-                  <div className={deviceInfo.biometricCapabilities.faceUnlock ? 'text-green-600' : 'text-gray-400'}>
-                    {deviceInfo.biometricCapabilities.faceUnlock ? '✓ Available' : '✗ Not Available'}
+                  <div
+                    className={
+                      deviceInfo.biometricCapabilities.faceUnlock
+                        ? 'text-green-600'
+                        : 'text-gray-400'
+                    }
+                  >
+                    {deviceInfo.biometricCapabilities.faceUnlock
+                      ? '✓ Available'
+                      : '✗ Not Available'}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-1">👁️</div>
                   <div className="font-medium">Iris Scan</div>
-                  <div className={deviceInfo.biometricCapabilities.iris ? 'text-green-600' : 'text-gray-400'}>
+                  <div
+                    className={
+                      deviceInfo.biometricCapabilities.iris ? 'text-green-600' : 'text-gray-400'
+                    }
+                  >
                     {deviceInfo.biometricCapabilities.iris ? '✓ Available' : '✗ Not Available'}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-1">🔒</div>
                   <div className="font-medium">Strong Auth</div>
-                  <div className={deviceInfo.biometricCapabilities.strongBiometrics ? 'text-green-600' : 'text-gray-400'}>
-                    {deviceInfo.biometricCapabilities.strongBiometrics ? '✓ Available' : '✗ Not Available'}
+                  <div
+                    className={
+                      deviceInfo.biometricCapabilities.strongBiometrics
+                        ? 'text-green-600'
+                        : 'text-gray-400'
+                    }
+                  >
+                    {deviceInfo.biometricCapabilities.strongBiometrics
+                      ? '✓ Available'
+                      : '✗ Not Available'}
                   </div>
                 </div>
               </div>
@@ -161,7 +205,8 @@ export const AndroidBiometricDemo: React.FC = () => {
           <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
             <h3 className="font-medium text-yellow-800 mb-2">Non-Android Device Detected</h3>
             <p className="text-yellow-700 mb-3">
-              This demo is designed to show Android biometric detection. You're currently on a {deviceInfo?.os || 'non-Android'} device.
+              This demo is designed to show Android biometric detection. You're currently on a{' '}
+              {deviceInfo?.os || 'non-Android'} device.
             </p>
             <button
               onClick={simulateAndroidDevice}
@@ -201,7 +246,7 @@ export const AndroidBiometricDemo: React.FC = () => {
               <li>Detects hardware-backed security features</li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="font-medium mb-1">🔄 Integration Points</h3>
             <ul className="list-disc pl-5 space-y-1 text-gray-700">

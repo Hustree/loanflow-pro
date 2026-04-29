@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<Props, State> {
       error,
       errorInfo,
     });
-    
+
     // Log to Firebase Analytics or error tracking service
     if (process.env.NODE_ENV === 'production') {
       // firebaseService.logEvent('error_boundary_catch', {
@@ -78,15 +78,15 @@ class ErrorBoundary extends Component<Props, State> {
                   mb: 2,
                 }}
               />
-              
+
               <Typography variant="h5" gutterBottom color="error">
                 Oops! Something went wrong
               </Typography>
-              
+
               <Typography variant="body1" color="text.secondary" paragraph>
                 We're sorry for the inconvenience. The application encountered an unexpected error.
               </Typography>
-              
+
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <Box
                   sx={{
@@ -97,13 +97,17 @@ class ErrorBoundary extends Component<Props, State> {
                     textAlign: 'left',
                   }}
                 >
-                  <Typography variant="caption" component="pre" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                  <Typography
+                    variant="caption"
+                    component="pre"
+                    sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                  >
                     {this.state.error.toString()}
                     {this.state.errorInfo && this.state.errorInfo.componentStack}
                   </Typography>
                 </Box>
               )}
-              
+
               <Button
                 variant="contained"
                 color="primary"

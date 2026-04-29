@@ -55,7 +55,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           Upload File
         </Button>
       </label>
-      
+
       {selectedFile && (
         <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="body2" color="text.secondary">
@@ -66,9 +66,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </IconButton>
         </Box>
       )}
-      
+
       {helperText && (
-        <Typography variant="caption" color={error ? 'error' : 'text.secondary'} sx={{ mt: 0.5, display: 'block' }}>
+        <Typography
+          variant="caption"
+          color={error ? 'error' : 'text.secondary'}
+          sx={{ mt: 0.5, display: 'block' }}
+        >
           {helperText}
         </Typography>
       )}

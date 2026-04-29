@@ -43,8 +43,8 @@ import {
 } from '@mui/icons-material';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  loadUserPasskeys, 
+import {
+  loadUserPasskeys,
   removePasskey,
   checkPasskeySupport,
 } from '../../store/slices/passkeySlice';
@@ -62,12 +62,8 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
   const [selectedDevice, setSelectedDevice] = useState<any>(null);
   const [showAddDevice, setShowAddDevice] = useState(false);
   const [loading, setLoading] = useState(true);
-  
-  const { 
-    devices, 
-    isSupported,
-    error,
-  } = useSelector((state: RootState) => state.passkey);
+
+  const { devices, isSupported, error } = useSelector((state: RootState) => state.passkey);
 
   useEffect(() => {
     loadDevices();
@@ -96,7 +92,7 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
     if (os?.toLowerCase().includes('windows')) {
       return <Window />;
     }
-    
+
     // Device type icons
     switch (type) {
       case 'mobile':
@@ -134,13 +130,15 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
 
   const handleDeleteConfirm = async () => {
     if (!selectedDevice) return;
-    
+
     try {
-      await dispatch(removePasskey({ 
-        passkeyId: selectedDevice.id, 
-        email: userEmail 
-      })).unwrap();
-      
+      await dispatch(
+        removePasskey({
+          passkeyId: selectedDevice.id,
+          email: userEmail,
+        }),
+      ).unwrap();
+
       setDeleteDialogOpen(false);
       setSelectedDevice(null);
     } catch (err) {
@@ -155,15 +153,21 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
 
   const isCurrentDevice = (device: any) => {
     const ua = navigator.userAgent;
-    const currentBrowser = 
-      ua.includes('Chrome') ? 'Chrome' :
-      ua.includes('Safari') && !ua.includes('Chrome') ? 'Safari' :
-      ua.includes('Firefox') ? 'Firefox' :
-      ua.includes('Edge') ? 'Edge' : 'Unknown';
-    
+    const currentBrowser = ua.includes('Chrome')
+      ? 'Chrome'
+      : ua.includes('Safari') && !ua.includes('Chrome')
+        ? 'Safari'
+        : ua.includes('Firefox')
+          ? 'Firefox'
+          : ua.includes('Edge')
+            ? 'Edge'
+            : 'Unknown';
+
     // Simple check - can be improved
-    return device.browser === currentBrowser && 
-           new Date(device.lastUsed).toDateString() === new Date().toDateString();
+    return (
+      device.browser === currentBrowser &&
+      new Date(device.lastUsed).toDateString() === new Date().toDateString()
+    );
   };
 
   if (loading) {
@@ -222,8 +226,8 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
                 <ListItem sx={{ py: 2 }}>
                   <ListItemIcon>
                     <Badge
-                      badgeContent={isCurrentDevice(device) ? 
-                        <CheckCircle sx={{ fontSize: 12 }} /> : null
+                      badgeContent={
+                        isCurrentDevice(device) ? <CheckCircle sx={{ fontSize: 12 }} /> : null
                       }
                       color="success"
                       overlap="circular"
@@ -231,17 +235,15 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
                       {getDeviceIcon(device.type, device.os)}
                     </Badge>
                   </ListItemIcon>
-                  
+
                   <ListItemText
                     primary={
                       <Stack direction="row" spacing={1} alignItems="center">
-                        <Typography variant="subtitle1">
-                          {device.name}
-                        </Typography>
+                        <Typography variant="subtitle1">{device.name}</Typography>
                         {isCurrentDevice(device) && (
-                          <Chip 
-                            label="This device" 
-                            size="small" 
+                          <Chip
+                            label="This device"
+                            size="small"
                             color="success"
                             variant="outlined"
                           />
@@ -259,17 +261,20 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
                             Added {format(new Date(device.createdAt), 'MMM d, yyyy')}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            Last used {formatDistanceToNow(new Date(device.lastUsed), { addSuffix: true })}
+                            Last used{' '}
+                            {formatDistanceToNow(new Date(device.lastUsed), { addSuffix: true })}
                           </Typography>
                         </Stack>
                       </Stack>
                     }
                   />
-                  
+
                   <ListItemSecondaryAction>
-                    <Tooltip title={isCurrentDevice(device) ? 
-                      "Cannot remove current device" : "Remove device"
-                    }>
+                    <Tooltip
+                      title={
+                        isCurrentDevice(device) ? 'Cannot remove current device' : 'Remove device'
+                      }
+                    >
                       <span>
                         <IconButton
                           edge="end"
@@ -299,7 +304,7 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
           >
             Add {devices.length > 0 ? 'Another' : 'a'} Device
           </Button>
-          
+
           {!isSupported && (
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
               Your current device doesn't support passkeys
@@ -316,19 +321,19 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
             </Typography>
             <List dense>
               <ListItem disableGutters>
-                <ListItemText 
+                <ListItemText
                   primary="• Remove devices you no longer use or recognize"
                   primaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText 
+                <ListItemText
                   primary="• Each device uses unique encryption keys for maximum security"
                   primaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText 
+                <ListItemText
                   primary="• Your biometric data never leaves your device"
                   primaryTypographyProps={{ variant: 'body2' }}
                 />
@@ -339,14 +344,11 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
       </Stack>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-      >
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Remove Device?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to remove "{selectedDevice?.name}" from your trusted devices? 
+            Are you sure you want to remove "{selectedDevice?.name}" from your trusted devices?
             You'll need to register it again to use passkey authentication on this device.
           </DialogContentText>
           {selectedDevice && (
@@ -355,20 +357,15 @@ export const DeviceManagement: React.FC<Props> = ({ userEmail, userName }) => {
                 Device: {selectedDevice.browser} on {selectedDevice.os}
               </Typography>
               <Typography variant="caption">
-                Last used: {formatDistanceToNow(new Date(selectedDevice.lastUsed), { addSuffix: true })}
+                Last used:{' '}
+                {formatDistanceToNow(new Date(selectedDevice.lastUsed), { addSuffix: true })}
               </Typography>
             </Alert>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleDeleteConfirm} 
-            color="error"
-            variant="contained"
-          >
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
             Remove Device
           </Button>
         </DialogActions>

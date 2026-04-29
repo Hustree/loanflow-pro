@@ -25,7 +25,15 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
     loadDeviceInfo();
   }, []);
 
-  const simulateDevice = (deviceType: 'iphone-face-id' | 'iphone-touch-id' | 'android-pixel' | 'android-galaxy' | 'ipad-face-id' | 'macbook-touch-id') => {
+  const simulateDevice = (
+    deviceType:
+      | 'iphone-face-id'
+      | 'iphone-touch-id'
+      | 'android-pixel'
+      | 'android-galaxy'
+      | 'ipad-face-id'
+      | 'macbook-touch-id',
+  ) => {
     let mockInfo: DeviceBiometricInfo;
 
     switch (deviceType) {
@@ -48,7 +56,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                 enrolled: true,
                 hardwareBacked: true,
                 securityLevel: 'strong',
-              }
+              },
             ],
             primaryMethod: 'face-id',
             fallbackMethods: ['device-passcode'],
@@ -81,7 +89,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                 enrolled: true,
                 hardwareBacked: true,
                 securityLevel: 'strong',
-              }
+              },
             ],
             primaryMethod: 'touch-id',
             fallbackMethods: ['device-passcode'],
@@ -122,7 +130,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                 enrolled: true,
                 hardwareBacked: false,
                 securityLevel: 'weak',
-              }
+              },
             ],
             primaryMethod: 'fingerprint',
             fallbackMethods: ['pin', 'pattern', 'password'],
@@ -163,7 +171,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                 enrolled: true,
                 hardwareBacked: true,
                 securityLevel: 'strong',
-              }
+              },
             ],
             primaryMethod: 'fingerprint',
             fallbackMethods: ['pin', 'pattern', 'password'],
@@ -195,7 +203,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                 enrolled: true,
                 hardwareBacked: true,
                 securityLevel: 'strong',
-              }
+              },
             ],
             primaryMethod: 'face-id',
             fallbackMethods: ['device-passcode'],
@@ -227,7 +235,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                 enrolled: true,
                 hardwareBacked: true,
                 securityLevel: 'strong',
-              }
+              },
             ],
             primaryMethod: 'touch-id',
             fallbackMethods: ['system-password'],
@@ -261,7 +269,9 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
   }
 
   const currentDevice = deviceInfo;
-  const primaryBiometric = currentDevice?.biometrics.methods.find(m => m.type === currentDevice.biometrics.primaryMethod);
+  const primaryBiometric = currentDevice?.biometrics.methods.find(
+    (m) => m.type === currentDevice.biometrics.primaryMethod,
+  );
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
@@ -281,17 +291,27 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4 flex items-center">
           🔍 <span className="ml-2">Current Device Detection</span>
         </h2>
-        
+
         {currentDevice && (
           <div className="grid md:grid-cols-3 gap-6">
             <div className="space-y-3">
               <h3 className="font-semibold text-lg">Device Information</h3>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
-                <p><strong>Model:</strong> {currentDevice.deviceModel || 'Unknown'}</p>
-                <p><strong>Family:</strong> {currentDevice.deviceFamily || 'Unknown'}</p>
-                <p><strong>Platform:</strong> {currentDevice.platform}</p>
-                <p><strong>Type:</strong> {currentDevice.deviceType}</p>
-                <p><strong>Browser:</strong> {currentDevice.browser}</p>
+                <p>
+                  <strong>Model:</strong> {currentDevice.deviceModel || 'Unknown'}
+                </p>
+                <p>
+                  <strong>Family:</strong> {currentDevice.deviceFamily || 'Unknown'}
+                </p>
+                <p>
+                  <strong>Platform:</strong> {currentDevice.platform}
+                </p>
+                <p>
+                  <strong>Type:</strong> {currentDevice.deviceType}
+                </p>
+                <p>
+                  <strong>Browser:</strong> {currentDevice.browser}
+                </p>
               </div>
             </div>
 
@@ -307,14 +327,16 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
                         <div className="text-xs text-gray-600">{method.securityLevel} security</div>
                       </div>
                     </div>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      method.supported ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        method.supported ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}
+                    >
                       {method.supported ? 'Available' : 'Not Available'}
                     </span>
                   </div>
                 ))}
-                
+
                 {primaryBiometric && (
                   <div className="mt-3 p-2 bg-blue-100 rounded text-sm">
                     <strong>Primary Method:</strong> {primaryBiometric.name}
@@ -326,11 +348,22 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
             <div className="space-y-3">
               <h3 className="font-semibold text-lg">WebAuthn Support</h3>
               <div className="bg-green-50 p-4 rounded-lg space-y-2 text-sm">
-                <p><strong>WebAuthn:</strong> {currentDevice.webauthn.supported ? '✅ Yes' : '❌ No'}</p>
-                <p><strong>Platform Auth:</strong> {currentDevice.webauthn.platformAuthenticator ? '✅ Yes' : '❌ No'}</p>
-                <p><strong>User Verification:</strong> {currentDevice.webauthn.userVerifyingPlatformAuthenticator ? '✅ Yes' : '❌ No'}</p>
+                <p>
+                  <strong>WebAuthn:</strong> {currentDevice.webauthn.supported ? '✅ Yes' : '❌ No'}
+                </p>
+                <p>
+                  <strong>Platform Auth:</strong>{' '}
+                  {currentDevice.webauthn.platformAuthenticator ? '✅ Yes' : '❌ No'}
+                </p>
+                <p>
+                  <strong>User Verification:</strong>{' '}
+                  {currentDevice.webauthn.userVerifyingPlatformAuthenticator ? '✅ Yes' : '❌ No'}
+                </p>
                 {currentDevice.webauthn.autofillSupported !== undefined && (
-                  <p><strong>Autofill:</strong> {currentDevice.webauthn.autofillSupported ? '✅ Yes' : '❌ No'}</p>
+                  <p>
+                    <strong>Autofill:</strong>{' '}
+                    {currentDevice.webauthn.autofillSupported ? '✅ Yes' : '❌ No'}
+                  </p>
                 )}
               </div>
             </div>
@@ -342,7 +375,7 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
       <div className="bg-gray-50 border rounded-xl p-6">
         <h2 className="text-2xl font-semibold mb-4">🧪 Test Different Devices</h2>
         <p className="text-gray-600 mb-4">Click any device below to see how the labels change</p>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           <button
             onClick={() => simulateDevice('iphone-face-id')}
@@ -447,13 +480,26 @@ export const DeviceSpecificBiometricDemo: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4 text-blue-900">✨ Key Features</h2>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <h3 className="font-semibold text-lg text-blue-800 mb-3">📱 Device-Specific Detection</h3>
+            <h3 className="font-semibold text-lg text-blue-800 mb-3">
+              📱 Device-Specific Detection
+            </h3>
             <ul className="space-y-2 text-blue-700">
-              <li>• <strong>iPhone X+:</strong> Shows "Face ID" with face emoji 🆔</li>
-              <li>• <strong>iPhone 5s-8:</strong> Shows "Touch ID" with finger emoji 👆</li>
-              <li>• <strong>Android:</strong> Shows "Fingerprint Scanner" or device-specific names</li>
-              <li>• <strong>Samsung:</strong> Shows "Face Recognition" instead of generic "Face Unlock"</li>
-              <li>• <strong>macOS:</strong> Shows "Touch ID" for MacBook Pro</li>
+              <li>
+                • <strong>iPhone X+:</strong> Shows "Face ID" with face emoji 🆔
+              </li>
+              <li>
+                • <strong>iPhone 5s-8:</strong> Shows "Touch ID" with finger emoji 👆
+              </li>
+              <li>
+                • <strong>Android:</strong> Shows "Fingerprint Scanner" or device-specific names
+              </li>
+              <li>
+                • <strong>Samsung:</strong> Shows "Face Recognition" instead of generic "Face
+                Unlock"
+              </li>
+              <li>
+                • <strong>macOS:</strong> Shows "Touch ID" for MacBook Pro
+              </li>
             </ul>
           </div>
           <div>

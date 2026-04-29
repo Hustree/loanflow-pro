@@ -1,31 +1,37 @@
 # Redux Demo Script for Loan Management System
 
 ## 🎯 Overview
+
 This demo showcases Redux implementation in our Loan Management System with full CRUD operations for Loans, Members, and Loan Products.
 
 ## 🚀 Quick Start
 
 1. **Start the application:**
+
 ```bash
 npm start
 ```
 
 2. **Navigate to Redux Demo:**
+
 - Login first (any email/password works in demo mode)
 - Navigate to: http://localhost:3000/redux-demo
 
 3. **Install Redux DevTools:**
+
 - Chrome: https://chrome.google.com/webstore/detail/redux-devtools
 - Firefox: https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/
 
 ## 📊 Redux Pattern Advantages
 
 ### 1. **Predictable State Management**
+
 - Single source of truth (one store)
 - State is read-only (immutable)
 - Changes made with pure functions (reducers)
 
 ### 2. **Centralized State Logic**
+
 ```javascript
 // All state logic in one place
 const loanSlice = createSlice({
@@ -37,21 +43,23 @@ const loanSlice = createSlice({
     },
     updateLoanStatus: (state, action) => {
       // Centralized status update logic
-    }
-  }
-})
+    },
+  },
+});
 ```
 
 ### 3. **Time-Travel Debugging**
+
 - Undo/Redo any action
 - Inspect state at any point in time
 - Export/Import state for debugging
 
 ### 4. **Component Decoupling**
+
 ```javascript
 // Any component can access state
-const loans = useAppSelector(state => state.loan.loans)
-const dispatch = useAppDispatch()
+const loans = useAppSelector((state) => state.loan.loans);
+const dispatch = useAppDispatch();
 
 // No prop drilling needed!
 ```
@@ -59,6 +67,7 @@ const dispatch = useAppDispatch()
 ## 🏗️ Architecture
 
 ### Store Structure
+
 ```
 store/
 ├── store.ts          # Redux store configuration
@@ -69,6 +78,7 @@ store/
 ```
 
 ### State Shape
+
 ```typescript
 {
   loan: {
@@ -154,26 +164,31 @@ store/
 ## 🔍 Redux DevTools Features
 
 ### 1. **Action Inspector**
+
 - See every action dispatched
 - View action payload
 - Track timing
 
 ### 2. **State Tree**
+
 - Inspect current state
 - Drill down into nested data
 - Compare state changes
 
 ### 3. **Diff View**
+
 - See what changed
 - Before/After comparison
 - Identify mutations
 
 ### 4. **Time Travel**
+
 - Slider to move through actions
 - Jump to any point in history
 - Export/Import sessions
 
 ### 5. **Action Replay**
+
 - Record user sessions
 - Replay bug scenarios
 - Share debugging sessions
@@ -181,23 +196,27 @@ store/
 ## 🎬 Live Demo Flow
 
 ### Part 1: Setup (1 min)
+
 1. Open app and Redux DevTools
 2. Navigate to /redux-demo
 3. Show empty state in DevTools
 
 ### Part 2: Loan Operations (3 min)
+
 1. Create 3 different loans
 2. Show each action in DevTools
 3. Update statuses (approve/reject)
 4. Demonstrate time-travel to undo
 
 ### Part 3: Complex State (2 min)
+
 1. Add members
 2. Create products
 3. Show entire state tree
 4. Demonstrate state persistence
 
 ### Part 4: Benefits Discussion (2 min)
+
 1. No prop drilling example
 2. Centralized business logic
 3. Easy testing capabilities
@@ -214,6 +233,7 @@ store/
 5. **Testing**: Pure functions are easy to test
 
 ### Redux Toolkit Benefits
+
 - Less boilerplate code
 - Built-in DevTools support
 - Immer for immutable updates
@@ -222,6 +242,7 @@ store/
 ## 🛠️ Technical Implementation
 
 ### Slice Example
+
 ```typescript
 export const loanSlice = createSlice({
   name: 'loan',
@@ -233,28 +254,29 @@ export const loanSlice = createSlice({
         id: crypto.randomUUID(),
         ref: generateReferenceNumber(),
         status: 'pending',
-        submissionDate: new Date()
-      }
-      state.loans.push(newLoan) // Immer handles immutability
-    }
-  }
-})
+        submissionDate: new Date(),
+      };
+      state.loans.push(newLoan); // Immer handles immutability
+    },
+  },
+});
 ```
 
 ### Component Usage
+
 ```typescript
 function LoanList() {
   const loans = useAppSelector(state => state.loan.loans)
   const dispatch = useAppDispatch()
-  
+
   const handleApprove = (id: string) => {
-    dispatch(updateLoanStatus({ 
-      id, 
+    dispatch(updateLoanStatus({
+      id,
       status: 'approved',
       notes: 'Approved by admin'
     }))
   }
-  
+
   return (
     // Render loans
   )
@@ -275,10 +297,12 @@ function LoanList() {
 - Our Implementation: `/src/store/`
 
 ## 📹 Video Reference
+
 Similar to the Pizza Shop demo: https://www.youtube.com/watch?v=_shA5Xwe8_4
 But adapted for Loan Management System with:
+
 - Loan applications instead of pizza orders
-- Members instead of customers  
+- Members instead of customers
 - Loan products instead of pizza types
 - Approval workflow instead of delivery tracking
 

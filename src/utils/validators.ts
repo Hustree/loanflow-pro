@@ -99,17 +99,17 @@ export interface LoanEligibilityResult {
 export const validateLoanEligibility = (
   monthlyIncome: number,
   loanAmount: number,
-  term: number
+  term: number,
 ): LoanEligibilityResult => {
   const monthlyPayment = (loanAmount * 0.015 * Math.pow(1.015, term)) / (Math.pow(1.015, term) - 1);
   const debtToIncomeRatio = monthlyPayment / monthlyIncome;
   const maxLoanAmount = monthlyIncome * 10; // 10x monthly income max
-  
+
   const isEligible = debtToIncomeRatio <= 0.4 && loanAmount <= maxLoanAmount;
-  
+
   let reason = '';
   let recommendation = '';
-  
+
   if (!isEligible) {
     if (debtToIncomeRatio > 0.4) {
       reason = 'Debt-to-income ratio exceeds 40%';
@@ -119,7 +119,7 @@ export const validateLoanEligibility = (
       recommendation = `Maximum eligible amount: ₱${maxLoanAmount.toLocaleString()}`;
     }
   }
-  
+
   return {
     isEligible,
     maxLoanAmount,

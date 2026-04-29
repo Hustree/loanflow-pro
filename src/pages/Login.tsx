@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Alert,
-  Divider,
-  Stack,
-} from '@mui/material';
+import { Container, Box, Paper, Typography, Button, Alert, Divider, Stack } from '@mui/material';
 import { AccountCircle, Lock, Fingerprint } from '@mui/icons-material';
 import TextInput from '../components/inputs/TextInput';
 import { validateLoginForm } from '../utils/validators';
@@ -36,7 +27,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     const validationErrors = validateLoginForm(formData.username, formData.password);
     if (Object.keys(validationErrors).length > 0) {
@@ -52,7 +43,7 @@ const Login: React.FC = () => {
       // Store auth state in sessionStorage
       sessionStorage.setItem('isAuthenticated', 'true');
       sessionStorage.setItem('username', formData.username);
-      
+
       // Navigate to loan page
       navigate('/loan');
     } else {
@@ -132,7 +123,12 @@ const Login: React.FC = () => {
               Sign In with Passkey
             </Button>
 
-            <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block' }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              align="center"
+              sx={{ display: 'block' }}
+            >
               Legacy credentials: psslaimember / 1234
             </Typography>
           </Box>

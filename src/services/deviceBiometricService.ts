@@ -6,27 +6,29 @@ export const DeviceBiometricInfoSchema = z.object({
   platform: z.enum(['iOS', 'Android', 'macOS', 'Windows', 'Linux', 'Unknown']),
   browser: z.string(),
   deviceName: z.string(),
-  
+
   // Specific device identification
   deviceModel: z.string().optional(),
   deviceFamily: z.string().optional(), // iPhone, iPad, Galaxy, Pixel, etc.
-  
+
   // Platform-specific biometric info
   biometrics: z.object({
     available: z.boolean(),
-    methods: z.array(z.object({
-      type: z.string(), // 'face-id', 'touch-id', 'fingerprint', 'face-unlock', 'iris', 'voice'
-      name: z.string(), // 'Face ID', 'Touch ID', 'Fingerprint Scanner', etc.
-      icon: z.string(), // Emoji or icon identifier
-      supported: z.boolean(),
-      enrolled: z.boolean().optional(),
-      hardwareBacked: z.boolean().optional(),
-      securityLevel: z.enum(['convenience', 'weak', 'strong']).optional(),
-    })),
+    methods: z.array(
+      z.object({
+        type: z.string(), // 'face-id', 'touch-id', 'fingerprint', 'face-unlock', 'iris', 'voice'
+        name: z.string(), // 'Face ID', 'Touch ID', 'Fingerprint Scanner', etc.
+        icon: z.string(), // Emoji or icon identifier
+        supported: z.boolean(),
+        enrolled: z.boolean().optional(),
+        hardwareBacked: z.boolean().optional(),
+        securityLevel: z.enum(['convenience', 'weak', 'strong']).optional(),
+      }),
+    ),
     primaryMethod: z.string().optional(), // The main biometric method for this device
     fallbackMethods: z.array(z.string()).optional(),
   }),
-  
+
   // WebAuthn support info
   webauthn: z.object({
     supported: z.boolean(),
@@ -50,9 +52,9 @@ interface BiometricMethod {
 
 export class DeviceBiometricService {
   private static instance: DeviceBiometricService;
-  
+
   private constructor() {}
-  
+
   public static getInstance(): DeviceBiometricService {
     if (!DeviceBiometricService.instance) {
       DeviceBiometricService.instance = new DeviceBiometricService();
@@ -72,7 +74,7 @@ export class DeviceBiometricService {
 
     // Get biometric capabilities based on platform
     const biometrics = await this.detectBiometricCapabilities(platform, deviceModel, ua);
-    
+
     // Get WebAuthn support info
     const webauthn = await this.checkWebAuthnSupport();
 
@@ -90,7 +92,9 @@ export class DeviceBiometricService {
     return DeviceBiometricInfoSchema.parse(deviceInfo);
   }
 
-  private detectPlatform(ua: string): 'iOS' | 'Android' | 'macOS' | 'Windows' | 'Linux' | 'Unknown' {
+  private detectPlatform(
+    ua: string,
+  ): 'iOS' | 'Android' | 'macOS' | 'Windows' | 'Linux' | 'Unknown' {
     if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
     if (/Android/i.test(ua)) return 'Android';
     if (/Mac OS X|Macintosh/i.test(ua)) return 'macOS';
@@ -132,28 +136,28 @@ export class DeviceBiometricService {
         { pattern: /iPhone16,\d/, model: 'iPhone 15 Pro Max' },
         { pattern: /iPhone15,[23]/, model: 'iPhone 15 Pro' },
         { pattern: /iPhone15,\d/, model: 'iPhone 15' },
-        
+
         // iPhone 14 series
         { pattern: /iPhone14,[678]/, model: 'iPhone 14 Pro' },
         { pattern: /iPhone14,\d/, model: 'iPhone 14' },
-        
+
         // iPhone 13 series
         { pattern: /iPhone14,[23]/, model: 'iPhone 13 Pro' },
         { pattern: /iPhone13,\d/, model: 'iPhone 13' },
-        
+
         // iPhone 12 series
         { pattern: /iPhone13,[23]/, model: 'iPhone 12 Pro' },
         { pattern: /iPhone12,\d/, model: 'iPhone 12' },
-        
+
         // iPhone 11 series
         { pattern: /iPhone12,[13]/, model: 'iPhone 11 Pro' },
         { pattern: /iPhone11,\d/, model: 'iPhone 11' },
-        
+
         // iPhone X series (Face ID devices)
         { pattern: /iPhone11,[248]/, model: 'iPhone XS' },
         { pattern: /iPhone11,6/, model: 'iPhone XR' },
         { pattern: /iPhone10,[36]/, model: 'iPhone X' },
-        
+
         // iPhone 8 and older (Touch ID devices)
         { pattern: /iPhone10,[12]/, model: 'iPhone 8' },
         { pattern: /iPhone9,[13]/, model: 'iPhone 7' },
@@ -168,7 +172,7 @@ export class DeviceBiometricService {
           return model;
         }
       }
-      
+
       // If no specific pattern matches, try to infer from iPhone identifier
       const iPhoneMatch = ua.match(/iPhone(\d+),\d/);
       if (iPhoneMatch) {
@@ -179,7 +183,7 @@ export class DeviceBiometricService {
           return 'iPhone 8 or older'; // Touch ID device
         }
       }
-      
+
       return 'iPhone';
     }
 
@@ -205,12 +209,12 @@ export class DeviceBiometricService {
 
   private extractAndroidModel(ua: string): string | undefined {
     const patterns = [
-      /Android.*?;\s*([^;)]+)\)/i,        // Standard Android pattern
-      /(SM-[A-Z0-9]+)/i,                 // Samsung models
-      /(Pixel [0-9]+[a-zA-Z]*)/i,        // Google Pixel
-      /(Mi [A-Z0-9 ]+)/i,                // Xiaomi
-      /(OnePlus [A-Z0-9]+)/i,            // OnePlus
-      /(LG-[A-Z0-9]+)/i,                 // LG
+      /Android.*?;\s*([^;)]+)\)/i, // Standard Android pattern
+      /(SM-[A-Z0-9]+)/i, // Samsung models
+      /(Pixel [0-9]+[a-zA-Z]*)/i, // Google Pixel
+      /(Mi [A-Z0-9 ]+)/i, // Xiaomi
+      /(OnePlus [A-Z0-9]+)/i, // OnePlus
+      /(LG-[A-Z0-9]+)/i, // LG
     ];
 
     for (const pattern of patterns) {
@@ -242,45 +246,45 @@ export class DeviceBiometricService {
   }
 
   private generateDeviceName(browser: string, platform: string, deviceModel?: string): string {
-    const date = new Date().toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    const date = new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
     });
 
     if (deviceModel) {
       return `${deviceModel} (${browser}) - ${date}`;
     }
-    
+
     return `${browser} on ${platform} (${date})`;
   }
 
   private async detectBiometricCapabilities(
-    platform: string, 
-    deviceModel?: string, 
-    ua?: string
+    platform: string,
+    deviceModel?: string,
+    ua?: string,
   ): Promise<DeviceBiometricInfo['biometrics']> {
     const methods: BiometricMethod[] = [];
     let primaryMethod: string | undefined;
 
     switch (platform) {
       case 'iOS':
-        methods.push(...await this.getiOSBiometrics(deviceModel, ua));
+        methods.push(...(await this.getiOSBiometrics(deviceModel, ua)));
         primaryMethod = this.getiOSPrimaryMethod(deviceModel);
         break;
       case 'Android':
-        methods.push(...await this.getAndroidBiometrics(deviceModel, ua));
+        methods.push(...(await this.getAndroidBiometrics(deviceModel, ua)));
         primaryMethod = this.getAndroidPrimaryMethod(deviceModel);
         break;
       case 'macOS':
-        methods.push(...await this.getMacOSBiometrics());
+        methods.push(...(await this.getMacOSBiometrics()));
         primaryMethod = 'touch-id';
         break;
       case 'Windows':
-        methods.push(...await this.getWindowsBiometrics());
+        methods.push(...(await this.getWindowsBiometrics()));
         break;
     }
 
-    const available = methods.some(m => m.supported);
+    const available = methods.some((m) => m.supported);
     const fallbackMethods = this.getFallbackMethods(platform);
 
     return {
@@ -293,7 +297,7 @@ export class DeviceBiometricService {
 
   private async getiOSBiometrics(deviceModel?: string, ua?: string): Promise<BiometricMethod[]> {
     const methods: BiometricMethod[] = [];
-    
+
     // Check WebAuthn platform authenticator support
     const platformAuthAvailable = await this.checkPlatformAuthenticator();
 
@@ -308,7 +312,7 @@ export class DeviceBiometricService {
       userAgent: ua,
       hasFaceID,
       hasTouchID,
-      platformAuthAvailable
+      platformAuthAvailable,
     });
 
     if (hasFaceID) {
@@ -362,9 +366,12 @@ export class DeviceBiometricService {
     return methods;
   }
 
-  private async getAndroidBiometrics(deviceModel?: string, ua?: string): Promise<BiometricMethod[]> {
+  private async getAndroidBiometrics(
+    deviceModel?: string,
+    ua?: string,
+  ): Promise<BiometricMethod[]> {
     const methods: BiometricMethod[] = [];
-    
+
     const platformAuthAvailable = await this.checkPlatformAuthenticator();
 
     // Most Android devices have fingerprint
@@ -408,14 +415,16 @@ export class DeviceBiometricService {
   private async getMacOSBiometrics(): Promise<BiometricMethod[]> {
     const platformAuthAvailable = await this.checkPlatformAuthenticator();
 
-    return [{
-      type: 'touch-id',
-      name: 'Touch ID',
-      icon: '👆',
-      supported: platformAuthAvailable,
-      hardwareBacked: true,
-      securityLevel: 'strong',
-    }];
+    return [
+      {
+        type: 'touch-id',
+        name: 'Touch ID',
+        icon: '👆',
+        supported: platformAuthAvailable,
+        hardwareBacked: true,
+        securityLevel: 'strong',
+      },
+    ];
   }
 
   private async getWindowsBiometrics(): Promise<BiometricMethod[]> {
@@ -437,7 +446,7 @@ export class DeviceBiometricService {
         supported: platformAuthAvailable,
         hardwareBacked: true,
         securityLevel: 'strong',
-      }
+      },
     ];
   }
 
@@ -446,10 +455,17 @@ export class DeviceBiometricService {
     // Check by device model first (most reliable)
     if (deviceModel) {
       const faceIDModels = [
-        'iPhone X', 'iPhone XS', 'iPhone XR',
-        'iPhone 11', 'iPhone 12', 'iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16'
+        'iPhone X',
+        'iPhone XS',
+        'iPhone XR',
+        'iPhone 11',
+        'iPhone 12',
+        'iPhone 13',
+        'iPhone 14',
+        'iPhone 15',
+        'iPhone 16',
       ];
-      return faceIDModels.some(model => deviceModel.includes(model));
+      return faceIDModels.some((model) => deviceModel.includes(model));
     }
 
     // Fallback to User Agent analysis
@@ -457,25 +473,25 @@ export class DeviceBiometricService {
       // iPhone X and newer have Face ID - more comprehensive patterns
       const faceIDPatterns = [
         // iPhone X series and newer (iPhone10,x and higher)
-        /iPhone1[0-9],\d/,          // iPhone X (iPhone10,x) and all newer models
+        /iPhone1[0-9],\d/, // iPhone X (iPhone10,x) and all newer models
         // Additional patterns for various iPhone models with Face ID
-        /iPhone.*OS 1[1-9]_/,       // iOS 11+ is a good indicator for Face ID capable devices
-        /iPhone.*Version\/1[1-9]\./  // Safari version 11+ on iPhone
+        /iPhone.*OS 1[1-9]_/, // iOS 11+ is a good indicator for Face ID capable devices
+        /iPhone.*Version\/1[1-9]\./, // Safari version 11+ on iPhone
       ];
-      
+
       // Also check if it's NOT an older iPhone model that has Touch ID
       const touchIDOnlyPatterns = [
-        /iPhone[5-9],\d/,  // iPhone 5s, 6, 6s, 7, 8 series
+        /iPhone[5-9],\d/, // iPhone 5s, 6, 6s, 7, 8 series
       ];
-      
-      const hasFaceIDPattern = faceIDPatterns.some(pattern => pattern.test(ua));
-      const hasTouchIDOnlyPattern = touchIDOnlyPatterns.some(pattern => pattern.test(ua));
-      
+
+      const hasFaceIDPattern = faceIDPatterns.some((pattern) => pattern.test(ua));
+      const hasTouchIDOnlyPattern = touchIDOnlyPatterns.some((pattern) => pattern.test(ua));
+
       // If it matches Face ID patterns and doesn't match Touch ID only patterns
       if (hasFaceIDPattern && !hasTouchIDOnlyPattern) {
         return true;
       }
-      
+
       // Additional heuristic: if it's iOS and mentions "Mobile" but no specific iPhone model,
       // assume it's a newer device (most likely Face ID)
       if (/iPhone.*Mobile.*Safari/i.test(ua) && !/iPhone[5-9],/i.test(ua)) {
@@ -491,23 +507,21 @@ export class DeviceBiometricService {
   private iOSDeviceHasTouchID(deviceModel?: string, ua?: string): boolean {
     // Check by device model first (most reliable)
     if (deviceModel) {
-      const touchIDModels = [
-        'iPhone 5s', 'iPhone 6', 'iPhone 6s', 'iPhone 7', 'iPhone 8'
-      ];
-      return touchIDModels.some(model => deviceModel.includes(model));
+      const touchIDModels = ['iPhone 5s', 'iPhone 6', 'iPhone 6s', 'iPhone 7', 'iPhone 8'];
+      return touchIDModels.some((model) => deviceModel.includes(model));
     }
 
     // Fallback to User Agent analysis - only for specific older iPhone models
     if (ua) {
       // Only iPhone 5s to iPhone 8 have Touch ID (before Face ID)
       const touchIDOnlyPatterns = [
-        /iPhone[6-9],[1-6]/,   // iPhone 6,1 through iPhone 9,6 (covers iPhone 5s through iPhone 8)
+        /iPhone[6-9],[1-6]/, // iPhone 6,1 through iPhone 9,6 (covers iPhone 5s through iPhone 8)
       ];
-      
+
       // Must match Touch ID pattern AND not match Face ID patterns
-      const hasTouchIDPattern = touchIDOnlyPatterns.some(pattern => pattern.test(ua));
+      const hasTouchIDPattern = touchIDOnlyPatterns.some((pattern) => pattern.test(ua));
       const hasFaceIDPattern = /iPhone1[0-9],\d/.test(ua); // iPhone 10,x and newer
-      
+
       return hasTouchIDPattern && !hasFaceIDPattern;
     }
 
@@ -517,18 +531,16 @@ export class DeviceBiometricService {
 
   private iPadHasFaceID(deviceModel?: string): boolean {
     if (!deviceModel) return false;
-    
+
     // iPad Pro models with Face ID
-    const faceIDiPads = [
-      'iPad Pro (11-inch)', 'iPad Pro (12.9-inch)', 'iPad Air'
-    ];
-    
-    return faceIDiPads.some(model => deviceModel.includes(model));
+    const faceIDiPads = ['iPad Pro (11-inch)', 'iPad Pro (12.9-inch)', 'iPad Air'];
+
+    return faceIDiPads.some((model) => deviceModel.includes(model));
   }
 
   private iPadHasTouchID(deviceModel?: string): boolean {
     if (!deviceModel) return false;
-    
+
     // Most iPads have Touch ID unless they have Face ID
     return deviceModel.includes('iPad') && !this.iPadHasFaceID(deviceModel);
   }
@@ -537,31 +549,29 @@ export class DeviceBiometricService {
   private androidDeviceHasFaceUnlock(deviceModel?: string, ua?: string): boolean {
     if (!deviceModel) return false;
 
-    const faceUnlockDevices = [
-      'Pixel', 'Galaxy S', 'Galaxy Note', 'OnePlus', 'Mi ', 'Xiaomi'
-    ];
+    const faceUnlockDevices = ['Pixel', 'Galaxy S', 'Galaxy Note', 'OnePlus', 'Mi ', 'Xiaomi'];
 
-    return faceUnlockDevices.some(device => deviceModel.includes(device));
+    return faceUnlockDevices.some((device) => deviceModel.includes(device));
   }
 
   private getAndroidFaceUnlockName(deviceModel?: string): string {
     if (!deviceModel) return 'Face Unlock';
-    
+
     if (deviceModel.includes('Pixel')) return 'Face Unlock';
     if (deviceModel.includes('Galaxy')) return 'Face Recognition';
     if (deviceModel.includes('OnePlus')) return 'Face Unlock';
     if (deviceModel.includes('Mi') || deviceModel.includes('Xiaomi')) return 'Face Unlock';
-    
+
     return 'Face Unlock';
   }
 
   private androidFaceUnlockIsHardwareBacked(deviceModel?: string): boolean {
     if (!deviceModel) return false;
-    
+
     // Pixel 4 and newer, Galaxy S10 and newer typically have hardware-backed face unlock
     const hardwareBackedDevices = ['Pixel 4', 'Pixel 5', 'Pixel 6', 'Galaxy S1', 'Galaxy S2'];
-    
-    return hardwareBackedDevices.some(device => deviceModel.includes(device));
+
+    return hardwareBackedDevices.some((device) => deviceModel.includes(device));
   }
 
   private androidFaceUnlockSecurityLevel(deviceModel?: string): 'convenience' | 'weak' | 'strong' {
@@ -573,11 +583,11 @@ export class DeviceBiometricService {
 
   private androidDeviceHasIris(deviceModel?: string): boolean {
     if (!deviceModel) return false;
-    
+
     // Mainly Samsung Galaxy Note and S series
     const irisDevices = ['Galaxy Note', 'Galaxy S8', 'Galaxy S9'];
-    
-    return irisDevices.some(device => deviceModel.includes(device));
+
+    return irisDevices.some((device) => deviceModel.includes(device));
   }
 
   // Get primary biometric method for device
@@ -611,16 +621,17 @@ export class DeviceBiometricService {
   // WebAuthn support detection
   private async checkWebAuthnSupport(): Promise<DeviceBiometricInfo['webauthn']> {
     const supported = 'credentials' in navigator && 'create' in navigator.credentials;
-    
+
     let platformAuthenticator = false;
     let userVerifyingPlatformAuthenticator = false;
     let autofillSupported = false;
 
     if (supported) {
       try {
-        platformAuthenticator = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        platformAuthenticator =
+          await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
         userVerifyingPlatformAuthenticator = platformAuthenticator;
-        
+
         // Check autofill support if available
         if ('isConditionalMediationAvailable' in PublicKeyCredential) {
           autofillSupported = await (PublicKeyCredential as any).isConditionalMediationAvailable();

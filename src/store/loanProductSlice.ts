@@ -1,26 +1,26 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface LoanProduct {
-  id: string
-  code: string
-  name: string
-  description: string
-  minAmount: number
-  maxAmount: number
-  interestRate: number
-  processingFee: number
-  availableTerms: number[]
-  requirements: string[]
-  isActive: boolean
-  createdAt: Date
-  updatedAt?: Date
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  minAmount: number;
+  maxAmount: number;
+  interestRate: number;
+  processingFee: number;
+  availableTerms: number[];
+  requirements: string[];
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
 export interface LoanProductState {
-  products: LoanProduct[]
-  selectedProduct: LoanProduct | null
-  isLoading: boolean
-  error: string | null
+  products: LoanProduct[];
+  selectedProduct: LoanProduct | null;
+  isLoading: boolean;
+  error: string | null;
 }
 
 const initialState: LoanProductState = {
@@ -71,83 +71,87 @@ const initialState: LoanProductState = {
   selectedProduct: null,
   isLoading: false,
   error: null,
-}
+};
 
 export const loanProductSlice = createSlice({
   name: 'loanProduct',
   initialState,
   reducers: {
     // CREATE
-    addProduct: (state, action: PayloadAction<Omit<LoanProduct, 'id' | 'createdAt' | 'updatedAt'>>) => {
+    addProduct: (
+      state,
+      action: PayloadAction<Omit<LoanProduct, 'id' | 'createdAt' | 'updatedAt'>>,
+    ) => {
       const newProduct: LoanProduct = {
         ...action.payload,
         id: crypto.randomUUID(),
         createdAt: new Date(),
-      }
-      state.products.push(newProduct)
-      state.error = null
+      };
+      state.products.push(newProduct);
+      state.error = null;
     },
 
     // READ (single)
     selectProduct: (state, action: PayloadAction<string>) => {
-      state.selectedProduct = state.products.find(product => product.id === action.payload) || null
+      state.selectedProduct =
+        state.products.find((product) => product.id === action.payload) || null;
     },
 
     // UPDATE
     updateProduct: (state, action: PayloadAction<Partial<LoanProduct> & { id: string }>) => {
-      const index = state.products.findIndex(product => product.id === action.payload.id)
+      const index = state.products.findIndex((product) => product.id === action.payload.id);
       if (index !== -1) {
         state.products[index] = {
           ...state.products[index],
           ...action.payload,
           updatedAt: new Date(),
-        }
+        };
         if (state.selectedProduct?.id === action.payload.id) {
-          state.selectedProduct = state.products[index]
+          state.selectedProduct = state.products[index];
         }
       }
     },
 
     // DELETE
     deleteProduct: (state, action: PayloadAction<string>) => {
-      state.products = state.products.filter(product => product.id !== action.payload)
+      state.products = state.products.filter((product) => product.id !== action.payload);
       if (state.selectedProduct?.id === action.payload) {
-        state.selectedProduct = null
+        state.selectedProduct = null;
       }
-      state.error = null
+      state.error = null;
     },
 
     // TOGGLE ACTIVE STATUS
     toggleProductStatus: (state, action: PayloadAction<string>) => {
-      const product = state.products.find(p => p.id === action.payload)
+      const product = state.products.find((p) => p.id === action.payload);
       if (product) {
-        product.isActive = !product.isActive
-        product.updatedAt = new Date()
+        product.isActive = !product.isActive;
+        product.updatedAt = new Date();
       }
     },
 
     // BULK OPERATIONS
     setProducts: (state, action: PayloadAction<LoanProduct[]>) => {
-      state.products = action.payload
-      state.isLoading = false
-      state.error = null
+      state.products = action.payload;
+      state.isLoading = false;
+      state.error = null;
     },
 
     // UTILITY
     setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload
+      state.isLoading = action.payload;
     },
 
     setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload
-      state.isLoading = false
+      state.error = action.payload;
+      state.isLoading = false;
     },
 
     clearError: (state) => {
-      state.error = null
+      state.error = null;
     },
   },
-})
+});
 
 export const {
   addProduct,
@@ -159,6 +163,6 @@ export const {
   setLoading,
   setError,
   clearError,
-} = loanProductSlice.actions
+} = loanProductSlice.actions;
 
-export default loanProductSlice.reducer
+export default loanProductSlice.reducer;

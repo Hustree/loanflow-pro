@@ -1,5 +1,12 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, SelectChangeEvent } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  SelectChangeEvent,
+} from '@mui/material';
 
 interface SelectOption {
   value: string | number;
@@ -40,12 +47,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
       disabled={disabled}
     >
       <InputLabel>{label}</InputLabel>
-      <Select<string | number>
-        name={name}
-        value={value}
-        onChange={onChange}
-        label={label}
-      >
+      <Select<string | number> name={name} value={value} onChange={onChange} label={label}>
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}

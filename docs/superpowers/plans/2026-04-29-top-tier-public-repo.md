@@ -188,13 +188,8 @@ This task is the largest single mechanical change. All sub-steps must be in one 
     "web-vitals": "^4.2.3"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml,css}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml,css}": ["prettier --write"]
   }
 }
 ```
@@ -491,7 +486,10 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/consistent-type-imports': 'error',
       'import/order': [
         'error',
@@ -613,6 +611,7 @@ npm run lint:fix || true
 - [ ] **Step 2: Manually resolve any remaining errors**
 
 Read each ESLint error and fix the source. Common ones:
+
 - Unused imports → remove
 - `import/order` → already auto-fixed
 - `react/jsx-uses-react` → not needed (auto-runtime)
@@ -675,7 +674,20 @@ export default {
     'scope-enum': [
       2,
       'always',
-      ['auth', 'apply', 'manage', 'theme', 'i18n', 'infra', 'docs', 'brand', 'test', 'ci', 'deps', 'release'],
+      [
+        'auth',
+        'apply',
+        'manage',
+        'theme',
+        'i18n',
+        'infra',
+        'docs',
+        'brand',
+        'test',
+        'ci',
+        'deps',
+        'release',
+      ],
     ],
     'subject-case': [2, 'always', ['sentence-case', 'lower-case']],
   },
@@ -775,7 +787,7 @@ git commit -m "docs: add Contributor Covenant 2.1 code of conduct"
 
 - [ ] **Step 1: Write `SECURITY.md`**
 
-````markdown
+```markdown
 # Security policy
 
 ## Supported versions
@@ -806,7 +818,7 @@ This is a portfolio + starter project. The auth surface is non-trivial (passkeys
 - Issues affecting the demo's static credentials (`demo / demo`) — these are intentional
 - Issues that require a malicious browser extension or compromised host
 - Self-XSS in the demo console
-````
+```
 
 - [ ] **Step 2: Commit**
 
@@ -1094,6 +1106,7 @@ grep -rin 'psslai\|Sir Paul' *.md || true
 ```
 
 Note each file + line. Expected files to touch (verify against output):
+
 - `src/contexts/AuthContext.tsx` (creds)
 - `src/pages/Login.tsx` (welcome text)
 - `src/utils/constants.ts` (loan types/branding strings)
@@ -1107,6 +1120,7 @@ Note each file + line. Expected files to touch (verify against output):
 - [ ] **Step 1: Replace branding strings**
 
 For each file in the audit, replace:
+
 - `PSSLAI` → `LoanFlow Pro`
 - `psslaimember` → `demo`
 - `'1234'` (when paired with psslaimember) → `'demo'`
@@ -1156,13 +1170,13 @@ git mv REDUX_DEMO_SCRIPT.md docs/legacy/
 
 These documents come from the original PSSLAI MVP phase of this project. They are preserved for historical context and to credit the work that informed LoanFlow Pro. They do not represent the current architecture — see `STORY.md` and `docs/architecture.md` for that.
 
-| Document | Phase | Note |
-| --- | --- | --- |
-| `PROJECT_SUMMARY.md` | Day 1 deliverables | First-week status report |
-| `PASSKEY_AUTH_PRD.md` | Auth design | WebAuthn ceremony PRD |
-| `PASSKEY_ANDROID_BIOMETRICS_PRD.md` | Auth — Android | Device-specific UX |
-| `PASSKEY_IMPLEMENTATION_GUIDE.md` | Auth — implementation | Engineering notes |
-| `REDUX_DEMO_SCRIPT.md` | State management | Walkthrough script |
+| Document                            | Phase                 | Note                     |
+| ----------------------------------- | --------------------- | ------------------------ |
+| `PROJECT_SUMMARY.md`                | Day 1 deliverables    | First-week status report |
+| `PASSKEY_AUTH_PRD.md`               | Auth design           | WebAuthn ceremony PRD    |
+| `PASSKEY_ANDROID_BIOMETRICS_PRD.md` | Auth — Android        | Device-specific UX       |
+| `PASSKEY_IMPLEMENTATION_GUIDE.md`   | Auth — implementation | Engineering notes        |
+| `REDUX_DEMO_SCRIPT.md`              | State management      | Walkthrough script       |
 ```
 
 - [ ] **Step 3: Commit**
@@ -1962,7 +1976,10 @@ export const handlers = [
         name: 'demo',
         displayName: 'Alex Demo',
       },
-      pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+      pubKeyCredParams: [
+        { alg: -7, type: 'public-key' },
+        { alg: -257, type: 'public-key' },
+      ],
       timeout: 60_000,
       attestation: 'none',
     });
@@ -2068,7 +2085,10 @@ export const api = createApi({
       query: () => '/loans',
       providesTags: (result) =>
         result
-          ? [...result.map((l) => ({ type: 'Loan' as const, id: l.id })), { type: 'Loan', id: 'LIST' }]
+          ? [
+              ...result.map((l) => ({ type: 'Loan' as const, id: l.id })),
+              { type: 'Loan', id: 'LIST' },
+            ]
           : [{ type: 'Loan', id: 'LIST' }],
     }),
     getLoan: builder.query<Loan, string>({
@@ -2689,8 +2709,8 @@ git commit -m "i18n: add react-i18next with en/tl/es scaffolding (login + apply 
 
 ```tsx
 <Alert severity="info" sx={{ mb: 3 }} data-testid="passkey-demo-banner">
-  This is a simulated passkey flow. Your credential is stored locally in this browser only —
-  nothing is sent to a real server.
+  This is a simulated passkey flow. Your credential is stored locally in this browser only — nothing
+  is sent to a real server.
 </Alert>
 ```
 
@@ -2722,11 +2742,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-a11y',
-    '@storybook/addon-interactions',
-  ],
+  addons: ['@storybook/addon-essentials', '@storybook/addon-a11y', '@storybook/addon-interactions'],
   framework: { name: '@storybook/react-vite', options: {} },
   docs: { autodocs: 'tag' },
   typescript: { reactDocgen: 'react-docgen-typescript' },
@@ -3318,11 +3334,13 @@ test('dark mode toggle persists across reload', async ({ page }) => {
   await page.goto('/');
   await page.getByTestId('theme-toggle').click();
   const html = page.locator('html');
-  await expect(html).toHaveAttribute('data-theme', 'dark').catch(async () => {
-    // Fallback: check body background colour
-    const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).toMatch(/rgb\(11,\s*18,\s*32\)|rgb\(15,\s*23,\s*42\)/);
-  });
+  await expect(html)
+    .toHaveAttribute('data-theme', 'dark')
+    .catch(async () => {
+      // Fallback: check body background colour
+      const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+      expect(bg).toMatch(/rgb\(11,\s*18,\s*32\)|rgb\(15,\s*23,\s*42\)/);
+    });
   await page.reload();
   // Verify persistence (either via attribute or background colour)
 });
@@ -3681,20 +3699,20 @@ The public Vercel deploy stays in MSW mode regardless — Firebase mode is for l
 
 ## Scripts
 
-| Script | Purpose |
-| --- | --- |
-| `npm run dev` | Vite dev server |
-| `npm run build` | Production build |
-| `npm run preview` | Serve production build locally |
-| `npm run test` | Vitest unit/integration tests |
-| `npm run test:cov` | Vitest with coverage |
-| `npm run test:e2e` | Playwright E2E |
-| `npm run storybook` | Storybook dev |
-| `npm run build-storybook` | Storybook production build |
-| `npm run lint` | ESLint |
-| `npm run lint:fix` | ESLint with auto-fix |
-| `npm run format` | Prettier write |
-| `npm run typecheck` | tsc --noEmit |
+| Script                    | Purpose                        |
+| ------------------------- | ------------------------------ |
+| `npm run dev`             | Vite dev server                |
+| `npm run build`           | Production build               |
+| `npm run preview`         | Serve production build locally |
+| `npm run test`            | Vitest unit/integration tests  |
+| `npm run test:cov`        | Vitest with coverage           |
+| `npm run test:e2e`        | Playwright E2E                 |
+| `npm run storybook`       | Storybook dev                  |
+| `npm run build-storybook` | Storybook production build     |
+| `npm run lint`            | ESLint                         |
+| `npm run lint:fix`        | ESLint with auto-fix           |
+| `npm run format`          | Prettier write                 |
+| `npm run typecheck`       | tsc --noEmit                   |
 
 ## Branching + commits
 
@@ -3970,6 +3988,7 @@ npm run dev
 - [ ] **Step 2: Capture screenshots manually**
 
 Use macOS `Cmd-Shift-4` to capture each route at 1920×1200:
+
 - `/login` (light + dark)
 - `/loan` (step 2 mid-fill)
 - `/manage` (with seeded loans + an open status modal)
@@ -3979,6 +3998,7 @@ Save into `docs/screenshots/` with names: `login.png`, `login-dark.png`, `apply.
 - [ ] **Step 3: Capture demo GIF**
 
 Use Kap (https://getkap.co/) or LICEcap to record a 15-second walkthrough:
+
 1. Land on `/login`
 2. Click "Try Demo"
 3. Auto-fills + submits
@@ -4043,16 +4063,16 @@ No signup, no API keys, no backend required.
 
 ## What's inside
 
-| Area | Tech |
-| --- | --- |
-| **Build** | Vite 5 + SWC, TypeScript 5 (strict + noUncheckedIndexedAccess) |
-| **UI** | React 19, MUI v7, Emotion, dark mode, react-i18next (en / tl / es) |
-| **State + data** | Redux Toolkit + RTK Query, react-hook-form, Zod |
-| **Backend** | MSW (default, in-browser) or Firebase (opt-in) |
-| **Auth** | SimpleWebAuthn passkeys + static demo credentials |
-| **Tests** | Vitest, Testing Library, MSW (Node), Playwright (Chromium / WebKit / Firefox), axe |
-| **Components** | Storybook 8 + a11y addon |
-| **CI/CD** | GitHub Actions (lint / typecheck / test / build / e2e / CodeQL / knip), Vercel preview deploys, release-please |
+| Area             | Tech                                                                                                           |
+| ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Build**        | Vite 5 + SWC, TypeScript 5 (strict + noUncheckedIndexedAccess)                                                 |
+| **UI**           | React 19, MUI v7, Emotion, dark mode, react-i18next (en / tl / es)                                             |
+| **State + data** | Redux Toolkit + RTK Query, react-hook-form, Zod                                                                |
+| **Backend**      | MSW (default, in-browser) or Firebase (opt-in)                                                                 |
+| **Auth**         | SimpleWebAuthn passkeys + static demo credentials                                                              |
+| **Tests**        | Vitest, Testing Library, MSW (Node), Playwright (Chromium / WebKit / Firefox), axe                             |
+| **Components**   | Storybook 8 + a11y addon                                                                                       |
+| **CI/CD**        | GitHub Actions (lint / typecheck / test / build / e2e / CodeQL / knip), Vercel preview deploys, release-please |
 
 ## Features
 
@@ -4066,8 +4086,8 @@ No signup, no API keys, no backend required.
 
 ## Screenshots
 
-| Login | Apply | Manage | Dark mode |
-| --- | --- | --- | --- |
+| Login                                  | Apply                                  | Manage                                   | Dark mode                                  |
+| -------------------------------------- | -------------------------------------- | ---------------------------------------- | ------------------------------------------ |
 | ![Login](./docs/screenshots/login.png) | ![Apply](./docs/screenshots/apply.png) | ![Manage](./docs/screenshots/manage.png) | ![Dark](./docs/screenshots/login-dark.png) |
 
 ## Local development
@@ -4119,13 +4139,13 @@ See [`docs/architecture.md`](./docs/architecture.md) for the full picture. Key d
 
 ## Testing
 
-| Layer | Tool | Where |
-| --- | --- | --- |
-| Schemas, reducers, hooks, primitives | Vitest + Testing Library | `src/**/*.test.{ts,tsx}` |
-| Feature integration (with MSW) | Vitest + Testing Library + MSW | colocated `*.test.tsx` |
-| End-to-end | Playwright (3 browsers) | `tests/e2e/*.spec.ts` |
-| Accessibility | axe-core via Playwright | per-page budget in E2E |
-| Components | Storybook + a11y addon | `*.stories.tsx` |
+| Layer                                | Tool                           | Where                    |
+| ------------------------------------ | ------------------------------ | ------------------------ |
+| Schemas, reducers, hooks, primitives | Vitest + Testing Library       | `src/**/*.test.{ts,tsx}` |
+| Feature integration (with MSW)       | Vitest + Testing Library + MSW | colocated `*.test.tsx`   |
+| End-to-end                           | Playwright (3 browsers)        | `tests/e2e/*.spec.ts`    |
+| Accessibility                        | axe-core via Playwright        | per-page budget in E2E   |
+| Components                           | Storybook + a11y addon         | `*.stories.tsx`          |
 
 CI gates: `lint`, `typecheck`, `test:cov` (≥80% lines / 75% branches), `build`, `build-storybook`, `knip`, Playwright on PRs that touch `src/`.
 

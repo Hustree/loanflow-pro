@@ -1,4 +1,5 @@
 # Passkey Authentication - Technical Implementation Guide
+
 ## React MVP Loan App
 
 ---
@@ -50,24 +51,28 @@ export const RegistrationOptionsSchema = z.object({
     name: z.string(),
     displayName: z.string(),
   }),
-  pubKeyCredParams: z.array(z.object({
-    alg: z.number(),
-    type: z.literal('public-key'),
-  })),
+  pubKeyCredParams: z.array(
+    z.object({
+      alg: z.number(),
+      type: z.literal('public-key'),
+    }),
+  ),
   timeout: z.number().optional(),
   attestation: z.string().optional(),
-  authenticatorSelection: z.object({
-    authenticatorAttachment: z.string().optional(),
-    requireResidentKey: z.boolean().optional(),
-    userVerification: z.string().optional(),
-  }).optional(),
+  authenticatorSelection: z
+    .object({
+      authenticatorAttachment: z.string().optional(),
+      requireResidentKey: z.boolean().optional(),
+      userVerification: z.string().optional(),
+    })
+    .optional(),
 });
 
 export class PasskeyService {
   private static instance: PasskeyService;
-  
+
   private constructor() {}
-  
+
   public static getInstance(): PasskeyService {
     if (!PasskeyService.instance) {
       PasskeyService.instance = new PasskeyService();
@@ -84,7 +89,7 @@ export class PasskeyService {
   getDeviceInfo() {
     const ua = navigator.userAgent;
     const platform = navigator.platform;
-    
+
     return {
       deviceType: this.detectDeviceType(),
       browser: this.detectBrowser(ua),
@@ -119,9 +124,9 @@ export class PasskeyService {
 
   private generateDeviceName(): string {
     const device = this.getDeviceInfo();
-    const date = new Date().toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    const date = new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
     });
     return `${device.browser} on ${device.os} (${date})`;
   }
@@ -135,18 +140,18 @@ export class PasskeyService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, displayName }),
       });
-      
+
       const options = await response.json();
-      
+
       // Validate server response
       const validatedOptions = RegistrationOptionsSchema.parse(options);
-      
+
       // Start WebAuthn registration
       const credential = await startRegistration(validatedOptions);
-      
+
       // Add device info
       const deviceInfo = this.getDeviceInfo();
-      
+
       // Verify with server
       const verifyResponse = await fetch('/api/auth/passkey/register/verify', {
         method: 'POST',
@@ -156,11 +161,11 @@ export class PasskeyService {
           deviceInfo,
         }),
       });
-      
+
       if (!verifyResponse.ok) {
         throw new Error('Registration verification failed');
       }
-      
+
       return await verifyResponse.json();
     } catch (error) {
       console.error('Passkey registration failed:', error);
@@ -177,12 +182,12 @@ export class PasskeyService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      
+
       const options = await response.json();
-      
+
       // Start WebAuthn authentication
       const credential = await startAuthentication(options);
-      
+
       // Verify with server
       const verifyResponse = await fetch('/api/auth/passkey/login/verify', {
         method: 'POST',
@@ -192,11 +197,11 @@ export class PasskeyService {
           credential,
         }),
       });
-      
+
       if (!verifyResponse.ok) {
         throw new Error('Authentication verification failed');
       }
-      
+
       return await verifyResponse.json();
     } catch (error) {
       console.error('Passkey authentication failed:', error);
@@ -244,25 +249,22 @@ const initialState: PasskeyState = {
 };
 
 // Async thunks
-export const checkPasskeySupport = createAsyncThunk(
-  'passkey/checkSupport',
-  async () => {
-    return passkeyService.checkSupport();
-  }
-);
+export const checkPasskeySupport = createAsyncThunk('passkey/checkSupport', async () => {
+  return passkeyService.checkSupport();
+});
 
 export const registerPasskey = createAsyncThunk(
   'passkey/register',
   async ({ email, displayName }: { email: string; displayName: string }) => {
     return await passkeyService.startRegistration(email, displayName);
-  }
+  },
 );
 
 export const authenticateWithPasskey = createAsyncThunk(
   'passkey/authenticate',
   async (email: string) => {
     return await passkeyService.startAuthentication(email);
-  }
+  },
 );
 
 const passkeySlice = createSlice({
@@ -279,7 +281,7 @@ const passkeySlice = createSlice({
       state.devices.push(action.payload);
     },
     removeDevice: (state, action: PayloadAction<string>) => {
-      state.devices = state.devices.filter(d => d.id !== action.payload);
+      state.devices = state.devices.filter((d) => d.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -354,7 +356,7 @@ export const PasskeyLogin: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [showFallback, setShowFallback] = useState(false);
-  
+
   const { isSupported, loading, error } = useSelector(
     (state: RootState) => state.passkey
   );
@@ -367,7 +369,7 @@ export const PasskeyLogin: React.FC = () => {
     if (!email) {
       return;
     }
-    
+
     try {
       const result = await dispatch(authenticateWithPasskey(email)).unwrap();
       if (result.success) {
@@ -397,7 +399,7 @@ export const PasskeyLogin: React.FC = () => {
   if (!isSupported) {
     return (
       <Alert severity="warning">
-        Your device doesn't support passkey authentication. 
+        Your device doesn't support passkey authentication.
         Please use OTP or password login instead.
       </Alert>
     );
@@ -557,7 +559,7 @@ export const PasskeyRegistration: React.FC<Props> = ({
       const result = await dispatch(
         registerPasskey({ email, displayName })
       ).unwrap();
-      
+
       if (result.success) {
         setStep(2);
         setTimeout(onComplete, 2000);
@@ -577,7 +579,7 @@ export const PasskeyRegistration: React.FC<Props> = ({
               <Typography variant="h6">
                 Set up secure, passwordless login
               </Typography>
-              
+
               <List>
                 {benefits.map((benefit, index) => (
                   <ListItem key={index}>
@@ -680,11 +682,11 @@ const ORIGIN = ['https://psslai.com', 'https://app.psslai.com'];
 // Registration - Begin
 export const registerBegin = functions.https.onRequest(async (req, res) => {
   const { email, displayName } = req.body;
-  
+
   try {
     // Generate user ID
     const userId = isoBase64URL.fromString(email);
-    
+
     // Generate registration options
     const options = await generateRegistrationOptions({
       rpName: RP_NAME,
@@ -699,16 +701,19 @@ export const registerBegin = functions.https.onRequest(async (req, res) => {
       },
       supportedAlgorithmIDs: [-7, -257], // ES256, RS256
     });
-    
+
     // Store challenge in Firestore (expires in 5 minutes)
-    await db.collection('challenges').doc(userId).set({
-      challenge: options.challenge,
-      email,
-      type: 'registration',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
-    
+    await db
+      .collection('challenges')
+      .doc(userId)
+      .set({
+        challenge: options.challenge,
+        email,
+        type: 'registration',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      });
+
     res.json(options);
   } catch (error) {
     console.error('Registration begin error:', error);
@@ -719,18 +724,18 @@ export const registerBegin = functions.https.onRequest(async (req, res) => {
 // Registration - Verify
 export const registerVerify = functions.https.onRequest(async (req, res) => {
   const { credential, deviceInfo } = req.body;
-  
+
   try {
     // Get stored challenge
     const userId = credential.response.userHandle;
     const challengeDoc = await db.collection('challenges').doc(userId).get();
-    
+
     if (!challengeDoc.exists) {
       return res.status(400).json({ error: 'Challenge not found' });
     }
-    
+
     const { challenge, email } = challengeDoc.data()!;
-    
+
     // Verify registration
     const verification = await verifyRegistrationResponse({
       response: credential,
@@ -738,14 +743,14 @@ export const registerVerify = functions.https.onRequest(async (req, res) => {
       expectedOrigin: ORIGIN,
       expectedRPID: RP_ID,
     });
-    
+
     if (!verification.verified) {
       return res.status(400).json({ error: 'Verification failed' });
     }
-    
+
     // Store passkey credential
     const { credentialPublicKey, credentialID, counter } = verification.registrationInfo!;
-    
+
     await db.collection('passkeys').add({
       userId,
       email,
@@ -757,13 +762,13 @@ export const registerVerify = functions.https.onRequest(async (req, res) => {
       lastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
       isActive: true,
     });
-    
+
     // Clean up challenge
     await db.collection('challenges').doc(userId).delete();
-    
+
     // Create Firebase custom token for session
     const firebaseToken = await admin.auth().createCustomToken(userId);
-    
+
     res.json({
       success: true,
       token: firebaseToken,
@@ -786,7 +791,7 @@ export const registerVerify = functions.https.onRequest(async (req, res) => {
 // Authentication - Begin
 export const loginBegin = functions.https.onRequest(async (req, res) => {
   const { email } = req.body;
-  
+
   try {
     // Get user's passkeys
     const passkeysSnapshot = await db
@@ -794,35 +799,38 @@ export const loginBegin = functions.https.onRequest(async (req, res) => {
       .where('email', '==', email)
       .where('isActive', '==', true)
       .get();
-    
+
     if (passkeysSnapshot.empty) {
       return res.status(404).json({ error: 'No passkeys found' });
     }
-    
+
     // Build allowed credentials list
-    const allowCredentials = passkeysSnapshot.docs.map(doc => ({
+    const allowCredentials = passkeysSnapshot.docs.map((doc) => ({
       id: doc.data().credentialId,
       type: 'public-key',
       transports: ['internal', 'hybrid'],
     }));
-    
+
     // Generate authentication options
     const options = await generateAuthenticationOptions({
       rpID: RP_ID,
       allowCredentials,
       userVerification: 'preferred',
     });
-    
+
     // Store challenge
     const userId = isoBase64URL.fromString(email);
-    await db.collection('challenges').doc(userId).set({
-      challenge: options.challenge,
-      email,
-      type: 'authentication',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
-    
+    await db
+      .collection('challenges')
+      .doc(userId)
+      .set({
+        challenge: options.challenge,
+        email,
+        type: 'authentication',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      });
+
     res.json(options);
   } catch (error) {
     console.error('Login begin error:', error);
@@ -833,18 +841,18 @@ export const loginBegin = functions.https.onRequest(async (req, res) => {
 // Authentication - Verify
 export const loginVerify = functions.https.onRequest(async (req, res) => {
   const { email, credential } = req.body;
-  
+
   try {
     // Get stored challenge
     const userId = isoBase64URL.fromString(email);
     const challengeDoc = await db.collection('challenges').doc(userId).get();
-    
+
     if (!challengeDoc.exists) {
       return res.status(400).json({ error: 'Challenge not found' });
     }
-    
+
     const { challenge } = challengeDoc.data()!;
-    
+
     // Get passkey for verification
     const passkeySnapshot = await db
       .collection('passkeys')
@@ -853,14 +861,14 @@ export const loginVerify = functions.https.onRequest(async (req, res) => {
       .where('isActive', '==', true)
       .limit(1)
       .get();
-    
+
     if (passkeySnapshot.empty) {
       return res.status(404).json({ error: 'Passkey not found' });
     }
-    
+
     const passkeyDoc = passkeySnapshot.docs[0];
     const passkeyData = passkeyDoc.data();
-    
+
     // Verify authentication
     const verification = await verifyAuthenticationResponse({
       response: credential,
@@ -873,23 +881,23 @@ export const loginVerify = functions.https.onRequest(async (req, res) => {
         counter: passkeyData.counter,
       },
     });
-    
+
     if (!verification.verified) {
       return res.status(400).json({ error: 'Authentication failed' });
     }
-    
+
     // Update counter and last used
     await passkeyDoc.ref.update({
       counter: verification.authenticationInfo.newCounter,
       lastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-    
+
     // Clean up challenge
     await db.collection('challenges').doc(userId).delete();
-    
+
     // Create Firebase session
     const firebaseToken = await admin.auth().createCustomToken(userId);
-    
+
     res.json({
       success: true,
       token: firebaseToken,
@@ -934,7 +942,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Check passkey support
     setPasskeySupported(passkeyService.checkSupport());
-    
+
     // Check if user has passkeys
     if (user?.email) {
       checkUserPasskeys(user.email);
@@ -955,9 +963,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
+
       const result = await passkeyService.startAuthentication(email);
-      
+
       if (result.token) {
         // Sign in with custom token
         await firebaseService.signInWithCustomToken(result.token);
@@ -974,9 +982,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
+
       const result = await passkeyService.startRegistration(email, displayName);
-      
+
       if (result.success) {
         setHasPasskey(true);
       }
@@ -1029,7 +1037,7 @@ export function register() {
       navigator.serviceWorker.register('/service-worker.js').then(
         (registration) => {
           console.log('SW registered:', registration);
-          
+
           // Check for updates periodically
           setInterval(() => {
             registration.update();
@@ -1037,7 +1045,7 @@ export function register() {
         },
         (error) => {
           console.log('SW registration failed:', error);
-        }
+        },
       );
     });
   }
@@ -1054,34 +1062,32 @@ export function register() {
 // Test WebAuthn support
 if (window.PublicKeyCredential) {
   console.log('✅ WebAuthn is supported');
-  
+
   // Check platform authenticator
-  PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-    .then(available => {
-      console.log('Platform authenticator available:', available);
-    });
+  PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then((available) => {
+    console.log('Platform authenticator available:', available);
+  });
 } else {
   console.log('❌ WebAuthn not supported');
 }
 
 // Test conditional mediation (autofill)
 if (window.PublicKeyCredential?.isConditionalMediationAvailable) {
-  PublicKeyCredential.isConditionalMediationAvailable()
-    .then(available => {
-      console.log('Conditional mediation available:', available);
-    });
+  PublicKeyCredential.isConditionalMediationAvailable().then((available) => {
+    console.log('Conditional mediation available:', available);
+  });
 }
 ```
 
 ### Common Issues & Solutions
 
-| Issue | Solution |
-|-------|----------|
-| "User gesture required" | Ensure registration/login triggered by user click |
-| "Origin not allowed" | Check HTTPS and domain configuration |
-| "Authenticator not found" | Device may not support platform authenticator |
-| "Challenge mismatch" | Ensure challenge hasn't expired (5 min timeout) |
-| "User cancelled" | Normal - user declined biometric prompt |
+| Issue                     | Solution                                          |
+| ------------------------- | ------------------------------------------------- |
+| "User gesture required"   | Ensure registration/login triggered by user click |
+| "Origin not allowed"      | Check HTTPS and domain configuration              |
+| "Authenticator not found" | Device may not support platform authenticator     |
+| "Challenge mismatch"      | Ensure challenge hasn't expired (5 min timeout)   |
+| "User cancelled"          | Normal - user declined biometric prompt           |
 
 ---
 
@@ -1101,5 +1107,5 @@ if (window.PublicKeyCredential?.isConditionalMediationAvailable) {
 
 ---
 
-*Implementation Guide Version: 1.0*
-*Compatible with: @simplewebauthn/browser@10.0.0*
+_Implementation Guide Version: 1.0_
+_Compatible with: @simplewebauthn/browser@10.0.0_

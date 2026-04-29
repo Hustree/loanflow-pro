@@ -19,7 +19,12 @@ import {
 import { Close, Save, Warning } from '@mui/icons-material';
 import { useAppDispatch } from '../store/hooks';
 import { updateLoanStatus } from '../store/loanSlice';
-import { Loan, StatusUpdateInputSchema, statusUpdateInputSchema, LoanStatusEnum } from '../schema/loan';
+import {
+  Loan,
+  StatusUpdateInputSchema,
+  statusUpdateInputSchema,
+  LoanStatusEnum,
+} from '../schema/loan';
 import { ZodError } from 'zod';
 
 interface StatusUpdateModalProps {
@@ -37,7 +42,9 @@ const STATUS_OPTIONS: { value: LoanStatusEnum; label: string; description: strin
   { value: 'completed', label: 'Completed', description: 'Loan has been fully repaid' },
 ];
 
-const getStatusColor = (status: string): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+const getStatusColor = (
+  status: string,
+): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
   switch (status) {
     case 'pending':
       return 'warning';
@@ -67,17 +74,17 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
 
   const handleStatusChange = (event: any) => {
     const newStatus = event.target.value as LoanStatusEnum;
-    setFormData(prev => ({ ...prev, status: newStatus }));
+    setFormData((prev) => ({ ...prev, status: newStatus }));
     if (validationErrors.status) {
-      setValidationErrors(prev => ({ ...prev, status: '' }));
+      setValidationErrors((prev) => ({ ...prev, status: '' }));
     }
   };
 
   const handleNotesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const notes = event.target.value;
-    setFormData(prev => ({ ...prev, notes }));
+    setFormData((prev) => ({ ...prev, notes }));
     if (validationErrors.notes) {
-      setValidationErrors(prev => ({ ...prev, notes: '' }));
+      setValidationErrors((prev) => ({ ...prev, notes: '' }));
     }
   };
 
@@ -87,19 +94,20 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
     try {
       // Validate using Zod schema
       const validatedData = statusUpdateInputSchema.parse(formData);
-      
+
       setIsSubmitting(true);
-      
+
       // Dispatch the update action
-      dispatch(updateLoanStatus({
-        id: loan.id!,
-        status: validatedData.status,
-        notes: validatedData.notes,
-      }));
+      dispatch(
+        updateLoanStatus({
+          id: loan.id!,
+          status: validatedData.status,
+          notes: validatedData.notes,
+        }),
+      );
 
       // Close modal and reset form
       handleClose();
-      
     } catch (error) {
       if (error instanceof ZodError) {
         const errors: Record<string, string> = {};
@@ -125,13 +133,13 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
   if (!loan) return null;
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        sx: { borderRadius: 2 }
+        sx: { borderRadius: 2 },
       }}
     >
       <DialogTitle sx={{ pb: 1 }}>
@@ -139,11 +147,7 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
           <Typography variant="h6" component="div">
             Update Loan Status
           </Typography>
-          <Button
-            onClick={handleClose}
-            sx={{ minWidth: 'auto', p: 1 }}
-            color="inherit"
-          >
+          <Button onClick={handleClose} sx={{ minWidth: 'auto', p: 1 }} color="inherit">
             <Close />
           </Button>
         </Box>
@@ -159,12 +163,7 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
             <Typography variant="body2" fontWeight="medium">
               {loan.name}
             </Typography>
-            <Chip
-              label={loan.ref}
-              size="small"
-              color="primary"
-              variant="outlined"
-            />
+            <Chip label={loan.ref} size="small" color="primary" variant="outlined" />
           </Box>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="body2" color="text.secondary">
@@ -230,19 +229,15 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
         {formData.status !== loan.status && (
           <Alert severity="warning" sx={{ mb: 2 }}>
             <Typography variant="body2">
-              You are about to change the status from <strong>{loan.status}</strong> to <strong>{formData.status}</strong>. 
-              This action will be recorded with your notes.
+              You are about to change the status from <strong>{loan.status}</strong> to{' '}
+              <strong>{formData.status}</strong>. This action will be recorded with your notes.
             </Typography>
           </Alert>
         )}
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 3 }}>
-        <Button 
-          onClick={handleClose} 
-          variant="outlined"
-          disabled={isSubmitting}
-        >
+        <Button onClick={handleClose} variant="outlined" disabled={isSubmitting}>
           Cancel
         </Button>
         <Button
@@ -259,4 +254,4 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({ open, onClose, lo
   );
 };
 
-export default StatusUpdateModal; 
+export default StatusUpdateModal;

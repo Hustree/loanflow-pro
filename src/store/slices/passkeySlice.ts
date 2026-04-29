@@ -35,7 +35,7 @@ interface PasskeyState {
   error: string | null;
   registrationStep: 'idle' | 'started' | 'prompting' | 'verifying' | 'completed';
   authenticationStep: 'idle' | 'started' | 'prompting' | 'verifying' | 'completed';
-  
+
   // New Android-specific state
   androidCapabilities: AndroidDeviceInfo | null;
   biometricEnrollment: BiometricEnrollmentState;
@@ -55,7 +55,7 @@ const initialState: PasskeyState = {
   error: null,
   registrationStep: 'idle',
   authenticationStep: 'idle',
-  
+
   // Android-specific initial state
   androidCapabilities: null,
   biometricEnrollment: {
@@ -68,78 +68,72 @@ const initialState: PasskeyState = {
 };
 
 // Async thunks
-export const checkPasskeySupport = createAsyncThunk(
-  'passkey/checkSupport',
-  async () => {
-    const isSupported = passkeyService.checkSupport();
-    const isAutofillSupported = await passkeyService.checkAutofillSupport();
-    return { isSupported, isAutofillSupported };
-  }
-);
+export const checkPasskeySupport = createAsyncThunk('passkey/checkSupport', async () => {
+  const isSupported = passkeyService.checkSupport();
+  const isAutofillSupported = await passkeyService.checkAutofillSupport();
+  return { isSupported, isAutofillSupported };
+});
 
 export const registerPasskey = createAsyncThunk(
   'passkey/register',
   async ({ email, displayName }: { email: string; displayName: string }, { dispatch }) => {
     dispatch(setRegistrationStep('started'));
-    
+
     try {
       dispatch(setRegistrationStep('prompting'));
       const result = await passkeyService.startRegistration(email, displayName);
-      
+
       dispatch(setRegistrationStep('verifying'));
-      
+
       if (result.success) {
         dispatch(setRegistrationStep('completed'));
         return result;
       }
-      
+
       throw new Error('Registration failed');
     } catch (error) {
       dispatch(setRegistrationStep('idle'));
       throw error;
     }
-  }
+  },
 );
 
 export const authenticateWithPasskey = createAsyncThunk(
   'passkey/authenticate',
   async (email: string, { dispatch }) => {
     dispatch(setAuthenticationStep('started'));
-    
+
     try {
       dispatch(setAuthenticationStep('prompting'));
       const result = await passkeyService.startAuthentication(email);
-      
+
       dispatch(setAuthenticationStep('verifying'));
-      
+
       if (result.success) {
         dispatch(setAuthenticationStep('completed'));
         return result;
       }
-      
+
       throw new Error('Authentication failed');
     } catch (error) {
       dispatch(setAuthenticationStep('idle'));
       throw error;
     }
-  }
+  },
 );
 
-export const loadUserPasskeys = createAsyncThunk(
-  'passkey/loadDevices',
-  async (email: string) => {
-    const passkeys = await passkeyService.getUserPasskeys(email);
-    return passkeys.map(p => ({
-      id: p.id,
-      name: p.deviceInfo?.deviceName || p.deviceName || 'Unknown Device',
-      type: p.deviceInfo?.deviceType || 'desktop',
-      browser: p.deviceInfo?.browser || 'Unknown',
-      os: p.deviceInfo?.os || 'Unknown',
-      lastUsed: p.lastUsed || p.createdAt,
-      createdAt: p.createdAt,
-    }));
-  }
-);
+export const loadUserPasskeys = createAsyncThunk('passkey/loadDevices', async (email: string) => {
+  const passkeys = await passkeyService.getUserPasskeys(email);
+  return passkeys.map((p) => ({
+    id: p.id,
+    name: p.deviceInfo?.deviceName || p.deviceName || 'Unknown Device',
+    type: p.deviceInfo?.deviceType || 'desktop',
+    browser: p.deviceInfo?.browser || 'Unknown',
+    os: p.deviceInfo?.os || 'Unknown',
+    lastUsed: p.lastUsed || p.createdAt,
+    createdAt: p.createdAt,
+  }));
+});
 
 export const removePasskey = createAsyncThunk(
   'passkey/remove',
@@ -151,15 +145,12 @@ export const removePasskey = createAsyncThunk(
       return { passkeyId, passkeys };
     }
     throw new Error('Failed to remove passkey');
-  }
+  },
 );
 
-export const checkHasPasskeys = createAsyncThunk(
-  'passkey/checkHas',
-  async (email: string) => {
-    return await passkeyService.hasPasskeys(email);
-  }
-);
+export const checkHasPasskeys = createAsyncThunk('passkey/checkHas', async (email: string) => {
+  return await passkeyService.hasPasskeys(email);
+});
 
 // New Android-specific async thunks
 export const checkAndroidCapabilities = createAsyncThunk(
@@ -167,57 +158,70 @@ export const checkAndroidCapabilities = createAsyncThunk(
   async () => {
     const capabilities = await passkeyService.getAndroidCapabilities();
     const securityLevel = capabilities?.securityLevel || null;
-    
+
     const availableBiometrics: string[] = [];
     if (capabilities?.biometricCapabilities?.fingerprint) availableBiometrics.push('fingerprint');
     if (capabilities?.biometricCapabilities?.faceUnlock) availableBiometrics.push('face');
     if (capabilities?.biometricCapabilities?.iris) availableBiometrics.push('iris');
-    
+
     return {
       capabilities,
       securityLevel,
       availableBiometrics,
       isAndroidDevice: capabilities !== null,
     };
-  }
+  },
 );
 
 export const enrollAndroidBiometric = createAsyncThunk(
   'passkey/enrollAndroidBiometric',
-  async ({ email, displayName, biometricType }: { 
-    email: string; 
-    displayName: string; 
-    biometricType: 'fingerprint' | 'face' | 'iris' 
-  }, { dispatch }) => {
-    dispatch(setBiometricEnrollmentState({ 
-      isEnrolling: true, 
-      enrollmentType: biometricType 
-    }));
-    
+  async (
+    {
+      email,
+      displayName,
+      biometricType,
+    }: {
+      email: string;
+      displayName: string;
+      biometricType: 'fingerprint' | 'face' | 'iris';
+    },
+    { dispatch },
+  ) => {
+    dispatch(
+      setBiometricEnrollmentState({
+        isEnrolling: true,
+        enrollmentType: biometricType,
+      }),
+    );
+
     try {
       const result = await passkeyService.createAndroidPasskey(email, displayName, biometricType);
-      
-      dispatch(setBiometricEnrollmentState({ 
-        isEnrolling: false, 
-        success: true 
-      }));
-      
+
+      dispatch(
+        setBiometricEnrollmentState({
+          isEnrolling: false,
+          success: true,
+        }),
+      );
+
       return result;
     } catch (error) {
-      dispatch(setBiometricEnrollmentState({ 
-        isEnrolling: false, 
-        error: error instanceof Error ? error.message : 'Enrollment failed' 
-      }));
+      dispatch(
+        setBiometricEnrollmentState({
+          isEnrolling: false,
+          error: error instanceof Error ? error.message : 'Enrollment failed',
+        }),
+      );
       throw error;
     }
-  }
+  },
 );
 
 export const authenticateAndroidBiometric = createAsyncThunk(
   'passkey/authenticateAndroidBiometric',
   async ({ email, credentialId }: { email: string; credentialId?: string }) => {
     return await passkeyService.authenticateWithAndroidBiometric(email, credentialId);
-  }
+  },
 );
 
 export const checkAndroidBiometricPasskeys = createAsyncThunk(
@@ -225,19 +229,19 @@ export const checkAndroidBiometricPasskeys = createAsyncThunk(
   async (email: string) => {
     const hasAndroidBiometric = await passkeyService.hasAndroidBiometricPasskeys(email);
     const passkeys = await passkeyService.getUserPasskeys(email);
-    
+
     const enrolledBiometrics: string[] = [];
     passkeys.forEach((p: any) => {
       if (p.biometricType && !enrolledBiometrics.includes(p.biometricType)) {
         enrolledBiometrics.push(p.biometricType);
       }
     });
-    
+
     return {
       hasAndroidBiometric,
       enrolledBiometrics,
     };
-  }
+  },
 );
 
 const passkeySlice = createSlice({
@@ -254,7 +258,7 @@ const passkeySlice = createSlice({
       state.devices.push(action.payload);
     },
     removeDevice: (state, action: PayloadAction<string>) => {
-      state.devices = state.devices.filter(d => d.id !== action.payload);
+      state.devices = state.devices.filter((d) => d.id !== action.payload);
     },
     setRegistrationStep: (state, action: PayloadAction<PasskeyState['registrationStep']>) => {
       state.registrationStep = action.payload;
@@ -266,7 +270,10 @@ const passkeySlice = createSlice({
       state.registrationStep = 'idle';
       state.authenticationStep = 'idle';
     },
-    setBiometricEnrollmentState: (state, action: PayloadAction<Partial<BiometricEnrollmentState>>) => {
+    setBiometricEnrollmentState: (
+      state,
+      action: PayloadAction<Partial<BiometricEnrollmentState>>,
+    ) => {
       state.biometricEnrollment = { ...state.biometricEnrollment, ...action.payload };
     },
     setAndroidCapabilities: (state, action: PayloadAction<AndroidDeviceInfo | null>) => {
@@ -292,7 +299,7 @@ const passkeySlice = createSlice({
         state.isSupported = action.payload.isSupported;
         state.isAutofillSupported = action.payload.isAutofillSupported;
       })
-      
+
       // Registration
       .addCase(registerPasskey.pending, (state) => {
         state.loading = true;
@@ -310,7 +317,7 @@ const passkeySlice = createSlice({
         state.error = action.error.message || 'Registration failed';
         state.registrationStep = 'idle';
       })
-      
+
       // Authentication
       .addCase(authenticateWithPasskey.pending, (state) => {
         state.loading = true;
@@ -324,7 +331,7 @@ const passkeySlice = createSlice({
         state.error = action.error.message || 'Authentication failed';
         state.authenticationStep = 'idle';
       })
-      
+
       // Load user passkeys
       .addCase(loadUserPasskeys.pending, (state) => {
         state.loading = true;
@@ -338,20 +345,20 @@ const passkeySlice = createSlice({
         state.loading = false;
         state.devices = [];
       })
-      
+
       // Remove passkey
       .addCase(removePasskey.fulfilled, (state, action) => {
-        state.devices = state.devices.filter(d => d.id !== action.payload.passkeyId);
+        state.devices = state.devices.filter((d) => d.id !== action.payload.passkeyId);
         if (state.devices.length === 0) {
           state.isRegistered = false;
         }
       })
-      
+
       // Check has passkeys
       .addCase(checkHasPasskeys.fulfilled, (state, action) => {
         state.isRegistered = action.payload;
       })
-      
+
       // Android capabilities
       .addCase(checkAndroidCapabilities.fulfilled, (state, action) => {
         state.androidCapabilities = action.payload.capabilities;
@@ -363,7 +370,7 @@ const passkeySlice = createSlice({
         state.androidCapabilities = null;
         state.isAndroidDevice = false;
       })
-      
+
       // Android biometric enrollment
       .addCase(enrollAndroidBiometric.pending, (state) => {
         state.loading = true;
@@ -380,7 +387,7 @@ const passkeySlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Android biometric enrollment failed';
       })
-      
+
       // Android biometric authentication
       .addCase(authenticateAndroidBiometric.pending, (state) => {
         state.loading = true;
@@ -393,7 +400,7 @@ const passkeySlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Android biometric authentication failed';
       })
-      
+
       // Check Android biometric passkeys
       .addCase(checkAndroidBiometricPasskeys.fulfilled, (state, action) => {
         state.enrolledBiometrics = action.payload.enrolledBiometrics;
@@ -401,10 +408,10 @@ const passkeySlice = createSlice({
   },
 });
 
-export const { 
-  setSupported, 
-  clearError, 
-  addDevice, 
+export const {
+  setSupported,
+  clearError,
+  addDevice,
   removeDevice,
   setRegistrationStep,
   setAuthenticationStep,

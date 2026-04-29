@@ -7,22 +7,24 @@ export const AndroidDeviceInfoSchema = z.object({
   browser: z.string(),
   os: z.string(),
   deviceName: z.string(),
-  
+
   // New Android-specific fields
-  androidVersion: z.string().optional(),           // "13", "14", etc.
-  apiLevel: z.number().optional(),                 // 28, 29, 30, etc.
-  biometricCapabilities: z.object({
-    fingerprint: z.boolean(),
-    faceUnlock: z.boolean(),
-    iris: z.boolean(),
-    strongBiometrics: z.boolean(),      // Class 3 (Strong)
-    weakBiometrics: z.boolean(),        // Class 2 (Weak)
-    convenienceBiometrics: z.boolean(), // Class 1 (Convenience)
-  }).optional(),
+  androidVersion: z.string().optional(), // "13", "14", etc.
+  apiLevel: z.number().optional(), // 28, 29, 30, etc.
+  biometricCapabilities: z
+    .object({
+      fingerprint: z.boolean(),
+      faceUnlock: z.boolean(),
+      iris: z.boolean(),
+      strongBiometrics: z.boolean(), // Class 3 (Strong)
+      weakBiometrics: z.boolean(), // Class 2 (Weak)
+      convenienceBiometrics: z.boolean(), // Class 1 (Convenience)
+    })
+    .optional(),
   securityLevel: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
   biometricEnrolled: z.boolean().optional(),
-  fallbackMethods: z.array(z.string()).optional(),  // ["PIN", "PATTERN", "PASSWORD"]
-  hardwareBacked: z.boolean().optional(),           // Uses TEE/SE
+  fallbackMethods: z.array(z.string()).optional(), // ["PIN", "PATTERN", "PASSWORD"]
+  hardwareBacked: z.boolean().optional(), // Uses TEE/SE
 });
 
 export type AndroidDeviceInfo = z.infer<typeof AndroidDeviceInfoSchema>;
@@ -73,9 +75,9 @@ declare global {
 
 export class AndroidBiometricService {
   private static instance: AndroidBiometricService;
-  
+
   private constructor() {}
-  
+
   public static getInstance(): AndroidBiometricService {
     if (!AndroidBiometricService.instance) {
       AndroidBiometricService.instance = new AndroidBiometricService();
@@ -87,10 +89,12 @@ export class AndroidBiometricService {
   isAndroidDevice(): boolean {
     const ua = navigator.userAgent;
     const platform = navigator.platform || '';
-    
-    return /Android/i.test(ua) || 
-           /Linux armv/i.test(platform) ||
-           (navigator.userAgentData?.platform === 'Android');
+
+    return (
+      /Android/i.test(ua) ||
+      /Linux armv/i.test(platform) ||
+      navigator.userAgentData?.platform === 'Android'
+    );
   }
 
   // Get Android version from user agent
@@ -103,7 +107,7 @@ export class AndroidBiometricService {
   // Convert Android version to API level (approximate)
   private getApiLevel(androidVersion: string): number {
     const version = parseFloat(androidVersion);
-    
+
     // Android version to API level mapping
     const versionMap: { [key: number]: number } = {
       14: 34,
@@ -117,7 +121,7 @@ export class AndroidBiometricService {
       7.1: 25,
       7.0: 24,
     };
-    
+
     return versionMap[version] || Math.max(28, Math.floor(version) + 19);
   }
 
@@ -125,7 +129,7 @@ export class AndroidBiometricService {
   async checkBiometricCapabilities(): Promise<AndroidDeviceInfo> {
     const ua = navigator.userAgent;
     const platform = navigator.platform || '';
-    
+
     // Base device info
     const baseInfo = {
       deviceType: this.detectDeviceType(),
@@ -146,7 +150,7 @@ export class AndroidBiometricService {
       // Try to detect biometric capabilities
       const biometricCapabilities = await this.detectBiometricCapabilities(apiLevel);
       const securityLevel = this.assessSecurityLevel(biometricCapabilities, apiLevel);
-      
+
       const androidInfo = {
         ...baseInfo,
         androidVersion,
@@ -161,7 +165,7 @@ export class AndroidBiometricService {
       return AndroidDeviceInfoSchema.parse(androidInfo);
     } catch (error) {
       console.warn('Android biometric detection failed:', error);
-      
+
       // Return basic Android info on failure
       return AndroidDeviceInfoSchema.parse({
         ...baseInfo,
@@ -198,14 +202,14 @@ export class AndroidBiometricService {
     if (apiLevel && apiLevel >= 28) {
       // Android 9+ has biometric support
       capabilities.convenienceBiometrics = true;
-      
+
       if (apiLevel >= 29) {
         // Android 10+ has enhanced biometrics
         capabilities.fingerprint = await this.checkFingerprintCapability();
         capabilities.faceUnlock = await this.checkFaceUnlockCapability();
         capabilities.weakBiometrics = true;
       }
-      
+
       if (apiLevel >= 30) {
         // Android 11+ has strong biometrics
         capabilities.strongBiometrics = true;
@@ -227,45 +231,42 @@ export class AndroidBiometricService {
         return false;
       }
     }
-    
+
     return false;
   }
 
   // Check face unlock capability
   private async checkFaceUnlockCapability(): Promise<boolean> {
     const ua = navigator.userAgent;
-    
+
     // Look for device patterns that commonly support face unlock
     const faceUnlockDevices = [
-      /Pixel [3-9]/i,        // Google Pixel 3+
-      /Galaxy S[89]/i,       // Samsung Galaxy S8+
-      /Galaxy S1[0-9]/i,     // Samsung Galaxy S10+
-      /Galaxy Note[89]/i,    // Samsung Galaxy Note 8+
-      /Galaxy Note1[0-9]/i,  // Samsung Galaxy Note 10+
-      /OnePlus [5-9]/i,      // OnePlus 5+
-      /Xiaomi Mi [89]/i,     // Xiaomi Mi 8+
+      /Pixel [3-9]/i, // Google Pixel 3+
+      /Galaxy S[89]/i, // Samsung Galaxy S8+
+      /Galaxy S1[0-9]/i, // Samsung Galaxy S10+
+      /Galaxy Note[89]/i, // Samsung Galaxy Note 8+
+      /Galaxy Note1[0-9]/i, // Samsung Galaxy Note 10+
+      /OnePlus [5-9]/i, // OnePlus 5+
+      /Xiaomi Mi [89]/i, // Xiaomi Mi 8+
     ];
-    
-    return faceUnlockDevices.some(pattern => pattern.test(ua));
+
+    return faceUnlockDevices.some((pattern) => pattern.test(ua));
   }
 
   // Assess overall security level
-  private assessSecurityLevel(
-    capabilities: any, 
-    apiLevel?: number
-  ): 'LOW' | 'MEDIUM' | 'HIGH' {
+  private assessSecurityLevel(capabilities: any, apiLevel?: number): 'LOW' | 'MEDIUM' | 'HIGH' {
     if (!apiLevel || apiLevel < 28) {
       return 'LOW';
     }
-    
+
     if (capabilities?.strongBiometrics && capabilities?.fingerprint) {
       return 'HIGH';
     }
-    
+
     if (capabilities?.weakBiometrics || capabilities?.fingerprint || capabilities?.faceUnlock) {
       return 'MEDIUM';
     }
-    
+
     return 'LOW';
   }
 
@@ -280,7 +281,7 @@ export class AndroidBiometricService {
         return false;
       }
     }
-    
+
     // Fallback: assume enrolled if platform authenticator is available
     try {
       return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
@@ -292,7 +293,7 @@ export class AndroidBiometricService {
   // Detect available fallback methods
   private detectFallbackMethods(): string[] {
     const methods = ['PIN', 'PATTERN', 'PASSWORD'];
-    
+
     // All modern Android devices support these fallback methods
     return methods;
   }
@@ -308,16 +309,18 @@ export class AndroidBiometricService {
         return false;
       }
     }
-    
+
     // Fallback: assume hardware backing on modern devices
     const androidVersion = this.getAndroidVersion();
     const apiLevel = androidVersion ? this.getApiLevel(androidVersion) : 0;
-    
+
     return apiLevel >= 30; // Android 11+ typically has hardware backing
   }
 
   // Enroll biometric (triggers native Android enrollment)
-  async enrollBiometric(type: 'fingerprint' | 'face' | 'iris' = 'fingerprint'): Promise<BiometricEnrollmentResult> {
+  async enrollBiometric(
+    type: 'fingerprint' | 'face' | 'iris' = 'fingerprint',
+  ): Promise<BiometricEnrollmentResult> {
     if (!this.isAndroidDevice()) {
       return {
         success: false,
@@ -332,7 +335,7 @@ export class AndroidBiometricService {
       try {
         const result = await window.AndroidBiometric.enrollBiometric(type);
         const enrollment = JSON.parse(result);
-        
+
         return {
           success: enrollment.success,
           biometricType: enrollment.biometricType || type,
@@ -357,7 +360,8 @@ export class AndroidBiometricService {
       biometricType: type,
       securityClass: 1,
       hardwareBacked: false,
-      error: 'Native enrollment interface not available. Please enroll biometrics in device settings.',
+      error:
+        'Native enrollment interface not available. Please enroll biometrics in device settings.',
     };
   }
 
@@ -374,9 +378,11 @@ export class AndroidBiometricService {
 
     if (window.AndroidBiometric) {
       try {
-        const result = await window.AndroidBiometric.authenticateWithBiometric(JSON.stringify(options));
+        const result = await window.AndroidBiometric.authenticateWithBiometric(
+          JSON.stringify(options),
+        );
         const auth = JSON.parse(result);
-        
+
         return {
           success: auth.success,
           biometricType: auth.biometricType || 'fingerprint',
@@ -397,7 +403,7 @@ export class AndroidBiometricService {
     try {
       // This will trigger the native biometric prompt on Android
       const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-      
+
       if (!available) {
         return {
           success: false,
@@ -450,14 +456,14 @@ export class AndroidBiometricService {
   private generateDeviceName(): string {
     const ua = navigator.userAgent;
     const platform = navigator.platform || '';
-    
+
     const browser = this.detectBrowser(ua);
     const os = this.detectOS(ua, platform);
-    const date = new Date().toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    const date = new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
     });
-    
+
     // Add Android-specific device name detection
     if (this.isAndroidDevice()) {
       const androidModel = this.extractAndroidModel(ua);
@@ -465,19 +471,19 @@ export class AndroidBiometricService {
         return `${androidModel} (${browser}) - ${date}`;
       }
     }
-    
+
     return `${browser} on ${os} (${date})`;
   }
 
   private extractAndroidModel(ua: string): string | null {
     // Extract Android device model from user agent
     const patterns = [
-      /Android.*?;\s*([^;)]+)\)/i,        // Standard Android pattern
-      /\(([^;]+);\s*wv\)/i,              // WebView pattern
-      /(SM-[A-Z0-9]+)/i,                 // Samsung models
-      /(Pixel [0-9]+[a-zA-Z]*)/i,        // Google Pixel
-      /(Mi [A-Z0-9 ]+)/i,                // Xiaomi
-      /(OnePlus [A-Z0-9]+)/i,            // OnePlus
+      /Android.*?;\s*([^;)]+)\)/i, // Standard Android pattern
+      /\(([^;]+);\s*wv\)/i, // WebView pattern
+      /(SM-[A-Z0-9]+)/i, // Samsung models
+      /(Pixel [0-9]+[a-zA-Z]*)/i, // Google Pixel
+      /(Mi [A-Z0-9 ]+)/i, // Xiaomi
+      /(OnePlus [A-Z0-9]+)/i, // OnePlus
     ];
 
     for (const pattern of patterns) {

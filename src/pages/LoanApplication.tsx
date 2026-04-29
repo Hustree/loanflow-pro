@@ -39,7 +39,7 @@ const LoanApplicationPage: React.FC = () => {
   const [showSummary, setShowSummary] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  
+
   const [formData, setFormData] = useState<Partial<LoanApplication>>({
     fullName: '',
     pnpBfpId: '',
@@ -50,7 +50,7 @@ const LoanApplicationPage: React.FC = () => {
     disbursementMode: undefined,
     uploadedFile: undefined,
   });
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const steps = ['Personal Info', 'Loan Details', 'Review & Submit'];
@@ -58,7 +58,7 @@ const LoanApplicationPage: React.FC = () => {
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const processedValue = ['loanAmount', 'monthlyIncome'].includes(name) ? Number(value) : value;
-    
+
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
     // Clear error for this field
     if (errors[name]) {
@@ -69,7 +69,7 @@ const LoanApplicationPage: React.FC = () => {
   const handleSelectChange = (e: SelectChangeEvent<string | number>) => {
     const { name, value } = e.target;
     const processedValue = name === 'term' ? Number(value) : value;
-    
+
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -89,7 +89,7 @@ const LoanApplicationPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validationErrors = validateLoanForm(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -98,7 +98,7 @@ const LoanApplicationPage: React.FC = () => {
 
     try {
       const submissionData: LoanApplication = {
-        ...formData as LoanApplication,
+        ...(formData as LoanApplication),
         referenceNumber: generateReferenceNumber(),
         submissionDate: new Date(),
       };
@@ -130,7 +130,7 @@ const LoanApplicationPage: React.FC = () => {
         referenceNumber: submissionData.referenceNumber,
         submissionDate: submissionData.submissionDate,
       }));
-      
+
       setSubmitSuccess(true);
       setShowSummary(true);
       setActiveStep(2);
@@ -149,25 +149,27 @@ const LoanApplicationPage: React.FC = () => {
   const handleNext = () => {
     // Validate current step
     let stepErrors: Record<string, string> = {};
-    
+
     if (activeStep === 0) {
       // Validate personal info
       if (!formData.fullName?.trim()) stepErrors.fullName = 'Full name is required';
       if (!formData.pnpBfpId?.trim()) stepErrors.pnpBfpId = 'PNP/BFP ID is required';
-      if (!formData.monthlyIncome || formData.monthlyIncome <= 0) stepErrors.monthlyIncome = 'Monthly income is required';
+      if (!formData.monthlyIncome || formData.monthlyIncome <= 0)
+        stepErrors.monthlyIncome = 'Monthly income is required';
     } else if (activeStep === 1) {
       // Validate loan details
       if (!formData.loanType) stepErrors.loanType = 'Loan type is required';
-      if (!formData.loanAmount || formData.loanAmount <= 0) stepErrors.loanAmount = 'Loan amount is required';
+      if (!formData.loanAmount || formData.loanAmount <= 0)
+        stepErrors.loanAmount = 'Loan amount is required';
       if (!formData.term) stepErrors.term = 'Term is required';
       if (!formData.disbursementMode) stepErrors.disbursementMode = 'Disbursement mode is required';
     }
-    
+
     if (Object.keys(stepErrors).length > 0) {
       setErrors(stepErrors);
       return;
     }
-    
+
     setActiveStep((prev) => prev + 1);
   };
 
@@ -189,7 +191,7 @@ const LoanApplicationPage: React.FC = () => {
               helperText={errors.fullName}
               required
             />
-            
+
             <TextInput
               label="PNP/BFP ID Number"
               name="pnpBfpId"
@@ -199,7 +201,7 @@ const LoanApplicationPage: React.FC = () => {
               helperText={errors.pnpBfpId || 'Enter your 6-12 character ID'}
               required
             />
-            
+
             <TextInput
               label="Monthly Income"
               name="monthlyIncome"
@@ -212,7 +214,7 @@ const LoanApplicationPage: React.FC = () => {
             />
           </>
         );
-        
+
       case 1:
         return (
           <>
@@ -226,7 +228,7 @@ const LoanApplicationPage: React.FC = () => {
               helperText={errors.loanType}
               required
             />
-            
+
             <TextInput
               label="Loan Amount"
               name="loanAmount"
@@ -237,7 +239,7 @@ const LoanApplicationPage: React.FC = () => {
               helperText={errors.loanAmount || 'Maximum: ₱500,000'}
               required
             />
-            
+
             <SelectInput
               label="Term"
               name="term"
@@ -248,7 +250,7 @@ const LoanApplicationPage: React.FC = () => {
               helperText={errors.term}
               required
             />
-            
+
             <FormControl
               component="fieldset"
               error={!!errors.disbursementMode}
@@ -256,10 +258,7 @@ const LoanApplicationPage: React.FC = () => {
               sx={{ mt: 2 }}
             >
               <FormLabel component="legend">Disbursement Mode</FormLabel>
-              <RadioGroup
-                value={formData.disbursementMode || ''}
-                onChange={handleRadioChange}
-              >
+              <RadioGroup value={formData.disbursementMode || ''} onChange={handleRadioChange}>
                 {DISBURSEMENT_MODES.map((mode) => (
                   <FormControlLabel
                     key={mode.value}
@@ -273,7 +272,7 @@ const LoanApplicationPage: React.FC = () => {
                 <FormHelperText>{errors.disbursementMode}</FormHelperText>
               )}
             </FormControl>
-            
+
             <FileUpload
               onFileSelect={handleFileSelect}
               selectedFile={formData.uploadedFile}
@@ -282,7 +281,7 @@ const LoanApplicationPage: React.FC = () => {
             />
           </>
         );
-        
+
       case 2:
         return (
           <>
@@ -294,16 +293,24 @@ const LoanApplicationPage: React.FC = () => {
                 <Typography variant="body2" color="text.secondary" paragraph>
                   Please review all information before submitting
                 </Typography>
-                
+
                 <Box sx={{ mt: 3, textAlign: 'left' }}>
-                  <Typography variant="subtitle2" gutterBottom>Personal Information:</Typography>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Personal Information:
+                  </Typography>
                   <Typography variant="body2">Name: {formData.fullName}</Typography>
                   <Typography variant="body2">ID: {formData.pnpBfpId}</Typography>
-                  <Typography variant="body2" gutterBottom>Monthly Income: ₱{formData.monthlyIncome?.toLocaleString()}</Typography>
-                  
-                  <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>Loan Details:</Typography>
+                  <Typography variant="body2" gutterBottom>
+                    Monthly Income: ₱{formData.monthlyIncome?.toLocaleString()}
+                  </Typography>
+
+                  <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
+                    Loan Details:
+                  </Typography>
                   <Typography variant="body2">Type: {formData.loanType}</Typography>
-                  <Typography variant="body2">Amount: ₱{formData.loanAmount?.toLocaleString()}</Typography>
+                  <Typography variant="body2">
+                    Amount: ₱{formData.loanAmount?.toLocaleString()}
+                  </Typography>
                   <Typography variant="body2">Term: {formData.term} months</Typography>
                   <Typography variant="body2">Disbursement: {formData.disbursementMode}</Typography>
                   {formData.uploadedFile && (
@@ -323,7 +330,7 @@ const LoanApplicationPage: React.FC = () => {
             )}
           </>
         );
-        
+
       default:
         return null;
     }
@@ -363,37 +370,24 @@ const LoanApplicationPage: React.FC = () => {
 
           <Box component="form" onSubmit={handleSubmit} noValidate>
             {renderStepContent()}
-            
+
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-              <Button
-                disabled={activeStep === 0 || showSummary}
-                onClick={handleBack}
-              >
+              <Button disabled={activeStep === 0 || showSummary} onClick={handleBack}>
                 Back
               </Button>
-              
+
               {activeStep === steps.length - 1 ? (
                 !showSummary ? (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    startIcon={<Send />}
-                  >
+                  <Button type="submit" variant="contained" startIcon={<Send />}>
                     Submit Application
                   </Button>
                 ) : (
-                  <Button
-                    variant="contained"
-                    onClick={() => window.location.reload()}
-                  >
+                  <Button variant="contained" onClick={() => window.location.reload()}>
                     New Application
                   </Button>
                 )
               ) : (
-                <Button
-                  variant="contained"
-                  onClick={handleNext}
-                >
+                <Button variant="contained" onClick={handleNext}>
                   Next
                 </Button>
               )}

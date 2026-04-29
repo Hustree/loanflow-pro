@@ -57,13 +57,10 @@ export const PasskeyRegistration: React.FC<Props> = ({
   const [step, setStep] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const [registrationStarted, setRegistrationStarted] = useState(false);
-  
-  const { 
-    loading, 
-    error, 
-    registrationStep,
-    isSupported,
-  } = useSelector((state: RootState) => state.passkey);
+
+  const { loading, error, registrationStep, isSupported } = useSelector(
+    (state: RootState) => state.passkey,
+  );
 
   useEffect(() => {
     return () => {
@@ -125,20 +122,18 @@ export const PasskeyRegistration: React.FC<Props> = ({
     if (/Android/i.test(ua)) {
       return 'Place your finger on the fingerprint sensor or look at the camera';
     }
-    return 'Follow your device\'s authentication prompt';
+    return "Follow your device's authentication prompt";
   };
 
   const handleSetupPasskey = async () => {
     if (registrationStarted) return; // Prevent double registration
-    
+
     try {
       setRegistrationStarted(true);
       setStep(1);
-      
-      const result = await dispatch(
-        registerPasskey({ email, displayName })
-      ).unwrap();
-      
+
+      const result = await dispatch(registerPasskey({ email, displayName })).unwrap();
+
       if (result.success) {
         // Registration successful
         console.log('Passkey registered successfully:', result);
@@ -146,7 +141,7 @@ export const PasskeyRegistration: React.FC<Props> = ({
     } catch (err: any) {
       console.error('Registration failed:', err);
       setRegistrationStarted(false);
-      
+
       // Handle specific errors
       if (err.message?.includes('cancelled')) {
         setStep(0); // Go back to first step
@@ -163,11 +158,16 @@ export const PasskeyRegistration: React.FC<Props> = ({
 
   const getProgressValue = () => {
     switch (registrationStep) {
-      case 'started': return 25;
-      case 'prompting': return 50;
-      case 'verifying': return 75;
-      case 'completed': return 100;
-      default: return 0;
+      case 'started':
+        return 25;
+      case 'prompting':
+        return 50;
+      case 'verifying':
+        return 75;
+      case 'completed':
+        return 100;
+      default:
+        return 0;
     }
   };
 
@@ -194,16 +194,11 @@ export const PasskeyRegistration: React.FC<Props> = ({
             Passkey Not Supported
           </Typography>
           <Typography variant="body2">
-            Your device or browser doesn't support passkey authentication. 
-            Please use OTP or password authentication instead.
+            Your device or browser doesn't support passkey authentication. Please use OTP or
+            password authentication instead.
           </Typography>
         </Alert>
-        <Button
-          fullWidth
-          variant="contained"
-          sx={{ mt: 2 }}
-          onClick={onSkip}
-        >
+        <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={onSkip}>
           Continue with Alternative Method
         </Button>
       </Paper>
@@ -215,10 +210,8 @@ export const PasskeyRegistration: React.FC<Props> = ({
       <Stepper activeStep={step} orientation="vertical">
         {/* Step 1: Learn about Passkeys */}
         <Step>
-          <StepLabel 
-            optional={
-              <Typography variant="caption">Secure authentication setup</Typography>
-            }
+          <StepLabel
+            optional={<Typography variant="caption">Secure authentication setup</Typography>}
           >
             Learn about Passkeys
           </StepLabel>
@@ -233,7 +226,7 @@ export const PasskeyRegistration: React.FC<Props> = ({
                   for {email}
                 </Typography>
               </Box>
-              
+
               <List dense>
                 {benefits.map((benefit, index) => (
                   <ListItem key={index}>
@@ -253,10 +246,10 @@ export const PasskeyRegistration: React.FC<Props> = ({
                     How it works:
                   </Typography>
                   <Typography variant="body2">
-                    Passkeys use public-key cryptography. Your device creates a unique 
-                    key pair - the private key stays secure on your device, while the 
-                    public key is stored on our servers. This means even if our servers 
-                    were compromised, your account would remain secure.
+                    Passkeys use public-key cryptography. Your device creates a unique key pair -
+                    the private key stays secure on your device, while the public key is stored on
+                    our servers. This means even if our servers were compromised, your account would
+                    remain secure.
                   </Typography>
                 </Alert>
               </Collapse>
@@ -271,8 +264,8 @@ export const PasskeyRegistration: React.FC<Props> = ({
                   Set Up Passkey
                 </Button>
                 {showSkip && (
-                  <Button 
-                    variant="outlined" 
+                  <Button
+                    variant="outlined"
                     onClick={onSkip}
                     disabled={loading || registrationStarted}
                   >
@@ -281,11 +274,7 @@ export const PasskeyRegistration: React.FC<Props> = ({
                 )}
               </Stack>
 
-              <Button
-                variant="text"
-                size="small"
-                onClick={() => setShowDetails(!showDetails)}
-              >
+              <Button variant="text" size="small" onClick={() => setShowDetails(!showDetails)}>
                 {showDetails ? 'Hide' : 'Learn more'}
               </Button>
             </Stack>
@@ -294,11 +283,7 @@ export const PasskeyRegistration: React.FC<Props> = ({
 
         {/* Step 2: Create Your Passkey */}
         <Step>
-          <StepLabel
-            optional={
-              <Typography variant="caption">Biometric verification</Typography>
-            }
-          >
+          <StepLabel optional={<Typography variant="caption">Biometric verification</Typography>}>
             Create Your Passkey
           </StepLabel>
           <StepContent>
@@ -324,24 +309,24 @@ export const PasskeyRegistration: React.FC<Props> = ({
                       </Box>
                     )}
                   </Box>
-                  
+
                   <Typography variant="body1" align="center">
                     {getRegistrationMessage()}
                   </Typography>
-                  
+
                   <Box sx={{ width: '100%' }}>
-                    <LinearProgress 
-                      variant="determinate" 
+                    <LinearProgress
+                      variant="determinate"
                       value={getProgressValue()}
                       sx={{ height: 6, borderRadius: 3 }}
                     />
                   </Box>
-                  
+
                   {registrationStep === 'prompting' && (
                     <Alert severity="info" sx={{ width: '100%' }}>
                       <Typography variant="body2">
-                        A prompt should appear on your device. Please complete 
-                        the biometric verification to continue.
+                        A prompt should appear on your device. Please complete the biometric
+                        verification to continue.
                       </Typography>
                     </Alert>
                   )}
@@ -353,23 +338,13 @@ export const PasskeyRegistration: React.FC<Props> = ({
                     <Typography variant="subtitle2" gutterBottom>
                       Registration Failed
                     </Typography>
-                    <Typography variant="body2">
-                      {error}
-                    </Typography>
+                    <Typography variant="body2">{error}</Typography>
                   </Alert>
                   <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
-                    <Button 
-                      onClick={handleRetry} 
-                      variant="contained"
-                      fullWidth
-                    >
+                    <Button onClick={handleRetry} variant="contained" fullWidth>
                       Try Again
                     </Button>
-                    <Button 
-                      onClick={onSkip} 
-                      variant="outlined"
-                      fullWidth
-                    >
+                    <Button onClick={onSkip} variant="outlined" fullWidth>
                       Skip
                     </Button>
                   </Stack>
@@ -381,28 +356,24 @@ export const PasskeyRegistration: React.FC<Props> = ({
 
         {/* Step 3: Setup Complete */}
         <Step>
-          <StepLabel
-            optional={
-              <Typography variant="caption">Ready to use</Typography>
-            }
-          >
+          <StepLabel optional={<Typography variant="caption">Ready to use</Typography>}>
             Setup Complete!
           </StepLabel>
           <StepContent>
-            <Card 
-              sx={{ 
-                bgcolor: 'success.light', 
+            <Card
+              sx={{
+                bgcolor: 'success.light',
                 color: 'success.contrastText',
                 borderRadius: 2,
               }}
             >
               <CardContent>
                 <Stack spacing={2} alignItems="center">
-                  <Avatar 
-                    sx={{ 
-                      bgcolor: 'success.main', 
-                      width: 56, 
-                      height: 56 
+                  <Avatar
+                    sx={{
+                      bgcolor: 'success.main',
+                      width: 56,
+                      height: 56,
                     }}
                   >
                     <Check sx={{ fontSize: 32 }} />
@@ -413,19 +384,19 @@ export const PasskeyRegistration: React.FC<Props> = ({
                   <Typography variant="body2" align="center">
                     You can now sign in quickly and securely using your device's biometrics
                   </Typography>
-                  
+
                   <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                    <Chip 
-                      icon={<Smartphone />} 
-                      label="Device registered" 
-                      color="success" 
+                    <Chip
+                      icon={<Smartphone />}
+                      label="Device registered"
+                      color="success"
                       variant="outlined"
                       size="small"
                     />
-                    <Chip 
-                      icon={<Security />} 
-                      label="Secure" 
-                      color="success" 
+                    <Chip
+                      icon={<Security />}
+                      label="Secure"
+                      color="success"
                       variant="outlined"
                       size="small"
                     />
@@ -433,13 +404,8 @@ export const PasskeyRegistration: React.FC<Props> = ({
                 </Stack>
               </CardContent>
             </Card>
-            
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3 }}
-              onClick={onComplete}
-            >
+
+            <Button fullWidth variant="contained" sx={{ mt: 3 }} onClick={onComplete}>
               Continue to Dashboard
             </Button>
           </StepContent>
