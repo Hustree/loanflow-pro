@@ -27,7 +27,7 @@ Same end-state, both audiences served. The repo must look credible in 10 seconds
 | Commit history    | Keep existing 4 commits (A)         | No force-push; new work as Conventional Commits             |
 | Rollout           | Big-bang single PR (1)              | Full end-to-end in one shipping unit                        |
 | License           | MIT                                 | Permissive, standard for portfolio + starter                |
-| Attribution       | None                                | No AI/Claude/Anthropic mentions in any artifact             |
+| Attribution       | None                                | Author-neutral — no third-party AI tooling mentions         |
 
 ## 3. End-state architecture
 
