@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { AuthProvider } from '@/features/auth/AuthContext';
-import { lightTheme } from '@/features/theme/theme';
+import { AuthProvider } from '@/features/auth';
+import { lightTheme } from '@/features/theme';
 import { store } from '@/store/store';
 
 import AppRoutes from './AppRoutes';
