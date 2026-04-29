@@ -19,6 +19,7 @@ export default {
         'release',
       ],
     ],
-    'subject-case': [2, 'always', ['sentence-case', 'lower-case']],
+    'subject-case': [0],
+    'scope-empty': [0],
   },
 };
